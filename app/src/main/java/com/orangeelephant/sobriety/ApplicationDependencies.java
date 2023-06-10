@@ -47,7 +47,7 @@ public class ApplicationDependencies {
         return logger;
     }*/
 
-    public static SobrietyDatabase getSobrietyDatabase() {
+    public static SobrietyDatabase getDatabase() {
         if (sobrietyDatabase == null) {
             sobrietyDatabase = new SobrietyDatabase(getApplicationContext());
         }

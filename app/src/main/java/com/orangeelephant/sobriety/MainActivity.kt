@@ -26,15 +26,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeScreen(counters =
-                        listOf(
-                            Counter(1, "GREAT", 0L, 0L),
-                            Counter(1, "Bad", 0L, 0L),
-                            Counter(1, "afdsgag", 0L, 0L),
-                            Counter(1, "afdgd", 0L, 0L),
-
-                        )
-                    )
+                    HomeScreen(this)
                 }
             }
         }
