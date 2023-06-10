@@ -10,10 +10,16 @@ import androidx.compose.ui.Modifier
 import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.ui.screens.HomeScreen
 import com.orangeelephant.sobriety.ui.theme.SobrietyTheme
+import net.sqlcipher.database.SQLiteDatabase
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (!ApplicationDependencies.isInitialised()) {
+            initialise();
+        }
+
         super.onCreate(savedInstanceState)
+
         setContent {
             SobrietyTheme {
                 Surface(
@@ -32,5 +38,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun initialise() {
+        //initialise ApplicationDependencies
+        ApplicationDependencies.init(application)
+        SQLiteDatabase.loadLibs(this);
     }
 }
