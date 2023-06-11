@@ -16,32 +16,24 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.orangeelephant.sobriety.ApplicationDependencies
+import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.Screen
 import com.orangeelephant.sobriety.storage.models.Counter
+import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
+import com.orangeelephant.sobriety.ui.common.SettingsLink
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(context: Context, navController: NavController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
     val allCounters = ApplicationDependencies.getDatabase().counters.getAllCounters()
     
     Scaffold (
-        topBar = {
-             TopAppBar (
-                 title = {
-                     Text(
-                         text = "Sobriety",
-                         style = MaterialTheme.typography.headlineLarge,
-                     )
-                 },
-                 colors = TopAppBarDefaults.topAppBarColors(
-                     containerColor = MaterialTheme.colorScheme.background,
-                     scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer
-                 ),
-                 scrollBehavior = scrollBehavior
-             )
-        },
+        topBar = { GenericTopAppBar(
+            title = R.string.app_name,
+            scrollBehavior = scrollBehavior,
+            actions = { SettingsLink(navController) }
+        ) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         floatingActionButton = {
             FloatingActionButton(
@@ -77,7 +69,9 @@ fun CounterView(counter: Counter, navController: NavController) {
             )
             .fillMaxWidth()
             .clickable {
-                navController.navigate(route = Screen.CounterFullView.createRoute(counterId = counter.id))
+                navController.navigate(
+                    route = Screen.CounterFullView.createRoute(counterId = counter.id)
+                )
             }
     ) {
         Text(
