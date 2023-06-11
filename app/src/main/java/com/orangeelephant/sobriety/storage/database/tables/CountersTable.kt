@@ -72,12 +72,13 @@ class CountersTable(private val openHelper: OpenHelper) {
         return counters
     }
 
+    //TODO calculate record time here
     fun resetCounterTimer(counterId: Int, recordTime: Long) {
         val timeNow: Long = Date().time
         val sql = """
             UPDATE $TABLE_NAME_COUNTERS
             SET $COLUMN_RECORD_CLEAN_TIME = $recordTime, $COLUMN_START_TIME = $timeNow
-            WHERE $COLUMN_ID = counterId
+            WHERE $COLUMN_ID = $counterId
             """
 
         val db: SQLiteDatabase = openHelper.getWritableDatabase()!!

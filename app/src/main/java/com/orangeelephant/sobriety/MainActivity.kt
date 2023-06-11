@@ -7,17 +7,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import com.orangeelephant.sobriety.storage.models.Counter
-import com.orangeelephant.sobriety.ui.screens.HomeScreen
 import com.orangeelephant.sobriety.ui.theme.SobrietyTheme
 import net.sqlcipher.database.SQLiteDatabase
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!ApplicationDependencies.isInitialised()) {
-            initialise();
+            ApplicationDependencies.init(application)
+            SQLiteDatabase.loadLibs(this)
         }
-
         super.onCreate(savedInstanceState)
 
         setContent {
@@ -26,15 +26,21 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeScreen(this)
+                    SobrietyAppNavigation(navController = rememberNavController(), context = this)
                 }
             }
         }
     }
 
-    private fun initialise() {
-        //initialise ApplicationDependencies
-        ApplicationDependencies.init(application)
-        SQLiteDatabase.loadLibs(this);
+    private fun addTestCounters() {
+        val counterDatabase = ApplicationDependencies.getDatabase().counters
+        for (counter in listOf(
+            Counter(1, "GREAT", 0L, 0L),
+            Counter(1, "Bad", 0L, 0L),
+            Counter(1, "afdsgag", 0L, 0L),
+            Counter(1, "afdgd", 0L, 0L),
+        )) {
+            counterDatabase.saveCounterObjectToDb(counter)
+        }
     }
 }
