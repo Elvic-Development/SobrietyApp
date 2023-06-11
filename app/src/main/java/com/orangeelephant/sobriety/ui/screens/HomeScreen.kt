@@ -2,6 +2,7 @@ package com.orangeelephant.sobriety.ui.screens
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,15 +17,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.orangeelephant.sobriety.ApplicationDependencies
+import com.orangeelephant.sobriety.Screen
 import com.orangeelephant.sobriety.storage.models.Counter
 
 @Composable
-fun HomeScreen(context: Context) {
+fun HomeScreen(context: Context, navController: NavController) {
     val allCounters = ApplicationDependencies.getDatabase().counters.getAllCounters()
     LazyColumn {
         items(allCounters) { counter ->
-            CounterView(counter)
+            CounterView(counter, navController)
         }
     }
 
@@ -43,8 +46,13 @@ fun HomeScreen(context: Context) {
 }
 
 @Composable
-fun CounterView(counter: Counter) {
-    Column(modifier = Modifier.padding(all = 8.dp)) {
+fun CounterView(counter: Counter, navController: NavController) {
+    Column(
+        modifier = Modifier.padding(all = 8.dp)
+           .clickable {
+               navController.navigate(route = Screen.CounterFullView.createRoute(counterId = counter.id))
+           }
+    ) {
         Text(
             text = counter.name,
             color = MaterialTheme.colorScheme.primary,
