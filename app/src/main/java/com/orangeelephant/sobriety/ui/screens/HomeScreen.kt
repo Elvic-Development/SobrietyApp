@@ -9,38 +9,60 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.orangeelephant.sobriety.ApplicationDependencies
 import com.orangeelephant.sobriety.Screen
 import com.orangeelephant.sobriety.storage.models.Counter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(context: Context, navController: NavController) {
-    val allCounters = ApplicationDependencies.getDatabase().counters.getAllCounters()
-    LazyColumn {
-        items(allCounters) { counter ->
-            CounterView(counter, navController)
-        }
-    }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    Column(
-        horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.Bottom,
-        modifier = Modifier.padding(all = 15.dp)
-    ) {
-        FloatingActionButton(
-            onClick = { Toast.makeText(context, "Not implemented", Toast.LENGTH_SHORT).show() },
-            shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 35)),
+    val allCounters = ApplicationDependencies.getDatabase().counters.getAllCounters()
+    
+    Scaffold (
+        topBar = {
+             TopAppBar (
+                 title = {
+                     Text(
+                         text = "Sobriety",
+                         style = MaterialTheme.typography.headlineLarge,
+                     )
+                 },
+                 colors = TopAppBarDefaults.topAppBarColors(
+                     containerColor = MaterialTheme.colorScheme.background,
+                     scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer
+                 ),
+                 scrollBehavior = scrollBehavior
+             )
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { Toast.makeText(context, "Not implemented", Toast.LENGTH_SHORT).show() },
+                shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 25)),
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = "Create counter")
+            }
+        }
+    ) { innerPadding ->
+        LazyColumn (
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = 0.dp
+                )
         ) {
-            Icon(Icons.Filled.Add, contentDescription = "Create counter")
+            items(allCounters) { counter ->
+                CounterView(counter, navController)
+            }
         }
     }
 }
@@ -48,10 +70,15 @@ fun HomeScreen(context: Context, navController: NavController) {
 @Composable
 fun CounterView(counter: Counter, navController: NavController) {
     Column(
-        modifier = Modifier.padding(all = 8.dp)
-           .clickable {
-               navController.navigate(route = Screen.CounterFullView.createRoute(counterId = counter.id))
-           }
+        modifier = Modifier
+            .padding(
+                vertical = 8.dp,
+                horizontal = 14.dp
+            )
+            .fillMaxWidth()
+            .clickable {
+                navController.navigate(route = Screen.CounterFullView.createRoute(counterId = counter.id))
+            }
     ) {
         Text(
             text = counter.name,
