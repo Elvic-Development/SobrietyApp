@@ -8,4 +8,15 @@
     <string name="version">Version</string>
     <string name="source_code">Source code</string>
     <string name="source_code_description">Follow this link to view the source code of this app.</string>
+
+    <!--- counter creation -->
+    <string name="create_counter">Create Counter</string>
+    <string name="create_counter_name">What is the name of your counter?</string>
+    <string name="create_counter_start_date">When did you begin?</string>
+    <string name="create_counter_reason">Why are you doing this?</string>
+    <string name="placeholder_counter_name">Name</string>
+    <string name="placeholder_counter_reason">Reason</string>
+
+
+
 </resources>
