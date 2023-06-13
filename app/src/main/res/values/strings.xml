@@ -16,8 +16,11 @@
     <string name="create_counter_reason">Why are you doing this?</string>
     <string name="placeholder_counter_name">Name</string>
     <string name="placeholder_counter_reason">Reason (Optional)</string>
-    <string name="placeholder_date">dd/mm/yy</string>
+    <string name="placeholder_date">dd/mm/yyyy</string>
 
+    <!--- Drawables -->
+    <string name="ic_launcher_background">ic_launcher_background</string>
+    <string name="ic_calendar">ic_calendar</string>
 
 
 </resources>

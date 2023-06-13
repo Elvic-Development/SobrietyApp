@@ -2,6 +2,7 @@ package com.orangeelephant.sobriety.ui.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 
 import androidx.compose.material3.*
@@ -13,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,13 +57,29 @@ fun CreateCounter(navController: NavController) {
 @Composable
 fun Creation() {
     val context = LocalContext.current
-    var text by remember { mutableStateOf("") }
+    var nameText by remember { mutableStateOf("")}
+    var dateText by remember { mutableStateOf("")}
+    var reasonText by remember { mutableStateOf("")}
     var isDialogOpen by remember { mutableStateOf(false) }
 
     if (isDialogOpen) {
         DatePickerDialog(
             onDismissRequest = { isDialogOpen = false },
-            confirmButton = { /*TODO*/ }
+            confirmButton = {
+                Button(
+                    onClick = { isDialogOpen = false }
+                ) {
+                    Text(text = "Confirm")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { isDialogOpen = false },
+
+                ) {
+                    Text(text = "Cancel")
+                }
+            }
         ) {
             DatePicker(state = rememberDatePickerState())
         }
@@ -73,6 +91,7 @@ fun Creation() {
             .fillMaxWidth()
             .padding(16.dp)
     ) {
+
         // name
         Text(
             text = context.getString(R.string.create_counter_name),
@@ -82,8 +101,8 @@ fun Creation() {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(),
-            value = text,
-            onValueChange = { },
+            value = nameText,
+            onValueChange = { nameText = it },
             label = { Text(stringResource(R.string.placeholder_counter_name)) }
         )
 
@@ -96,17 +115,29 @@ fun Creation() {
             style = MaterialTheme.typography.titleMedium,
         )
 
-        Button(onClick = { isDialogOpen = true }) {
-            Text(text = "Test")
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            OutlinedTextField(
+                value = dateText,
+                onValueChange = { dateText = it },
+                label = { Text(context.getString(R.string.placeholder_date)) }
+            )
+            IconButton(
+                onClick = {
+                    isDialogOpen = true
+                },
+                modifier = Modifier.padding(start = 8.dp, top = 8.dp) // Add padding to the left and top of the IconButton
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_calendar),
+                    contentDescription = stringResource(id = R.string.ic_calendar)
+                )
+            }
         }
 
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth(),
-            value = text,
-            onValueChange = { text = it },
-            label = { Text(context.getString(R.string.placeholder_date))}
-        )
+
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -120,8 +151,8 @@ fun Creation() {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(),
-            value = text,
-            onValueChange = { text = it },
+            value = reasonText,
+            onValueChange = { reasonText = it },
             label = { Text(context.getString(R.string.placeholder_counter_reason)) }
         )
     }
