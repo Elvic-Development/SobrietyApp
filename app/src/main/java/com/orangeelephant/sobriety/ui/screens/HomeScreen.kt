@@ -1,7 +1,6 @@
 package com.orangeelephant.sobriety.ui.screens
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
@@ -37,7 +36,8 @@ fun HomeScreen(context: Context, navController: NavController) {
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { Toast.makeText(context, "Not implemented", Toast.LENGTH_SHORT).show() },
+                onClick = {
+                    navController.navigate(route = Screen.AddCounter.route)},
                 shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 25)),
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Create counter")

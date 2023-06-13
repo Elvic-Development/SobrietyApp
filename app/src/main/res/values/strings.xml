@@ -12,6 +12,24 @@
     <string name="source_code">Source code</string>
     <string name="source_code_description">Follow this link to view the source code of this app.</string>
 
+    <!-- General -->
+    <string name="cancel_button">Cancel</string>
+    <string name="submit_button">Submit</string>
+    <string name="create_button">Create</string>
+
+    <!--- counter creation -->
+    <string name="create_counter">Create Counter</string>
+    <string name="create_counter_name">What is the name of your counter?</string>
+    <string name="create_counter_start_date">When did you begin?</string>
+    <string name="create_counter_reason">Why are you doing this?</string>
+    <string name="placeholder_counter_name">Name</string>
+    <string name="placeholder_counter_reason">Reason (Optional)</string>
+    <string name="placeholder_date">dd/mm/yyyy</string>
+
+    <!--- Drawables -->
+    <string name="ic_launcher_background">ic_launcher_background</string>
+    <string name="ic_calendar">ic_calendar</string>
+
     <!-- Theme preferences -->
     <string name="system_default">System default</string>
     <string name="light_mode">Light</string>
