@@ -9,6 +9,10 @@
     <string name="source_code">Source code</string>
     <string name="source_code_description">Follow this link to view the source code of this app.</string>
 
+    <!-- General -->
+    <string name="cancel_button">Cancel</string>
+    <string name="submit_button">Submit</string>
+
     <!--- counter creation -->
     <string name="create_counter">Create Counter</string>
     <string name="create_counter_name">What is the name of your counter?</string>
