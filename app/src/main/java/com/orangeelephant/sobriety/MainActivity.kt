@@ -20,18 +20,36 @@ class MainActivity : ComponentActivity() {
         }
         super.onCreate(savedInstanceState)
 
+        //setLocale()
+
         setContent {
             SobrietyTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SobrietyAppNavigation(navController = rememberNavController(), context = this)
+                    SobrietyAppNavigation(
+                        navController = rememberNavController(),
+                        context = this
+                    )
                 }
             }
         }
     }
 
+    /*private fun setLocale() {
+        val lang: String = Preferences.getLanguage()
+
+        val locale: Locale = if (Objects.equals(lang, "default")) {
+            Resources.getSystem().configuration.locales.get(0)
+        } else {
+            Locale(lang)
+        }
+        Locale.setDefault(locale)
+        val configuration = resources.configuration
+        configuration.setLocale(locale)
+        resources.updateConfiguration(configuration, resources.displayMetrics)
+    }*/
     private fun addTestCounters() {
         val counterDatabase = ApplicationDependencies.getDatabase().counters
         for (counter in listOf(
