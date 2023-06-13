@@ -32,7 +32,10 @@ sealed class Screen(val route: String) {
 
 
 @Composable
-fun SobrietyAppNavigation(navController: NavHostController, context: Context) {
+fun SobrietyAppNavigation(
+    navController: NavHostController,
+    context: Context
+) {
     NavHost(navController, startDestination = Screen.Home.route) {
         addHomeNavigation(navController, context)
         addCounterFullViewNavigation(context)

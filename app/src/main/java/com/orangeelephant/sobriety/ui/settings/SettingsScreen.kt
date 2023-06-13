@@ -11,10 +11,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.jamal.composeprefs3.ui.GroupHeader
+import com.jamal.composeprefs3.ui.PrefsScreen
+import com.jamal.composeprefs3.ui.prefs.TextPref
 import com.orangeelephant.sobriety.BuildConfig
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
+import com.orangeelephant.sobriety.util.preferencesDataStore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,44 +35,35 @@ fun SettingsScreen(navController: NavController) {
         )},
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
-        Column (
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
-        ){
-            About()
+        PrefsScreen(
+            dataStore = LocalContext.current.preferencesDataStore,
+            modifier = Modifier.padding(
+                top = innerPadding.calculateTopPadding(),
+                bottom = 0.dp
+            )
+        ) {
+            prefsGroup({
+                GroupHeader(title = stringResource(id = R.string.about))
+            }) {
+                prefsItem {
+                    TextPref(
+                        title = stringResource(id = R.string.version),
+                        summary = BuildConfig.VERSION_NAME
+                    )
+
+                    val context = LocalContext.current
+                    val sourceCodeIntent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(stringResource(id = R.string.source_code_url))
+                    )
+                    TextPref(
+                        title = stringResource(id = R.string.source_code),
+                        summary = stringResource(id = R.string.source_code_description),
+                        onClick = { context.startActivity(sourceCodeIntent) },
+                        enabled = true
+                    )
+                }
+            }
         }
     }
-}
-
-@Composable
-fun DisplaySettings() {
-
-}
-
-@Composable
-fun SecuritySettings() {
-
-}
-
-@Composable
-fun About() {
-    val context = LocalContext.current
-    val sourceCodeIntent = Intent(
-        Intent.ACTION_VIEW,
-        Uri.parse(stringResource(id = R.string.source_code_url))
-    )
-
-    Divider(modifier = Modifier.padding(vertical = 5.dp))
-    SettingsRow(
-        title = stringResource(id = R.string.version),
-        description = BuildConfig.VERSION_NAME
-    )
-    SettingsRow(
-        title = R.string.source_code,
-        description = R.string.source_code_description,
-        onClick = {
-            context.startActivity(sourceCodeIntent)
-        }
-    )
 }
