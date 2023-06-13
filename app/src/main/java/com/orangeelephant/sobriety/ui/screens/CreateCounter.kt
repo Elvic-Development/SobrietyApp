@@ -126,6 +126,9 @@ fun Creation() {
             modifier = Modifier.fillMaxWidth()
         ) {
             OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                 value = dateText,
                 onValueChange = { dateText = it },
                 label = { Text(context.getString(R.string.placeholder_date)) }
