@@ -15,7 +15,8 @@
     <string name="create_counter_start_date">When did you begin?</string>
     <string name="create_counter_reason">Why are you doing this?</string>
     <string name="placeholder_counter_name">Name</string>
-    <string name="placeholder_counter_reason">Reason</string>
+    <string name="placeholder_counter_reason">Reason (Optional)</string>
+    <string name="placeholder_date">dd/mm/yy</string>
 
 
 
