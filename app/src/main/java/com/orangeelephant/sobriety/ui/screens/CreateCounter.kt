@@ -3,6 +3,7 @@ package com.orangeelephant.sobriety.ui.screens
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -11,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,19 +34,53 @@ import java.util.Locale
 @Composable
 fun CreateCounter(navController: NavController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    var createConditonsMet by remember { mutableStateOf(false) }
 
-    Scaffold (
-        topBar = { GenericTopAppBar(
-            title = R.string.create_counter,
-            scrollBehavior = scrollBehavior,
-            navigationIcon = { BackIcon(onClick = {
-                navController.popBackStack()
-            })
+    Scaffold(
+        topBar = {
+            GenericTopAppBar(
+                title = R.string.create_counter,
+                scrollBehavior = scrollBehavior,
+                navigationIcon = {
+                    BackIcon(onClick = {
+                        navController.popBackStack()
+                    })
+                }
+            )
+        },
+
+        floatingActionButton = {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            ) {
+                OutlinedButton(
+                    onClick = { navController.popBackStack() },
+                    content = {
+                        Text(text = stringResource(id = R.string.cancel_button))
+                    },
+                    shape = RoundedCornerShape(50.dp),
+                    modifier = Modifier
+                        .size(width = 170.dp, height = 50.dp)
+                )
+
+                Spacer(modifier = Modifier.width(30.dp))
+
+                Button(
+                    enabled = createConditonsMet,
+                    onClick = { /*TODO*/ },
+                    content = {
+                        Text(text = stringResource(id = R.string.create_button))
+                    },
+                    shape = RoundedCornerShape(50.dp),
+                    modifier = Modifier
+                        .size(width = 170.dp, height = 50.dp)
+                )
             }
-        ) },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        },
+        floatingActionButtonPosition = FabPosition.Center,
     ) { innerPadding ->
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
@@ -54,8 +88,8 @@ fun CreateCounter(navController: NavController) {
             Creation()
         }
     }
-
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -149,9 +183,6 @@ fun Creation() {
             }
         }
 
-
-
-
         Spacer(modifier = Modifier.height(16.dp))
 
         // reason
@@ -159,7 +190,6 @@ fun Creation() {
             text = context.getString(R.string.create_counter_reason),
             style = MaterialTheme.typography.titleMedium,
         )
-
 
         OutlinedTextField(
             modifier = Modifier
