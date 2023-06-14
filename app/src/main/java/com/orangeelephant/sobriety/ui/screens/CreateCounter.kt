@@ -4,12 +4,10 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,13 +22,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
@@ -110,7 +106,8 @@ fun Creation() {
     var reasonText by remember { mutableStateOf("")}
     var isDialogOpen by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = System.currentTimeMillis())
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val packageName =  context.packageName
+    var selectedImageUri by remember { mutableStateOf<Uri?>(Uri.parse("android.resource://$packageName/" + R.drawable.image1)) }
 
 
     if (isDialogOpen) {
@@ -229,19 +226,24 @@ fun Creation() {
 @Composable
 fun SinglePhotoPicker(selectedImageUri: Uri?, onImageSelected: (Uri?) -> Unit) {
     val singlePhotoDialog = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri -> onImageSelected(uri) }
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri -> onImageSelected(uri) }
     )
 
     Column(
         modifier = Modifier
-        .fillMaxWidth(),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
                 .size(150.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .clickable {
+                    singlePhotoDialog.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
@@ -252,27 +254,10 @@ fun SinglePhotoPicker(selectedImageUri: Uri?, onImageSelected: (Uri?) -> Unit) {
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )
+
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Button(
-                onClick = {
-                    singlePhotoDialog.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
-                },
-                modifier = Modifier.scale(1f) // Apply scale modifier to make the button 20% smaller
-            ) {
-                Text(text = "Edit Photo")
-            }
-        }
         Spacer(modifier = Modifier.height(8.dp))
-
     }
 }
 
