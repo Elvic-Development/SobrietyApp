@@ -29,6 +29,9 @@
     <!--- Drawables -->
     <string name="ic_launcher_background">ic_launcher_background</string>
     <string name="ic_calendar">ic_calendar</string>
+    <string name="ic_description">ic_description</string>
+    <string name="ic_person">ic_person</string>
+    <string name="ic_no_drink">ic_no_drink</string>
 
     <!-- Theme preferences -->
     <string name="system_default">System default</string>

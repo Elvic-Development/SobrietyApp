@@ -1,8 +1,13 @@
 package com.orangeelephant.sobriety.ui.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+
 import androidx.compose.foundation.layout.*
+
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.material3.*
@@ -11,7 +16,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
@@ -100,6 +110,8 @@ fun Creation() {
     var reasonText by remember { mutableStateOf("")}
     var isDialogOpen by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = System.currentTimeMillis())
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
 
     if (isDialogOpen) {
         DatePickerDialog(
@@ -115,7 +127,7 @@ fun Creation() {
                 }
             },
             dismissButton = {
-                Button(
+                OutlinedButton(
                     onClick = { isDialogOpen = false },
                 ) {
                     Text(text = context.getString(R.string.cancel_button))
@@ -130,15 +142,25 @@ fun Creation() {
     Column(
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+                .fillMaxWidth()
+                .padding(16.dp)
     ) {
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // photo
+        SinglePhotoPicker(selectedImageUri) { uri ->
+            selectedImageUri = uri
+        }
+
+        Spacer(modifier = Modifier.height(64.dp))
 
         // name
         Text(
             text = context.getString(R.string.create_counter_name),
             style = MaterialTheme.typography.titleMedium,
         )
+
 
         OutlinedTextField(
             modifier = Modifier
@@ -168,13 +190,12 @@ fun Creation() {
                 label = { Text(context.getString(R.string.placeholder_date)) }
 
             )
-
-
             IconButton(
                 onClick = {
                     isDialogOpen = true
                 },
-                modifier = Modifier.padding(start = 8.dp, top = 8.dp) // Add padding to the left and top of the IconButton
+                modifier = Modifier.padding(start = 8.dp, top = 8.dp)
+                    .scale(0.8f) // Add padding to the left and top of the IconButton
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_calendar),
@@ -191,6 +212,8 @@ fun Creation() {
             style = MaterialTheme.typography.titleMedium,
         )
 
+
+
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -198,6 +221,58 @@ fun Creation() {
             onValueChange = { reasonText = it },
             label = { Text(context.getString(R.string.placeholder_counter_reason)) }
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+fun SinglePhotoPicker(selectedImageUri: Uri?, onImageSelected: (Uri?) -> Unit) {
+    val singlePhotoDialog = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia(),
+            onResult = { uri -> onImageSelected(uri) }
+    )
+
+    Column(
+        modifier = Modifier
+        .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(150.dp)
+                .clip(CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                model = selectedImageUri,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(
+                onClick = {
+                    singlePhotoDialog.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
+                modifier = Modifier.scale(1f) // Apply scale modifier to make the button 20% smaller
+            ) {
+                Text(text = "Edit Photo")
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
     }
 }
 
@@ -211,9 +286,7 @@ fun convertMillisecondsToDate(utcMilliseconds: Long?): String {
     return dateFormat.format(date)
 }
 
-
 // create compostable preview
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun CreateCounterPreview() {
