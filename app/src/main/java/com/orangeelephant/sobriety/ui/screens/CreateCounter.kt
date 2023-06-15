@@ -175,31 +175,26 @@ fun Creation() {
             style = MaterialTheme.typography.titleMedium,
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                value = dateText,
-                onValueChange = { dateText = it },
-                label = { Text(context.getString(R.string.placeholder_date)) }
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth(),
 
-            )
-            IconButton(
-                onClick = {
-                    isDialogOpen = true
-                },
-                modifier = Modifier.padding(start = 8.dp, top = 8.dp)
-                    .scale(0.8f) // Add padding to the left and top of the IconButton
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_calendar),
-                    contentDescription = stringResource(id = R.string.ic_calendar)
-                )
+            value = dateText,
+            onValueChange = { dateText = it },
+            label = { Text(context.getString(R.string.placeholder_date))},
+
+            trailingIcon = {
+                IconButton(
+                    onClick = {
+                        isDialogOpen = true
+                    },
+                    modifier = Modifier
+                        .scale(0.7f)
+                ) {
+                    Icon( painter = painterResource(id = R.drawable.ic_calendar), contentDescription = stringResource(id = R.string.ic_calendar))
+                }
             }
-        }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -221,6 +216,7 @@ fun Creation() {
 
         Spacer(modifier = Modifier.height(16.dp))
     }
+
 }
 
 @Composable
@@ -254,12 +250,11 @@ fun SinglePhotoPicker(selectedImageUri: Uri?, onImageSelected: (Uri?) -> Unit) {
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )
-
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
     }
+    Spacer(modifier = Modifier.height(8.dp))
 }
+
 
 fun convertMillisecondsToDate(utcMilliseconds: Long?): String {
     if (utcMilliseconds == null) {
@@ -277,3 +272,4 @@ fun convertMillisecondsToDate(utcMilliseconds: Long?): String {
 fun CreateCounterPreview() {
     CreateCounter(rememberNavController())
 }
+
