@@ -11,7 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import com.orangeelephant.sobriety.ui.screens.CounterFullView
 import com.orangeelephant.sobriety.ui.screens.CreateCounter
-import com.orangeelephant.sobriety.ui.screens.HomeScreen
+import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
 import com.orangeelephant.sobriety.ui.settings.SettingsScreen
 
 sealed class Screen(val route: String) {
@@ -37,16 +37,16 @@ fun SobrietyAppNavigation(
     context: Context
 ) {
     NavHost(navController, startDestination = Screen.Home.route) {
-        addHomeNavigation(navController, context)
+        addHomeNavigation(navController)
         addCounterFullViewNavigation(context)
         addCreateCounterNavigation(navController)
         addSettingsNavigation(navController)
     }
 }
 
-fun NavGraphBuilder.addHomeNavigation(navController: NavHostController, context: Context) {
+fun NavGraphBuilder.addHomeNavigation(navController: NavHostController) {
     composable(route = Screen.Home.route) {
-        HomeScreen(context = context, navController)
+        HomeScreen(navController)
     }
 }
 

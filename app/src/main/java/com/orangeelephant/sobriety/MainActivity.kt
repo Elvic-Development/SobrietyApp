@@ -8,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.ui.theme.SobrietyTheme
 import net.sqlcipher.database.SQLiteDatabase
 
@@ -50,15 +49,4 @@ class MainActivity : ComponentActivity() {
         configuration.setLocale(locale)
         resources.updateConfiguration(configuration, resources.displayMetrics)
     }*/
-    private fun addTestCounters() {
-        val counterDatabase = ApplicationDependencies.getDatabase().counters
-        for (counter in listOf(
-            Counter(1, "GREAT", 0L, 0L),
-            Counter(1, "Bad", 0L, 0L),
-            Counter(1, "afdsgag", 0L, 0L),
-            Counter(1, "afdgd", 0L, 0L),
-        )) {
-            counterDatabase.saveCounterObjectToDb(counter)
-        }
-    }
 }

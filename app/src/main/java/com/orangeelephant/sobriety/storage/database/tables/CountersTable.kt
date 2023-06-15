@@ -49,7 +49,7 @@ class CountersTable(private val openHelper: OpenHelper) {
         return Counter(counterId, name, time, recordtime)
     }
 
-    fun getAllCounters(): ArrayList<Counter> {
+    fun getAllCounters(): List<Counter> {
         val db: SQLiteDatabase = openHelper.getReadableDatabase()!!
         val sql = """
                      SELECT * FROM $TABLE_NAME_COUNTERS
