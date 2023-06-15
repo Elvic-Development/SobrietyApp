@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import com.orangeelephant.sobriety.ui.screens.CounterFullView
-import com.orangeelephant.sobriety.ui.screens.CreateCounter
+import com.orangeelephant.sobriety.ui.screens.create.CreateCounter
 import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
 import com.orangeelephant.sobriety.ui.settings.SettingsScreen
 
