@@ -28,6 +28,7 @@ import com.orangeelephant.sobriety.util.dataStore
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SettingsScreen(navController: NavController) {
+    val preferences = SobrietyPreferences(context = LocalContext.current)
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold (
@@ -55,21 +56,13 @@ fun SettingsScreen(navController: NavController) {
                         key = SobrietyPreferences.LANGUAGE,
                         title = stringResource(id = R.string.language),
                         useSelectedAsSummary = true,
-                        entries = mapOf(
-                            "default" to stringResource(id = R.string.system_default),
-                            "en" to "English",
-                            "es" to "Espanol"
-                        )
+                        entries = preferences.availableLanguages
                     )
                     ListPref(
                         key = SobrietyPreferences.THEME,
                         title = stringResource(id = R.string.theme),
                         useSelectedAsSummary = true,
-                        entries = mapOf(
-                            "default" to stringResource(id = R.string.system_default),
-                            "light" to stringResource(id = R.string.light_mode),
-                            "dark" to stringResource(id = R.string.dark_mode)
-                        )
+                        entries = preferences.availableThemes
                     )
                     SwitchPref(
                         key = SobrietyPreferences.DYNAMIC_COLOURS,
