@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         // update language on pref value change
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                SobrietyPreferences(dataStore).language.collect {
+                SobrietyPreferences(applicationContext).language.collect {
                     setLocale(it)
                 }
             }
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
         val themePreference = mutableStateOf("default")
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                SobrietyPreferences(dataStore).theme.collect {
+                SobrietyPreferences(applicationContext).theme.collect {
                     themePreference.value = it
                 }
             }
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
         val dynamicColoursPreference = mutableStateOf(false)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                SobrietyPreferences(dataStore).dynamicColours.collect {
+                SobrietyPreferences(applicationContext).dynamicColours.collect {
                     dynamicColoursPreference.value = it
                 }
             }
