@@ -71,6 +71,7 @@ fun SettingsScreen(navController: NavController) {
                         defaultChecked = false,
                         enabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                     )
+                    Divider()
                 }
             }
 

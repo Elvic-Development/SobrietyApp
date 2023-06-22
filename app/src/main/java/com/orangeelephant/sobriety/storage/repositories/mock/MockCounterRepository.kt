@@ -7,9 +7,9 @@ class MockCounterRepository: CounterRepository {
     override fun getAllCounters(): List<Counter> {
         return listOf(
             Counter(1, "GREAT", 0L, 0L),
-            Counter(1, "Bad", 0L, 0L),
-            Counter(1, "afdsgag", 0L, 0L),
-            Counter(1, "afdgd", 0L, 0L),
+            Counter(2, "Bad", 0L, 0L),
+            Counter(3, "afdsgag", 0L, 0L),
+            Counter(4, "afdgd", 0L, 0L),
         )
     }
 }

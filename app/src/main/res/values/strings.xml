@@ -36,4 +36,7 @@
     <string name="system_default">System default</string>
     <string name="light_mode">Light</string>
     <string name="dark_mode">Dark</string>
+
+    <!-- Duration -->
+    <string name="duration_string">%1$d days, %2$d hours, %3$d minutes, and %4$d seconds.</string>
 </resources>

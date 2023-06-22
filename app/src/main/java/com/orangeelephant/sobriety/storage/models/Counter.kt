@@ -5,4 +5,5 @@ data class Counter(
     val name: String,
     val startTimeMillis: Long,
     val recordTimeSoberInMillis: Long,
+    val currentDurationString: String = ""
 )

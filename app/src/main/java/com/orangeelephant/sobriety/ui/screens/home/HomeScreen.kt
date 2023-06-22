@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +31,8 @@ fun HomeScreen(
     homeScreenViewModel: HomeScreenViewModel = viewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    
+    val allCounters = remember { homeScreenViewModel.allCounters }
+
     Scaffold (
         topBar = { GenericTopAppBar(
             title = R.string.app_name,
@@ -56,7 +58,7 @@ fun HomeScreen(
                     bottom = 0.dp
                 )
         ) {
-            items(homeScreenViewModel.allCounters) { counter ->
+            items(allCounters, key = { it.id }) { counter ->
                 CounterView(counter, navController)
             }
         }
@@ -84,7 +86,7 @@ fun CounterView(counter: Counter, navController: NavController) {
             style = MaterialTheme.typography.headlineMedium,
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Text(text = "counter.startTimeMillis")
+        Text(text = counter.currentDurationString)
     }
 }
 
