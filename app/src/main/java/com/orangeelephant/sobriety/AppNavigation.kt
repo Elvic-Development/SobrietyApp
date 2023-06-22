@@ -39,7 +39,7 @@ fun SobrietyAppNavigation(
 ) {
     NavHost(navController, startDestination = Screen.Home.route) {
         addHomeNavigation(navController)
-        addCounterFullViewNavigation(context)
+        addCounterFullViewNavigation(context, navController)
         addCreateCounterNavigation(navController)
         addSettingsNavigation(navController)
     }
@@ -51,7 +51,7 @@ fun NavGraphBuilder.addHomeNavigation(navController: NavHostController) {
     }
 }
 
-fun NavGraphBuilder.addCounterFullViewNavigation(context: Context) {
+fun NavGraphBuilder.addCounterFullViewNavigation(context: Context, navController: NavHostController) {
     composable(
         route = Screen.CounterFullView.route,
         arguments = listOf(
@@ -63,7 +63,10 @@ fun NavGraphBuilder.addCounterFullViewNavigation(context: Context) {
         val counterId = backStackEntry.arguments?.getInt("counterId")
 
         counterId?.let {
-            CounterFullView(counterFullScreenViewModel = CounterFullScreenViewModel(counterId))
+            CounterFullView(
+                counterFullScreenViewModel = CounterFullScreenViewModel(counterId),
+                navController = navController
+            )
         } ?: run {
             Toast.makeText(context, "No counterID provided", Toast.LENGTH_LONG).show()
         }

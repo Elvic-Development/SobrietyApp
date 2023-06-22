@@ -4,11 +4,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.orangeelephant.sobriety.ApplicationDependencies
-import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.storage.repositories.CounterRepository
-import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository
+import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository import com.orangeelephant.sobriety.util.CounterViewUtil
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -22,7 +20,12 @@ class HomeScreenViewModel(
             while (true) {
                 delay(1000)
                 for (i in 0 until _allCounters.size - 1) {
-                    _allCounters[i] = updateCounterData(_allCounters[i])
+                    val counter = _allCounters[i]
+                    _allCounters[i] = counter.copy(
+                        currentDurationString = CounterViewUtil.formatDurationAsString(
+                            Calendar.getInstance().timeInMillis - counter.startTimeMillis
+                        )
+                    )
                 }
             }
         }
@@ -34,36 +37,4 @@ class HomeScreenViewModel(
     val allCounters: SnapshotStateList<Counter>
         get() = _allCounters
 
-
-    private fun updateCounterData(counter: Counter): Counter {
-        var timeSoberInMillis = Calendar.getInstance().timeInMillis - counter.startTimeMillis
-
-        val secondsInMilli: Long = 1000
-        val minutesInMilli = secondsInMilli * 60
-        val hoursInMilli = minutesInMilli * 60
-        val daysInMilli = hoursInMilli * 24
-
-        val elapsedDays: Long = timeSoberInMillis / daysInMilli
-        timeSoberInMillis %= daysInMilli
-
-        val elapsedHours: Long = timeSoberInMillis / hoursInMilli
-        timeSoberInMillis %= hoursInMilli
-
-        val elapsedMinutes: Long = timeSoberInMillis / minutesInMilli
-        timeSoberInMillis %= minutesInMilli
-
-        val elapsedSeconds: Long = timeSoberInMillis / secondsInMilli
-
-        val durationString = String.format(
-            ApplicationDependencies.getApplicationContext().getString(R.string.duration_string),
-            elapsedDays,
-            elapsedHours,
-            elapsedMinutes,
-            elapsedSeconds
-        )
-
-        return counter.copy(
-            currentDurationString = durationString
-        )
-    }
 }
