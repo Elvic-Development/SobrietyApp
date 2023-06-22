@@ -1,4 +1,4 @@
-package com.orangeelephant.sobriety.ui.screens
+package com.orangeelephant.sobriety.ui.screens.counterfullview
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -7,15 +7,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.orangeelephant.sobriety.ApplicationDependencies
 
 @Composable
-fun CounterFullView(counterId: Int) {
-    val counter = ApplicationDependencies.getDatabase().counters.getCounterById(counterId)
-    val reasons = ApplicationDependencies.getDatabase().reasons.getReasonsForCounter(counterId)
+fun CounterFullView(
+    counterFullScreenViewModel: CounterFullScreenViewModel
+) {
+    val counter = counterFullScreenViewModel.counter
 
     Text (
-        text = counter.name,
+        text = counter.value.name,
         color = MaterialTheme.colorScheme.primary,
         style = MaterialTheme.typography.headlineMedium,
     )

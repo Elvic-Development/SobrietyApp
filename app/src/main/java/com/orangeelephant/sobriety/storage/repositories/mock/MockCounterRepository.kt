@@ -4,12 +4,22 @@ import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.storage.repositories.CounterRepository
 
 class MockCounterRepository: CounterRepository {
+    private val allCounters = mutableListOf(
+        Counter(1, "GREAT", 0L, 0L),
+        Counter(2, "Bad", 0L, 0L),
+        Counter(3, "afdsgag", 0L, 0L),
+        Counter(4, "afdgd", 0L, 0L),
+    )
+
     override fun getAllCounters(): List<Counter> {
-        return listOf(
-            Counter(1, "GREAT", 0L, 0L),
-            Counter(2, "Bad", 0L, 0L),
-            Counter(3, "afdsgag", 0L, 0L),
-            Counter(4, "afdgd", 0L, 0L),
-        )
+        return allCounters
+    }
+
+    override fun getCounter(id: Int): Counter {
+        return Counter(1, "GREAT", 0L, 0L)
+    }
+
+    override fun addCounter(counter: Counter) {
+        allCounters.add(counter)
     }
 }
