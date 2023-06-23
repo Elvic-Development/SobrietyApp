@@ -19,7 +19,7 @@ class HomeScreenViewModel(
         viewModelScope.launch {
             while (true) {
                 delay(1000)
-                for (i in 0 until _allCounters.size - 1) {
+                for (i in 0 until _allCounters.size) {
                     val counter = _allCounters[i]
                     _allCounters[i] = counter.copy(
                         currentDurationString = CounterViewUtil.formatDurationAsString(
