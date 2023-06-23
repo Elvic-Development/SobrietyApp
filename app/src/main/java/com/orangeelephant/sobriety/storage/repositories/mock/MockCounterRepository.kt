@@ -23,7 +23,7 @@ class MockCounterRepository: CounterRepository {
         allCounters.add(counter)
     }
 
-    override fun resetCounter(id: Int): Long {
+    override fun resetCounter(id: Int, comment: String?): Long {
         return 0L
     }
 }

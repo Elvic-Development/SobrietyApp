@@ -13,16 +13,20 @@ class DatabaseCounterRepository: CounterRepository {
         ApplicationDependencies.getDatabase().counters.saveCounterObjectToDb(counter)
     }
 
-    override fun resetCounter(id: Int): Long {
+    override fun resetCounter(id: Int, comment: String?): Long {
+        val currentTime = Calendar.getInstance().timeInMillis
         val currentCounter = getCounter(id)
-        val elapsedTime = Calendar.getInstance().timeInMillis - currentCounter.startTimeMillis
+        val elapsedTime = currentTime - currentCounter.startTimeMillis
         val recordTime = if (currentCounter.recordTimeSoberInMillis < elapsedTime) {
             elapsedTime
         } else {
             currentCounter.recordTimeSoberInMillis
         }
 
-        ApplicationDependencies.getDatabase().counters.resetCounterTimer(id, recordTime)
+        val sobrietyDatabase = ApplicationDependencies.getDatabase()
+
+        sobrietyDatabase.counters.resetCounterTimer(id, recordTime)
+        sobrietyDatabase.relapses.recordRelapse(id, currentTime, comment)
 
         return recordTime
     }

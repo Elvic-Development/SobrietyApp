@@ -30,7 +30,7 @@ class CountersTable(private val openHelper: OpenHelper) {
     }
 
     fun getCounterById(counterId: Int): Counter {
-        val db: SQLiteDatabase = openHelper.getReadableDatabase()!!
+        val db: SQLiteDatabase = openHelper.getReadableDatabase()
         val sql = """SELECT * FROM $TABLE_NAME_COUNTERS 
                      WHERE $COLUMN_ID = $counterId
                      """
@@ -50,7 +50,7 @@ class CountersTable(private val openHelper: OpenHelper) {
     }
 
     fun getAllCounters(): List<Counter> {
-        val db: SQLiteDatabase = openHelper.getReadableDatabase()!!
+        val db: SQLiteDatabase = openHelper.getReadableDatabase()
         val sql = """
                      SELECT * FROM $TABLE_NAME_COUNTERS
                      ORDER by $COLUMN_START_TIME ASC
@@ -80,7 +80,7 @@ class CountersTable(private val openHelper: OpenHelper) {
             WHERE $COLUMN_ID = $counterId
             """
 
-        val db: SQLiteDatabase = openHelper.getWritableDatabase()!!
+        val db: SQLiteDatabase = openHelper.getWritableDatabase()
         db.execSQL(sql)
     }
 
@@ -92,7 +92,7 @@ class CountersTable(private val openHelper: OpenHelper) {
      * @param counterToSave the counter object to be saved
      */
     fun saveCounterObjectToDb(counterToSave: Counter): Long {
-        val db: SQLiteDatabase = openHelper.getWritableDatabase()!!
+        val db: SQLiteDatabase = openHelper.getWritableDatabase()
         val contentValues = contentValuesOf(
             COLUMN_NAME to counterToSave.name,
             COLUMN_START_TIME to counterToSave.startTimeMillis,
