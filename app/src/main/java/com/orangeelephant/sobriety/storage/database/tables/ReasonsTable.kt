@@ -25,7 +25,7 @@ class ReasonsTable(private val openHelper: OpenHelper) {
     }
 
     fun getReasonsForCounter(counterId: Int): ArrayList<Reason> {
-        val db: SQLiteDatabase = openHelper.getReadableDatabase()!!
+        val db: SQLiteDatabase = openHelper.getReadableDatabase()
         val reasons: ArrayList<Reason> = ArrayList()
         val reasonSql = "SELECT * FROM reasons WHERE $COLUMN_COUNTER_ID = $counterId"
         val reasonsCursor: Cursor = db.rawQuery(reasonSql, null)
@@ -49,12 +49,12 @@ class ReasonsTable(private val openHelper: OpenHelper) {
         val sqlReasonRecords = """DELETE FROM $TABLE_NAME_REASONS 
                                   WHERE $COLUMN_COUNTER_ID = $counterId"""
 
-        val db: SQLiteDatabase = openHelper.getWritableDatabase()!!
+        val db: SQLiteDatabase = openHelper.getWritableDatabase()
         db.execSQL(sqlReasonRecords)
     }
 
     fun addReasonForCounter(counterId: Int, reason: String) {
-        val db: SQLiteDatabase = openHelper.getWritableDatabase()!!
+        val db: SQLiteDatabase = openHelper.getWritableDatabase()
         val contentValues = contentValuesOf(
             COLUMN_COUNTER_ID to counterId,
             COLUMN_SOBRIETY_REASON to reason
@@ -63,7 +63,7 @@ class ReasonsTable(private val openHelper: OpenHelper) {
     }
 
     fun changeReason(reasonId: Int, reason: String) {
-        val db: SQLiteDatabase = openHelper.getWritableDatabase()!!
+        val db: SQLiteDatabase = openHelper.getWritableDatabase()
         val sql = """UPDATE $TABLE_NAME_REASONS
                      SET $COLUMN_SOBRIETY_REASON = '$reason' 
                      WHERE $COLUMN_ID = $reasonId

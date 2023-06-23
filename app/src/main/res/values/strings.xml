@@ -18,6 +18,7 @@
     <string name="cancel_button">Cancel</string>
     <string name="submit_button">Submit</string>
     <string name="create_button">Create</string>
+    <string name="reset_button">Reset</string>
 
     <!--- counter creation -->
     <string name="create_counter">Create Counter</string>
@@ -36,4 +37,7 @@
     <string name="system_default">System default</string>
     <string name="light_mode">Light</string>
     <string name="dark_mode">Dark</string>
+
+    <!-- Duration -->
+    <string name="duration_string">%1$d days, %2$d hours, %3$d minutes, and %4$d seconds.</string>
 </resources>

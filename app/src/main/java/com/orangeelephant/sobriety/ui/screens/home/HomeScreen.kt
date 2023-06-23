@@ -4,11 +4,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +20,7 @@ import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.Screen
 import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.storage.repositories.mock.MockCounterRepository
+import com.orangeelephant.sobriety.ui.common.Fab
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.SettingsLink
 
@@ -30,7 +31,8 @@ fun HomeScreen(
     homeScreenViewModel: HomeScreenViewModel = viewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    
+    val allCounters = remember { homeScreenViewModel.allCounters }
+
     Scaffold (
         topBar = { GenericTopAppBar(
             title = R.string.app_name,
@@ -39,13 +41,11 @@ fun HomeScreen(
         ) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate(route = Screen.AddCounter.route)},
-                shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 25)),
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = "Create counter")
-            }
+            Fab(
+                onClick = { navController.navigate(route = Screen.AddCounter.route)},
+                icon = Icons.Filled.Add,
+                contentDescription = R.string.create_counter
+            )
         }
     ) { innerPadding ->
         LazyColumn (
@@ -56,7 +56,7 @@ fun HomeScreen(
                     bottom = 0.dp
                 )
         ) {
-            items(homeScreenViewModel.allCounters) { counter ->
+            items(allCounters, key = { it.id }) { counter ->
                 CounterView(counter, navController)
             }
         }
@@ -84,7 +84,7 @@ fun CounterView(counter: Counter, navController: NavController) {
             style = MaterialTheme.typography.headlineMedium,
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Text(text = "counter.startTimeMillis")
+        Text(text = counter.currentDurationString)
     }
 }
 
