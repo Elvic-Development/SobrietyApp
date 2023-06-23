@@ -34,7 +34,7 @@ import java.util.Locale
 @Composable
 fun CreateCounter(navController: NavController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    var createConditionsMet by remember { mutableStateOf(false) }
+    val createConditionsMet by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
