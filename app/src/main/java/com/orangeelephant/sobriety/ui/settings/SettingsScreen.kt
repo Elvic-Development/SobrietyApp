@@ -23,6 +23,7 @@ import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.util.SobrietyPreferences
+import com.orangeelephant.sobriety.util.canEnableAuthentication
 import com.orangeelephant.sobriety.util.dataStore
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -70,6 +71,22 @@ fun SettingsScreen(navController: NavController) {
                         summary = stringResource(id = R.string.dynamic_colours_summary),
                         defaultChecked = false,
                         enabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                    )
+                    Divider()
+                }
+            }
+
+            prefsGroup({
+                GroupHeader(title = stringResource(id = R.string.security))
+            }) {
+                prefsItem {
+                    SwitchPref(
+                        key = SobrietyPreferences.BIOMETRIC_UNLOCK,
+                        title = stringResource(id = R.string.biometric_unlock),
+                        summary = stringResource(id = R.string.biometric_unlock_description),
+                        defaultChecked = false,
+                        enabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
+                                  canEnableAuthentication(LocalContext.current)
                     )
                     Divider()
                 }

@@ -20,6 +20,8 @@ class SobrietyPreferences(context: Context) {
         const val DYNAMIC_COLOURS = "dynamic_colours"
         const val THEME = "theme"
         const val LANGUAGE = "language"
+
+        const val BIOMETRIC_UNLOCK = "biometric_unlock"
     }
 
     val dynamicColours: Flow<Boolean> = preferenceDataStore.data.map {preferences ->
@@ -32,6 +34,10 @@ class SobrietyPreferences(context: Context) {
 
     val language: Flow<String> = preferenceDataStore.data.map {preferences ->
         preferences[stringPreferencesKey(LANGUAGE)] ?: "default"
+    }
+
+    val biometricUnlock: Flow<Boolean> = preferenceDataStore.data.map { preferences ->
+        preferences[booleanPreferencesKey(BIOMETRIC_UNLOCK)] ?: false
     }
 
     private val _availableLanguages = mapOf(
