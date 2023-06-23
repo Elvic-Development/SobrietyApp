@@ -72,7 +72,6 @@ class CountersTable(private val openHelper: OpenHelper) {
         return counters
     }
 
-    //TODO calculate record time here
     fun resetCounterTimer(counterId: Int, recordTime: Long) {
         val timeNow: Long = Date().time
         val sql = """

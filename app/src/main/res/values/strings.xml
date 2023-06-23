@@ -18,6 +18,7 @@
     <string name="cancel_button">Cancel</string>
     <string name="submit_button">Submit</string>
     <string name="create_button">Create</string>
+    <string name="reset_button">Reset</string>
 
     <!--- counter creation -->
     <string name="create_counter">Create Counter</string>

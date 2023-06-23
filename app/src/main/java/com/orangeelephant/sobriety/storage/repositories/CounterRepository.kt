@@ -6,4 +6,5 @@ interface CounterRepository {
     fun getAllCounters(): List<Counter>
     fun getCounter(id: Int): Counter
     fun addCounter(counter: Counter)
+    fun resetCounter(id: Int): Long
 }

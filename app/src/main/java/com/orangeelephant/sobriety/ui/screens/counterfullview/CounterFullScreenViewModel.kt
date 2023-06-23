@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class CounterFullScreenViewModel(
-    counterId: Int,
-    counterRepository: CounterRepository = DatabaseCounterRepository()
+    private val counterId: Int,
+    private val counterRepository: CounterRepository = DatabaseCounterRepository()
 ): ViewModel() {
     init {
         viewModelScope.launch {
@@ -34,4 +34,15 @@ class CounterFullScreenViewModel(
     )
     val counter: MutableState<Counter>
         get() = _counter
+
+
+    fun onResetCounter() {
+        val startTimeMillis = Calendar.getInstance().timeInMillis
+        val newRecord = counterRepository.resetCounter(counterId)
+        _counter.value = _counter.value.copy(
+            startTimeMillis = startTimeMillis,
+            recordTimeSoberInMillis = newRecord,
+            currentDurationString = CounterViewUtil.formatDurationAsString(startTimeMillis)
+        )
+    }
 }

@@ -22,4 +22,8 @@ class MockCounterRepository: CounterRepository {
     override fun addCounter(counter: Counter) {
         allCounters.add(counter)
     }
+
+    override fun resetCounter(id: Int): Long {
+        return 0L
+    }
 }

@@ -3,7 +3,10 @@ package com.orangeelephant.sobriety.ui.screens.counterfullview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -11,8 +14,10 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 
@@ -36,6 +41,17 @@ fun CounterFullView(
             }
         ) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = { counterFullScreenViewModel.onResetCounter() },
+                content = {
+                    Text(text = stringResource(id = R.string.reset_button))
+                },
+                shape = RoundedCornerShape(50.dp),
+                modifier = Modifier
+                    .size(width = 170.dp, height = 50.dp)
+            )
+        },
     ) { innerPadding ->
         Column(
             modifier = Modifier
