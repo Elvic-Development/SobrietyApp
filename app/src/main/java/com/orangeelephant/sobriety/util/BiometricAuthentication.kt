@@ -3,7 +3,6 @@ package com.orangeelephant.sobriety.util
 import android.content.Context
 import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
@@ -40,7 +39,6 @@ fun canEnableAuthentication(context: Context): Boolean {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
 fun showBiometricPrompt(activity: FragmentActivity, onAuthenticated: () -> Unit) {
     val ignoredErrors = listOf(
         BiometricPrompt.ERROR_CANCELED,

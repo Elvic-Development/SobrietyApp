@@ -1,6 +1,5 @@
 package com.orangeelephant.sobriety.ui.screens
 
-import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -41,7 +40,7 @@ fun UnlockScreen(navController: NavController, biometricEnabled: Boolean) {
         }
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && biometricEnabled) {
+    if (biometricEnabled) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally

@@ -1,7 +1,6 @@
 package com.orangeelephant.sobriety
 
 import android.content.Context
-import android.os.Build
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
@@ -43,9 +42,7 @@ fun SobrietyAppNavigation(
     context: Context,
     biometricEnabled: Boolean
 ) {
-    val startDestination = if (
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && biometricEnabled
-    ) {
+    val startDestination = if (biometricEnabled) {
         Screen.Unlock.route
     } else {
         Screen.Home.route
