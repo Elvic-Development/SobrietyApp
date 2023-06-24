@@ -22,7 +22,7 @@
     <string name="language">Language</string>
     <string name="theme">Theme</string>
     <string name="dynamic_colours">Dynamic colours</string>
-    <string name="dynamic_colours_summary">Use material you dynamic colours on new devices</string>
+    <string name="dynamic_colours_summary">Use material you dynamic colours. Requires Android 12 or above.</string>
     <string name="security">Security</string>
     <string name="biometric_unlock">Biometric Unlock</string>
     <string name="biometric_unlock_description">Require unlocking the app with device screenlock</string>

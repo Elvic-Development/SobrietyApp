@@ -55,12 +55,14 @@ fun SettingsScreen(navController: NavController) {
                 prefsItem {
                     ListPref(
                         key = SobrietyPreferences.LANGUAGE,
+                        defaultValue = "default",
                         title = stringResource(id = R.string.language),
                         useSelectedAsSummary = true,
                         entries = preferences.availableLanguages
                     )
                     ListPref(
                         key = SobrietyPreferences.THEME,
+                        defaultValue = "default",
                         title = stringResource(id = R.string.theme),
                         useSelectedAsSummary = true,
                         entries = preferences.availableThemes
