@@ -42,6 +42,11 @@ fun canEnableAuthentication(context: Context): Boolean {
 
 @RequiresApi(Build.VERSION_CODES.P)
 fun showBiometricPrompt(activity: FragmentActivity, onAuthenticated: () -> Unit) {
+    val ignoredErrors = listOf(
+        BiometricPrompt.ERROR_CANCELED,
+        BiometricPrompt.ERROR_USER_CANCELED
+    )
+
     val promptInfo = BiometricPrompt.PromptInfo.Builder()
         .setTitle(activity.getString(R.string.unlock_title))
         .setSubtitle(activity.getString(R.string.unlock_subtitle))
@@ -55,25 +60,19 @@ fun showBiometricPrompt(activity: FragmentActivity, onAuthenticated: () -> Unit)
                 errorCode: Int,
                 errString: CharSequence
             ) {
-                Toast.makeText(
-                    activity,
-                    R.string.unlock_error,
-                    Toast.LENGTH_LONG
-                ).show()
+                if (errorCode !in ignoredErrors) {
+                    Toast.makeText(
+                        activity,
+                        activity.getString(R.string.unlock_error, errString),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
 
             override fun onAuthenticationSucceeded(
                 result: BiometricPrompt.AuthenticationResult
             ) {
                 onAuthenticated()
-            }
-
-            override fun onAuthenticationFailed() {
-                Toast.makeText(
-                    activity,
-                    R.string.unlock_failed,
-                    Toast.LENGTH_LONG
-                ).show()
             }
         }
     )

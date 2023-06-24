@@ -3,12 +3,13 @@
     <string name="source_code_url" translatable="false">https://github.com/orange-elephant/SobrietyApp</string>
 
     <!--Strings app unlocking -->
+    <string name="prompt_unlock_button">Tap here to unlock</string>
     <string name="unlock_title">Fingerprint unlock</string>
     <string name="unlock_subtitle">Use your fingerprint to gain access</string>
     <string name="unlock_negative_button">Cancel</string>
     <string name="unlock_successful">Unlocked successfully</string>
     <string name="unlock_failed">Unlocking failed</string>
-    <string name="unlock_error">There was an error when unlocking</string>
+    <string name="unlock_error">Failed to unlock: %s</string>
 
     <string name="enable_error_no_hardware">No biometric hardware</string>
     <string name="enable_error_hardware_unavailable">Hardware unavailable</string>
