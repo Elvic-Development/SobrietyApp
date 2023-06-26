@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.orangeelephant.sobriety.storage.database.SqlCipherKey
 import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.ui.theme.SobrietyTheme
 import com.orangeelephant.sobriety.util.SobrietyPreferences
@@ -26,6 +27,7 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!ApplicationDependencies.isInitialised()) {
             ApplicationDependencies.init(application)
+            ApplicationDependencies.setSqlcipherKey(SqlCipherKey(isEncrypted = false))
             SQLiteDatabase.loadLibs(this)
         }
         super.onCreate(savedInstanceState)

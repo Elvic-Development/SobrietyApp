@@ -1,6 +1,7 @@
 package com.orangeelephant.sobriety.storage.database.helpers
 
 import android.content.Context
+import com.orangeelephant.sobriety.ApplicationDependencies
 import com.orangeelephant.sobriety.storage.database.migrations.V2_RecordEachRelapse
 import com.orangeelephant.sobriety.storage.database.tables.CountersTable
 import com.orangeelephant.sobriety.storage.database.tables.ReasonsTable
@@ -35,22 +36,16 @@ open class OpenHelper(context: Context): SQLiteOpenHelper(
     }
 
     fun getReadableDatabase(): SQLiteDatabase {
-        //TODO implement SQLCipher optionally
-        val password: ByteArray = "".toByteArray()
-        return if (false /*SobrietyPreferences.getIsDatabaseEncrypted()*/) {
-            super.getReadableDatabase(password)
-        } else {
-            super.getReadableDatabase("")
-        }
+        return super.getReadableDatabase(ApplicationDependencies.getSqlCipherKey().keyBytes)
     }
 
     fun getWritableDatabase(): SQLiteDatabase {
-        //TODO implement SQLCipher optionally
-        val password: ByteArray = "".toByteArray()
-        return if (false /*SobrietyPreferences.getIsDatabaseEncrypted()*/) {
-            super.getWritableDatabase(password)
-        } else {
-            super.getWritableDatabase("")
-        }
+        return super.getWritableDatabase(ApplicationDependencies.getSqlCipherKey().keyBytes)
+    }
+
+    fun reKey(oldKey: String, newKey: String) {
+        val db = getWritableDatabase(oldKey)
+        db.changePassword(newKey)
+        db.close()
     }
 }

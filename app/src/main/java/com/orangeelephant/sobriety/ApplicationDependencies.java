@@ -4,15 +4,15 @@ import android.app.Application;
 import android.content.Context;
 
 import com.orangeelephant.sobriety.storage.database.SobrietyDatabase;
+import com.orangeelephant.sobriety.storage.database.SqlCipherKey;
 
 /**
  * A class to store and retrieve other singletons required
  * by the application
  */
 public class ApplicationDependencies {
-
     private static volatile Application      application;
-    // private static volatile SqlcipherKey     sqlcipherKey;
+    private static volatile SqlCipherKey     sqlcipherKey;
     // private static volatile Logger           logger;
     private static volatile SobrietyDatabase sobrietyDatabase;
 
@@ -28,18 +28,19 @@ public class ApplicationDependencies {
         return application != null;
     }
 
-    /*public static void setSqlcipherKey(SqlcipherKey sqlcipherKey) {
+    public static void setSqlcipherKey(SqlCipherKey sqlcipherKey) {
         ApplicationDependencies.sqlcipherKey = sqlcipherKey;
-        logger.startLoggerThread();
+        // logger.startLoggerThread();
     }
 
-    public static SqlcipherKey getSqlCipherKey() {
+    public static SqlCipherKey getSqlCipherKey() {
         if (sqlcipherKey == null) {
             throw new IllegalStateException("SQLCipherKey has not been loaded");
         }
         return sqlcipherKey;
     }
 
+    /*
     public static Logger getLogger() {
         if (logger == null) {
             logger = Logger.getInstance();

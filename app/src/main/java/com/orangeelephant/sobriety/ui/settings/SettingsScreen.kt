@@ -87,8 +87,7 @@ fun SettingsScreen(navController: NavController) {
                         title = stringResource(id = R.string.biometric_unlock),
                         summary = stringResource(id = R.string.biometric_unlock_description),
                         defaultChecked = false,
-                        enabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
-                                  canEnableAuthentication(LocalContext.current)
+                        enabled = canEnableAuthentication(LocalContext.current)
                     )
                     Divider()
                 }

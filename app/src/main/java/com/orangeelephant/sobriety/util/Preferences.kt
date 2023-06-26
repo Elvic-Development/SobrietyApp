@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.orangeelephant.sobriety.R
@@ -22,22 +23,36 @@ class SobrietyPreferences(context: Context) {
         const val LANGUAGE = "language"
 
         const val BIOMETRIC_UNLOCK = "biometric_unlock"
+        const val ENCRYPTED_BY_PASSWORD = "encrypted_by_password"
+        const val PASSWORD_SALT = "password_salt"
     }
 
-    val dynamicColours: Flow<Boolean> = preferenceDataStore.data.map {preferences ->
-        preferences[booleanPreferencesKey(DYNAMIC_COLOURS)] ?: true
+    val dynamicColours: Flow<Boolean> = getPrefFlow(booleanPreferencesKey(DYNAMIC_COLOURS), true)
+    val theme: Flow<String> = getPrefFlow(stringPreferencesKey(THEME), "default")
+    val language: Flow<String> = getPrefFlow(stringPreferencesKey(LANGUAGE), "default")
+
+    val biometricUnlock: Flow<Boolean> = getPrefFlow(booleanPreferencesKey(BIOMETRIC_UNLOCK), false)
+    val encryptedByPassword: Flow<Boolean> = getPrefFlow(booleanPreferencesKey(ENCRYPTED_BY_PASSWORD), false)
+    val passwordSalt: Flow<String> = getPrefFlow(stringPreferencesKey(PASSWORD_SALT), "")
+
+    suspend fun setEncryptedByPassword(value: Boolean) {
+        editPref(booleanPreferencesKey(ENCRYPTED_BY_PASSWORD), value)
     }
 
-    val theme: Flow<String> = preferenceDataStore.data.map {preferences ->
-        preferences[stringPreferencesKey(THEME)] ?: "default"
+    suspend fun setPasswordSalt(value: String) {
+        editPref(stringPreferencesKey(PASSWORD_SALT), value)
     }
 
-    val language: Flow<String> = preferenceDataStore.data.map {preferences ->
-        preferences[stringPreferencesKey(LANGUAGE)] ?: "default"
+    private fun <T> getPrefFlow(key: Preferences.Key<T>, defaultValue: T): Flow<T> {
+        return preferenceDataStore.data.map { preferences ->
+            preferences[key] ?: defaultValue
+        }
     }
 
-    val biometricUnlock: Flow<Boolean> = preferenceDataStore.data.map { preferences ->
-        preferences[booleanPreferencesKey(BIOMETRIC_UNLOCK)] ?: false
+    private suspend fun <T> editPref(key: Preferences.Key<T>, value: T) {
+        preferenceDataStore.edit { preferences ->
+            preferences[key] = value
+        }
     }
 
     private val _availableLanguages = mapOf(
