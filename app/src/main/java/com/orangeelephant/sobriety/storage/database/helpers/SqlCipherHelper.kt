@@ -1,10 +1,14 @@
 package com.orangeelephant.sobriety.storage.database.helpers
 
 import android.content.Context
+import com.orangeelephant.sobriety.logging.LogEvent
 import net.sqlcipher.database.SQLiteDatabase
 import java.io.File
 
+private const val TAG = "SqlCipherHelper"
+
 fun encryptPlaintextDb(context: Context, originalFile: File, newKey: ByteArray, version: Int) {
+    LogEvent.i(TAG, "Encrypting plaintext database")
     if (originalFile.exists()) {
         val tmpEncryptedDbFile = File.createTempFile("dbEncryption", "tmpEncrypted.db", context.cacheDir)
         val encryptedDb = SQLiteDatabase.openDatabase(
@@ -27,6 +31,7 @@ fun encryptPlaintextDb(context: Context, originalFile: File, newKey: ByteArray, 
 }
 
 fun decryptEncryptedDb(context: Context, originalFile: File, currentKey: ByteArray, version: Int) {
+    LogEvent.i(TAG, "Decrypting encrypted database")
     if (originalFile.exists()) {
         val tmpUnencryptedFile = File.createTempFile("dbDecryption", "tmpDecrypted.db", context.cacheDir)
         val unencryptedDb = SQLiteDatabase.openDatabase(
@@ -63,4 +68,5 @@ private fun exportDatabase(tmpDbFile: File, originalFile: File, newDb: SQLiteDat
     originalFile.delete()
 
     tmpDbFile.renameTo(originalFile)
+    LogEvent.i(TAG, "Database data exported to new file")
 }

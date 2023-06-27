@@ -21,6 +21,10 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     @ApplicationContext app: Context
 ): ViewModel() {
+    companion object {
+        private val TAG = SettingsViewModel::class.java.simpleName
+    }
+
     private val preferences = SobrietyPreferences(context = app)
     val availableLanguages = preferences.availableLanguages
     val availableThemes = preferences.availableThemes
