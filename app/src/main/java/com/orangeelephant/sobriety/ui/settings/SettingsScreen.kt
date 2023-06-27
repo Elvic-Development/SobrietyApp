@@ -41,6 +41,7 @@ fun SettingsScreen(
 
     val showCreatePassword = remember { mutableStateOf(false) }
     val isEncryptingDb = remember { settingsViewModel.isEncryptingDb }
+    val isDecryptingDb = remember { settingsViewModel.isDecryptingDb }
 
     Scaffold (
         topBar = { GenericTopAppBar (
@@ -97,11 +98,15 @@ fun SettingsScreen(
                         title = stringResource(id = R.string.biometric_unlock),
                         summary = stringResource(id = R.string.biometric_unlock_description),
                         defaultChecked = false,
-                        enabled = canEnableAuthentication(LocalContext.current)
+                        enabled = canEnableAuthentication(localContext)
                     )
                     if (settingsViewModel.encryptedWithPassword.value) {
-                        TextPref(title = "Change password")
-                        TextPref(title = "Disable password")
+                        TextPref(
+                            title = stringResource(id = R.string.decrypt_db),
+                            summary = stringResource(id = R.string.decrypt_db_summary),
+                            onClick = { settingsViewModel.onDecrypt(localContext) },
+                            enabled = true
+                        )
                     } else {
                         TextPref(
                             title = stringResource(id = R.string.encrypt_db_with_password),
@@ -148,7 +153,7 @@ fun SettingsScreen(
             )
         }
         
-        if (isEncryptingDb.value) {
+        if (isEncryptingDb.value || isDecryptingDb.value) {
             AlertDialog(onDismissRequest = { /* Don't dismiss */ }) {
                 Surface(
                     modifier = Modifier
@@ -156,7 +161,12 @@ fun SettingsScreen(
                         .wrapContentHeight(),
                     shape = MaterialTheme.shapes.large
                 ) {
-                    Text("Encryption in progress")
+                    val message = if ( isEncryptingDb.value ) {
+                        stringResource(id = R.string.encryption_in_progress)
+                    } else {
+                        stringResource(id = R.string.decryption_in_progress)
+                    }
+                    Text(message)
                 }
             }
         }
