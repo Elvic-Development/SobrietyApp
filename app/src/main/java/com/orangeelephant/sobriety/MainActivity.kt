@@ -17,12 +17,14 @@ import com.orangeelephant.sobriety.storage.database.SqlCipherKey
 import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.ui.theme.SobrietyTheme
 import com.orangeelephant.sobriety.util.SobrietyPreferences
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.sqlcipher.database.SQLiteDatabase
 import java.util.*
 
+@AndroidEntryPoint
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!ApplicationDependencies.isInitialised()) {
@@ -50,7 +52,6 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
-
         val dynamicColoursPreference = mutableStateOf(false)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

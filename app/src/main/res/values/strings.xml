@@ -26,6 +26,8 @@
     <string name="security">Security</string>
     <string name="biometric_unlock">Biometric Unlock</string>
     <string name="biometric_unlock_description">Require unlocking the app with device screenlock</string>
+    <string name="encrypt_db_with_password">Encrypt database with password</string>
+    <string name="encrypt_db_with_password_summary">The database will be encrypted using this password</string>
     <string name="about">About</string>
     <string name="version">Version</string>
     <string name="source_code">Source code</string>
@@ -36,6 +38,12 @@
     <string name="submit_button">Submit</string>
     <string name="create_button">Create</string>
     <string name="reset_button">Reset</string>
+
+    <!-- Database password -->
+    <string name="create_password_dialog">Create password</string>
+    <string name="create_password_description">The database will be encrypted using this password, if you forget it then all data will be inaccessible.</string>
+    <string name="encrypt_database">Encrypt database</string>
+    <string name="password">Password</string>
 
     <!--- counter creation -->
     <string name="create_counter">Create Counter</string>
