@@ -10,12 +10,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Sobriety"
-        tools:targetApi="31">
+        android:theme="@style/Theme.SobrietySplashScreen"
+        tools:targetApi="33">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Sobriety">
+            android:theme="@style/Theme.SobrietySplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
