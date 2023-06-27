@@ -39,7 +39,7 @@ fun canEnableAuthentication(context: Context): Boolean {
     }
 }
 
-fun showBiometricPrompt(activity: FragmentActivity, onAuthenticated: () -> Unit) {
+fun showBiometricPrompt(activity: FragmentActivity, onAuthenticated: (String?) -> Unit) {
     val ignoredErrors = listOf(
         BiometricPrompt.ERROR_CANCELED,
         BiometricPrompt.ERROR_USER_CANCELED
@@ -70,7 +70,7 @@ fun showBiometricPrompt(activity: FragmentActivity, onAuthenticated: () -> Unit)
             override fun onAuthenticationSucceeded(
                 result: BiometricPrompt.AuthenticationResult
             ) {
-                onAuthenticated()
+                onAuthenticated(null)
             }
         }
     )

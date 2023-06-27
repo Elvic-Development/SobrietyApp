@@ -11,7 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullView
 import com.orangeelephant.sobriety.ui.screens.CreateCounter
-import com.orangeelephant.sobriety.ui.screens.UnlockScreen
+import com.orangeelephant.sobriety.ui.screens.unlock.UnlockScreen
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullScreenViewModel
 import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
 import com.orangeelephant.sobriety.ui.settings.SettingsScreen
@@ -39,17 +39,12 @@ sealed class Screen(val route: String) {
 @Composable
 fun SobrietyAppNavigation(
     navController: NavHostController,
-    context: Context,
-    biometricEnabled: Boolean
+    context: Context
 ) {
-    val startDestination = if (biometricEnabled) {
-        Screen.Unlock.route
-    } else {
-        Screen.Home.route
-    }
+    val startDestination = Screen.Unlock.route
 
     NavHost(navController, startDestination = startDestination) {
-        addUnlockNavigation(navController, biometricEnabled)
+        addUnlockNavigation(navController)
         addHomeNavigation(navController)
         addCounterFullViewNavigation(context, navController)
         addCreateCounterNavigation(navController)
@@ -57,9 +52,9 @@ fun SobrietyAppNavigation(
     }
 }
 
-fun NavGraphBuilder.addUnlockNavigation(navController: NavHostController, biometricEnabled: Boolean) {
+fun NavGraphBuilder.addUnlockNavigation(navController: NavHostController) {
     composable(route = Screen.Unlock.route) {
-        UnlockScreen(navController, biometricEnabled)
+        UnlockScreen(navController)
     }
 }
 

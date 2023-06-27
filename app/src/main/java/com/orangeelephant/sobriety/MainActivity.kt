@@ -13,14 +13,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.orangeelephant.sobriety.storage.database.SqlCipherKey
 import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.ui.theme.SobrietyTheme
 import com.orangeelephant.sobriety.util.SobrietyPreferences
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.sqlcipher.database.SQLiteDatabase
 import java.util.*
 
@@ -29,7 +26,6 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!ApplicationDependencies.isInitialised()) {
             ApplicationDependencies.init(application)
-            ApplicationDependencies.setSqlcipherKey(SqlCipherKey(isEncrypted = false))
             SQLiteDatabase.loadLibs(this)
         }
         super.onCreate(savedInstanceState)
@@ -61,10 +57,6 @@ class MainActivity : FragmentActivity() {
             }
         }
 
-        val biometricUnlock = runBlocking {
-            SobrietyPreferences(applicationContext).biometricUnlock.first()
-        }
-
         setContent {
             SobrietyTheme (
                 themePreference = themePreference,
@@ -76,8 +68,7 @@ class MainActivity : FragmentActivity() {
                 ) {
                     SobrietyAppNavigation(
                         navController = rememberNavController(),
-                        context = this,
-                        biometricEnabled = biometricUnlock
+                        context = this
                     )
                 }
             }

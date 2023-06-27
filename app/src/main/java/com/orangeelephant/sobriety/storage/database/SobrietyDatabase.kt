@@ -7,6 +7,7 @@ import com.orangeelephant.sobriety.storage.database.helpers.encryptPlaintextDb
 import com.orangeelephant.sobriety.storage.database.tables.CountersTable
 import com.orangeelephant.sobriety.storage.database.tables.ReasonsTable
 import com.orangeelephant.sobriety.storage.database.tables.RelapsesTable
+import net.sqlcipher.database.SQLiteException
 import java.io.File
 
 class SobrietyDatabase(context: Context) {
@@ -32,5 +33,14 @@ class SobrietyDatabase(context: Context) {
         database.close()
 
         decryptEncryptedDb(context, originalFile, oldKey, version)
+    }
+
+    fun keyIsCorrect(key: SqlCipherKey): Boolean {
+        return try {
+            openHelper.getReadableDatabase(key.keyBytes).close()
+            true
+        } catch (sqLiteException: SQLiteException) {
+            false
+        }
     }
 }

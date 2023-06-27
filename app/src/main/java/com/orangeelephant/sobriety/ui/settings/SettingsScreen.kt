@@ -36,9 +36,11 @@ fun SettingsScreen(
     navController: NavController,
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val localContext = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     val showCreatePassword = remember { mutableStateOf(false) }
+    val isEncryptingDb = remember { settingsViewModel.isEncryptingDb }
 
     Scaffold (
         topBar = { GenericTopAppBar (
@@ -140,10 +142,23 @@ fun SettingsScreen(
             SetupPassword(
                 onDismiss = { showCreatePassword.value = false },
                 onConfirm = { password -> 
-                    settingsViewModel.onEncryptWithPassword(password)
+                    settingsViewModel.onEncryptWithPassword(localContext, password)
                     showCreatePassword.value = false
                 }
             )
+        }
+        
+        if (isEncryptingDb.value) {
+            AlertDialog(onDismissRequest = { /* Don't dismiss */ }) {
+                Surface(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .wrapContentHeight(),
+                    shape = MaterialTheme.shapes.large
+                ) {
+                    Text("Encryption in progress")
+                }
+            }
         }
     }
 }
@@ -162,7 +177,7 @@ fun SetupPassword(onDismiss: () -> Unit, onConfirm: (password: String) -> Unit) 
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(
-                    stringResource(id = R.string.create_password_dialog), 
+                    stringResource(id = R.string.create_password_dialog),
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -181,6 +196,7 @@ fun SetupPassword(onDismiss: () -> Unit, onConfirm: (password: String) -> Unit) 
                 Spacer(modifier = Modifier.height(10.dp))
                 TextButton(
                     onClick = { onConfirm(password.value) },
+                    enabled = password.value != "",
                     modifier = Modifier.align(Alignment.End)
                 ) {
                     Text(stringResource(id = R.string.encrypt_database))

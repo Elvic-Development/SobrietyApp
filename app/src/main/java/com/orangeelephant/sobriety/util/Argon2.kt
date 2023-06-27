@@ -4,6 +4,7 @@ import com.lambdapioneer.argon2kt.Argon2Kt
 import com.lambdapioneer.argon2kt.Argon2KtResult
 import com.lambdapioneer.argon2kt.Argon2Mode
 import com.lambdapioneer.argon2kt.Argon2Version
+import java.security.SecureRandom
 
 class Argon2 {
     companion object {
@@ -26,5 +27,13 @@ class Argon2 {
             hashLengthInBytes = LENGTH,
             version = VERSION
         )
+    }
+
+    fun genSalt(): ByteArray {
+        val sr = SecureRandom()
+        val salt = ByteArray(16)
+        sr.nextBytes(salt)
+
+        return salt
     }
 }
