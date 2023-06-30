@@ -6,8 +6,6 @@ import android.util.Base64
 import android.widget.Toast
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.mutableStateOf
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,10 +17,10 @@ import com.orangeelephant.sobriety.util.Argon2
 import com.orangeelephant.sobriety.util.KeyStoreHelper
 import com.orangeelephant.sobriety.util.SobrietyPreferences
 import com.orangeelephant.sobriety.util.canEnableAuthentication
-import com.orangeelephant.sobriety.util.dataStore
 import com.orangeelephant.sobriety.util.showBiometricPrompt
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,7 +47,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun onEncryptWithPassword(context: Context, password: String) {
+    fun onEncryptWithPassword(context: FragmentActivity, password: String) {
         viewModelScope.launch {
             isEncryptingDb.value = true
 
@@ -61,9 +59,8 @@ class SettingsViewModel @Inject constructor(
                 salt = salt
             )
 
-            context.dataStore.edit { preferences ->
-                preferences[booleanPreferencesKey(SobrietyPreferences.BIOMETRIC_UNLOCK)] = false
-            }
+            val biometricsEnabledPreviously = preferences.biometricUnlock.first()
+            preferences.setBiometricsEnabled(false)
 
             preferences.setPasswordSalt(Base64.encodeToString(salt, Base64.DEFAULT))
             preferences.setEncryptedByPassword(true)
@@ -72,6 +69,10 @@ class SettingsViewModel @Inject constructor(
 
             Toast.makeText(context, R.string.encrypted_successfully, Toast.LENGTH_LONG).show()
             isEncryptingDb.value = false
+
+            if (biometricsEnabledPreviously) {
+                onToggleFingerprint(context, true)
+            }
         }
     }
 

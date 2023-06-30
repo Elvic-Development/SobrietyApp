@@ -36,7 +36,7 @@ fun SettingsScreen(
     navController: NavController,
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val localContext = LocalContext.current
+    val localContext = LocalContext.current as MainActivity
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     val showCreatePassword = remember { mutableStateOf(false) }
@@ -100,7 +100,7 @@ fun SettingsScreen(
                         defaultChecked = false,
                         onCheckedChange = { newValue ->
                             settingsViewModel.onToggleFingerprint(
-                                localContext as MainActivity,
+                                localContext,
                                 newValue
                             )}
                     )
@@ -179,7 +179,10 @@ fun SettingsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetupPassword(onDismiss: () -> Unit, onConfirm: (password: String) -> Unit) {
+fun SetupPassword(
+    onDismiss: () -> Unit,
+    onConfirm: (password: String) -> Unit
+) {
     val password = remember { mutableStateOf("") }
 
     AlertDialog(onDismissRequest = { onDismiss() }) {
