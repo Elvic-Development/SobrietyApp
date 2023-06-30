@@ -36,7 +36,6 @@ import androidx.navigation.NavController
 import com.orangeelephant.sobriety.MainActivity
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.Screen
-import com.orangeelephant.sobriety.util.showBiometricPrompt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +60,7 @@ fun UnlockScreen(
         }
     }
 
-    Scaffold {innerPadding ->
+    Scaffold { innerPadding ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -71,7 +70,11 @@ fun UnlockScreen(
                 painterResource(id = R.drawable.lotus_app_icon),
                 contentDescription = stringResource(id = R.string.app_name)
             )
-            Text(stringResource(id = R.string.app_name), style = MaterialTheme.typography.headlineLarge)
+            Text(
+                stringResource(id = R.string.app_name),
+                style = MaterialTheme.typography.headlineLarge
+            )
+
             Spacer(modifier = Modifier.height(40.dp))
 
             if (loading.value) {
@@ -80,13 +83,13 @@ fun UnlockScreen(
                 if (encrypted.value) {
                     val password = remember { mutableStateOf("") }
 
-                    OutlinedTextField (
+                    OutlinedTextField(
                         value = password.value,
                         onValueChange = { password.value = it },
                         label = { Text(stringResource(R.string.password)) }
                     )
                     Button(
-                        onClick = { viewModel.onSubmitPassword(password.value)},
+                        onClick = { viewModel.onSubmitPassword(password.value) },
                         enabled = password.value != ""
                     ) {
                         Text("Submit")
@@ -95,24 +98,19 @@ fun UnlockScreen(
 
                 if (biometricEnabled.value) {
                     Button(
-                        onClick = { showBiometricPrompt(
-                            activity,
-                            onAuthenticated = { viewModel.onSubmitPassword(null)}
-                        )},
+                        onClick = { viewModel.promptForBiometrics(activity) },
                         shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 25)),
-                        modifier = Modifier.size(width = 250.dp, height = 50.dp)
+                        modifier = Modifier.size(width = 250.dp, height = 50.dp),
+                        enabled = viewModel.biometricsAvailable()
                     ) {
                         Icon(Icons.Default.Lock, contentDescription = "lock icon")
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(stringResource(id = R.string.prompt_unlock_button))
                     }
 
-                    if (!hasShownPrompt.value) {
+                    if (!hasShownPrompt.value && viewModel.biometricsAvailable()) {
                         hasShownPrompt.value = true
-                        showBiometricPrompt(
-                            activity,
-                            onAuthenticated = { viewModel.onSubmitPassword(null)}
-                        )
+                        viewModel.promptForBiometrics(activity)
                     }
                 }
             }

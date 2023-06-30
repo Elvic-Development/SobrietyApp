@@ -23,11 +23,11 @@ import com.jamal.composeprefs3.ui.prefs.ListPref
 import com.jamal.composeprefs3.ui.prefs.SwitchPref
 import com.jamal.composeprefs3.ui.prefs.TextPref
 import com.orangeelephant.sobriety.BuildConfig
+import com.orangeelephant.sobriety.MainActivity
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.util.SobrietyPreferences
-import com.orangeelephant.sobriety.util.canEnableAuthentication
 import com.orangeelephant.sobriety.util.dataStore
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -98,7 +98,11 @@ fun SettingsScreen(
                         title = stringResource(id = R.string.biometric_unlock),
                         summary = stringResource(id = R.string.biometric_unlock_description),
                         defaultChecked = false,
-                        enabled = canEnableAuthentication(localContext)
+                        onCheckedChange = { newValue ->
+                            settingsViewModel.onToggleFingerprint(
+                                localContext as MainActivity,
+                                newValue
+                            )}
                     )
                     if (settingsViewModel.encryptedWithPassword.value) {
                         TextPref(

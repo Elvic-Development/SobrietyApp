@@ -11,6 +11,10 @@
     <string name="unlock_failed">Unlocking failed</string>
     <string name="unlock_error">Failed to unlock: %s</string>
 
+    <string name="enable_title">Enable biometric unlocking</string>
+    <string name="enable_summary">The database key will be encrypted and can only be decrypted with fingerprint authentication</string>
+    <string name="enable_success">Biometric unlock enabled successfully</string>
+    <string name="disable_success">Biometric unlock disabled successfully</string>
     <string name="enable_error_no_hardware">No biometric hardware</string>
     <string name="enable_error_hardware_unavailable">Hardware unavailable</string>
     <string name="enable_error_no_biometric_enrolled">No authentication types enrolled</string>
