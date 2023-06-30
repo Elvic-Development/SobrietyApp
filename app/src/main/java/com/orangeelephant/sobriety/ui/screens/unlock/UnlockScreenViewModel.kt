@@ -1,6 +1,7 @@
 package com.orangeelephant.sobriety.ui.screens.unlock
 
 import android.content.Context
+import android.security.keystore.KeyPermanentlyInvalidatedException
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +16,7 @@ import android.util.Base64
 import androidx.biometric.BiometricPrompt.CryptoObject
 import androidx.compose.runtime.MutableState
 import androidx.fragment.app.FragmentActivity
+import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.util.KeyStoreHelper
 import com.orangeelephant.sobriety.util.showBiometricPrompt
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +26,10 @@ import javax.inject.Inject
 class UnlockScreenViewModel @Inject constructor(
     @ApplicationContext app: Context
 ): ViewModel() {
+    companion object {
+        private val TAG = UnlockScreenViewModel::class.java.simpleName
+    }
+
     private val preferences = SobrietyPreferences(context = app)
 
     val loadingValues = mutableStateOf(true)
@@ -31,6 +37,7 @@ class UnlockScreenViewModel @Inject constructor(
     val cipherKeyLoaded = mutableStateOf(false)
 
     val fingerprintUnlockEnabled = mutableStateOf(false)
+    val showKeyInvalidatedDialog = mutableStateOf(false)
     val encrypted = mutableStateOf(false)
 
     private val keystoreEncryptedCipherKey: MutableState<SobrietyPreferences.EncryptedData?> = mutableStateOf(null)
@@ -79,28 +86,33 @@ class UnlockScreenViewModel @Inject constructor(
         }
     }
 
-    fun biometricsAvailable(): Boolean {
-        // TODO
-        return !encrypted.value || keystoreEncryptedCipherKey.value != null
-    }
-
     fun promptForBiometrics(activity: FragmentActivity) {
-        if (!biometricsAvailable()) {
-            // TODO Toast for here
+        if (!fingerprintUnlockEnabled.value) {
+            return
+        }
+
+        if (encrypted.value && keystoreEncryptedCipherKey.value == null) {
+            disableBiometricsAndWarn()
             return
         }
 
         val keyStoreHelper = KeyStoreHelper()
-        val cryptoObject = if (encrypted.value) {
-            CryptoObject(keyStoreHelper.getDecryptCipher(keystoreEncryptedCipherKey.value!!.iv))
-        } else {
-            null
+        var cryptoObject: CryptoObject? = null
+
+        if (encrypted.value) {
+            try {
+                cryptoObject = CryptoObject(keyStoreHelper.getDecryptCipher(keystoreEncryptedCipherKey.value!!.iv))
+            } catch (e: KeyPermanentlyInvalidatedException) {
+                LogEvent.i(TAG, "Key invalidated by biometric change, warning user to re-enable biometrics")
+                disableBiometricsAndWarn()
+                return
+            }
         }
 
         showBiometricPrompt(
             activity,
             cryptoObject,
-            onAuthenticated = { cryptoObject -> onBiometricSuccess(cryptoObject) }
+            onAuthenticated = { cryptoObj -> onBiometricSuccess(cryptoObj) }
         )
     }
 
@@ -131,5 +143,17 @@ class UnlockScreenViewModel @Inject constructor(
 
             retrievingKey.value = false
         }
+    }
+
+    private fun disableBiometricsAndWarn() {
+        showKeyInvalidatedDialog.value = true
+        fingerprintUnlockEnabled.value = false
+
+        viewModelScope.launch {
+            preferences.setBiometricsEnabled(false)
+            preferences.setKeystoreEncryptedKey(null)
+        }
+
+        LogEvent.i(TAG, "Disabled biometrics from lock screen and warned user")
     }
 }

@@ -10,6 +10,7 @@
     <string name="unlock_successful">Unlocked successfully</string>
     <string name="unlock_failed">Unlocking failed</string>
     <string name="unlock_error">Failed to unlock: %s</string>
+    <string name="unlock_error_couldnt_get_decrypt_key">Failed to get key to decrypt data</string>
 
     <string name="enable_title">Enable biometric unlocking</string>
     <string name="enable_summary">The database key will be encrypted and can only be decrypted with fingerprint authentication</string>
@@ -19,6 +20,10 @@
     <string name="enable_error_hardware_unavailable">Hardware unavailable</string>
     <string name="enable_error_no_biometric_enrolled">No authentication types enrolled</string>
     <string name="enable_error_unknowm">Unexpected issue with biometrics</string>
+    <string name="enable_error_couldnt_get_encrypt_key">Encryption key was invalidated, please try again.</string>
+
+    <string name="biometric_unlock_invalidated">Biometric unlock invalidated</string>
+    <string name="biometric_unlock_invalidated_summary">Biometric unlock has been disabled, most likely because you added or removed biometrics recently. You need to re-enable it in settings.</string>
 
     <!-- Preference Titles -->
     <string name="settings">Settings</string>
@@ -44,6 +49,7 @@
     <string name="submit_button">Submit</string>
     <string name="create_button">Create</string>
     <string name="reset_button">Reset</string>
+    <string name="understood">I understand</string>
 
     <!-- Database password -->
     <string name="create_password_dialog">Create password</string>

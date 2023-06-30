@@ -1,6 +1,7 @@
 package com.orangeelephant.sobriety.ui.settings
 
 import android.content.Context
+import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.util.Base64
 import android.widget.Toast
 import androidx.biometric.BiometricPrompt
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orangeelephant.sobriety.ApplicationDependencies
 import com.orangeelephant.sobriety.R
+import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.database.SqlCipherKey
 import com.orangeelephant.sobriety.util.Argon2
 import com.orangeelephant.sobriety.util.KeyStoreHelper
@@ -107,7 +109,14 @@ class SettingsViewModel @Inject constructor(
 
                 if (encryptedWithPassword.value && ApplicationDependencies.getSqlCipherKey().keyBytes != null) {
                     val keyStoreHelper = KeyStoreHelper()
-                    val cipher = keyStoreHelper.getEncryptCipher()
+                    val cipher = try {
+                        keyStoreHelper.getEncryptCipher()
+                    } catch (e: KeyPermanentlyInvalidatedException) {
+                        LogEvent.i(TAG, "Keystore key permanently invalidated")
+                        Toast.makeText(context, R.string.enable_error_couldnt_get_encrypt_key, Toast.LENGTH_LONG).show()
+                        return@launch
+                    }
+
                     showBiometricPrompt(
                         context,
                         BiometricPrompt.CryptoObject(cipher),

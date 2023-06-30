@@ -5,11 +5,8 @@ import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
 import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.logging.LogEvent.e
-import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.InvalidKeyException
-import java.security.Key
-import java.security.KeyManagementException
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -31,6 +28,7 @@ class KeyStoreHelper {
         keyStore.load(null)
     }
 
+    @Throws(KeyPermanentlyInvalidatedException::class)
     fun getEncryptCipher(): Cipher {
         val cipher = Cipher.getInstance(AES_MODE)
         val key = getKey()
@@ -38,6 +36,7 @@ class KeyStoreHelper {
         return cipher
     }
 
+    @Throws(KeyPermanentlyInvalidatedException::class)
     fun getDecryptCipher(iv: ByteArray): Cipher {
         val cipher = Cipher.getInstance(AES_MODE)
         val key = getKey()
@@ -54,24 +53,19 @@ class KeyStoreHelper {
         return cipher.doFinal(ciphertext)
     }
 
-    private fun getKey(): Key {
-        try {
-            if (!keyStore.containsAlias(KEY_ALIAS)) {
-                generateKey()
-            }
-            val key = keyStore.getKey(KEY_ALIAS, null) as SecretKey
+    @Throws(KeyPermanentlyInvalidatedException::class)
+    private fun getKey(): SecretKey {
+        if (!keyStore.containsAlias(KEY_ALIAS)) {
+            generateKey()
+        }
+        val key = keyStore.getKey(KEY_ALIAS, null) as SecretKey
 
-            if (isKeyInvalidated(key)) {
-                throw KeyPermanentlyInvalidatedException()
-            } else {
-                return key
-            }
-        } catch (e: GeneralSecurityException) {
-            e(TAG, "Unable to get the key from the keystore", e)
-            throw KeyManagementException("Unable to get the key from the keystore")
-        } catch (e: IOException) {
-            e(TAG, "Unable to get the key from the keystore", e)
-            throw KeyManagementException("Unable to get the key from the keystore")
+        if (isKeyInvalidated(key)) {
+            keyStore.deleteEntry(KEY_ALIAS)
+
+            throw KeyPermanentlyInvalidatedException()
+        } else {
+            return key
         }
     }
 
