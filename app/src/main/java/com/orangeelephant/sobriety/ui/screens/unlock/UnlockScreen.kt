@@ -8,21 +8,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,8 +31,9 @@ import androidx.navigation.NavController
 import com.orangeelephant.sobriety.MainActivity
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.Screen
+import com.orangeelephant.sobriety.ui.common.LoadingDialog
+import com.orangeelephant.sobriety.ui.common.WarningDialog
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnlockScreen(
     navController: NavController,
@@ -114,53 +109,33 @@ fun UnlockScreen(
         }
 
         if (viewModel.retrievingKey.value) {
-            AlertDialog(onDismissRequest = { /* Don't dismiss */ }) {
-                Surface(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .wrapContentHeight(),
-                    shape = MaterialTheme.shapes.large
-                ) {
-                    Text("Loading encryption key")
-                }
-            }
+            LoadingDialog(label = R.string.unlock_retrieving_key)
         }
 
         if (viewModel.showKeyInvalidatedDialog.value) {
-            val onDismiss = {
-                viewModel.showKeyInvalidatedDialog.value = false
-            }
+            val onDismiss = { viewModel.showKeyInvalidatedDialog.value = false }
 
-            AlertDialog(onDismissRequest = { onDismiss() }) {
-                Surface(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .wrapContentHeight(),
-                    shape = MaterialTheme.shapes.large
-                ) {
-                    Column(modifier = Modifier.padding(20.dp)) {
-                        Text(
-                            stringResource(id = R.string.biometric_unlock_invalidated),
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Text(
-                            stringResource(id = R.string.biometric_unlock_invalidated_summary),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Spacer(modifier = Modifier.height(5.dp))
+            WarningDialog (
+                onDismiss,
+                title = R.string.biometric_unlock_invalidated,
+                description = R.string.biometric_unlock_invalidated_summary
+            )
+        } else if (viewModel.showIncorrectPasswordDialog.value) {
+            val onDismiss = { viewModel.showIncorrectPasswordDialog.value = false }
 
-                        TextButton(
-                            onClick = { onDismiss() },
-                            modifier = Modifier.align(Alignment.End)
-                        ) {
-                            Text(stringResource(id = R.string.understood))
-                        }
-                    }
-                }
-            }
+            WarningDialog (
+                onDismiss,
+                title = R.string.error_incorrect_password,
+                description = R.string.error_incorrect_password_description
+            )
+        } else if (viewModel.showNoPasswordDialog.value) {
+            val onDismiss = { viewModel.showNoPasswordDialog.value = false }
+
+            WarningDialog (
+                onDismiss,
+                title = R.string.error_no_password_provided,
+                description = R.string.error_no_password_provided_description
+            )
         }
     }
 }

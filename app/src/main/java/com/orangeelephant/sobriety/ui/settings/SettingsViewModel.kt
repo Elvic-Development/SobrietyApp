@@ -20,8 +20,10 @@ import com.orangeelephant.sobriety.util.canEnableAuthentication
 import com.orangeelephant.sobriety.util.showBiometricPrompt
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -50,22 +52,25 @@ class SettingsViewModel @Inject constructor(
     fun onEncryptWithPassword(context: FragmentActivity, password: String) {
         viewModelScope.launch {
             isEncryptingDb.value = true
+            var biometricsEnabledPreviously: Boolean
 
-            val salt = Argon2().genSalt()
+            withContext(Dispatchers.Default) {
+                val salt = Argon2().genSalt()
 
-            val key = SqlCipherKey(
-                isEncrypted = true,
-                password = password.encodeToByteArray(),
-                salt = salt
-            )
+                val key = SqlCipherKey(
+                    isEncrypted = true,
+                    password = password.encodeToByteArray(),
+                    salt = salt
+                )
 
-            val biometricsEnabledPreviously = preferences.biometricUnlock.first()
-            preferences.setBiometricsEnabled(false)
+                biometricsEnabledPreviously = preferences.biometricUnlock.first()
+                preferences.setBiometricsEnabled(false)
 
-            preferences.setPasswordSalt(Base64.encodeToString(salt, Base64.DEFAULT))
-            preferences.setEncryptedByPassword(true)
-            ApplicationDependencies.getDatabase().encrypt(context, key.keyBytes!!)
-            ApplicationDependencies.setSqlcipherKey(key)
+                preferences.setPasswordSalt(Base64.encodeToString(salt, Base64.DEFAULT))
+                preferences.setEncryptedByPassword(true)
+                ApplicationDependencies.getDatabase().encrypt(context, key.keyBytes!!)
+                ApplicationDependencies.setSqlcipherKey(key)
+            }
 
             Toast.makeText(context, R.string.encrypted_successfully, Toast.LENGTH_LONG).show()
             isEncryptingDb.value = false
@@ -82,12 +87,14 @@ class SettingsViewModel @Inject constructor(
 
             val currentKey = ApplicationDependencies.getSqlCipherKey()
             currentKey.keyBytes?.let {
-                ApplicationDependencies.getDatabase().decrypt(context, it)
+                withContext(Dispatchers.Default) {
+                    ApplicationDependencies.getDatabase().decrypt(context, it)
 
-                preferences.setPasswordSalt("")
-                preferences.setEncryptedByPassword(false)
-                preferences.setKeystoreEncryptedKey(null)
-                ApplicationDependencies.setSqlcipherKey(SqlCipherKey(isEncrypted = false))
+                    preferences.setPasswordSalt("")
+                    preferences.setEncryptedByPassword(false)
+                    preferences.setKeystoreEncryptedKey(null)
+                    ApplicationDependencies.setSqlcipherKey(SqlCipherKey(isEncrypted = false))
+                }
 
                 Toast.makeText(context, R.string.decrypted_successfully, Toast.LENGTH_LONG).show()
             } ?: run {

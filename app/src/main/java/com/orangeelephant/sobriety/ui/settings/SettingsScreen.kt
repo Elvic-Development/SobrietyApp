@@ -27,6 +27,7 @@ import com.orangeelephant.sobriety.MainActivity
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
+import com.orangeelephant.sobriety.ui.common.LoadingDialog
 import com.orangeelephant.sobriety.util.SobrietyPreferences
 import com.orangeelephant.sobriety.util.dataStore
 
@@ -158,21 +159,12 @@ fun SettingsScreen(
         }
         
         if (isEncryptingDb.value || isDecryptingDb.value) {
-            AlertDialog(onDismissRequest = { /* Don't dismiss */ }) {
-                Surface(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .wrapContentHeight(),
-                    shape = MaterialTheme.shapes.large
-                ) {
-                    val message = if ( isEncryptingDb.value ) {
-                        stringResource(id = R.string.encryption_in_progress)
-                    } else {
-                        stringResource(id = R.string.decryption_in_progress)
-                    }
-                    Text(message)
-                }
+            val message = if ( isEncryptingDb.value ) {
+                R.string.encryption_in_progress
+            } else {
+                R.string.decryption_in_progress
             }
+            LoadingDialog(label = message)
         }
     }
 }

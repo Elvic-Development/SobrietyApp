@@ -20,6 +20,7 @@ import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.util.KeyStoreHelper
 import com.orangeelephant.sobriety.util.showBiometricPrompt
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,6 +36,8 @@ class UnlockScreenViewModel @Inject constructor(
     val loadingValues = mutableStateOf(true)
     val retrievingKey = mutableStateOf(false)
     val cipherKeyLoaded = mutableStateOf(false)
+    val showIncorrectPasswordDialog = mutableStateOf(false)
+    val showNoPasswordDialog = mutableStateOf(false)
 
     val fingerprintUnlockEnabled = mutableStateOf(false)
     val showKeyInvalidatedDialog = mutableStateOf(false)
@@ -58,27 +61,29 @@ class UnlockScreenViewModel @Inject constructor(
     }
 
     fun onSubmitPassword(password: String?) {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch {
             retrievingKey.value = true
 
-            if (!encrypted.value) {
-                ApplicationDependencies.setSqlcipherKey(SqlCipherKey(isEncrypted = false))
-                cipherKeyLoaded.value = true
-            } else if (encrypted.value && password == null) {
-                println("Must provide password if DB is encrypted")
-            } else {
-                val salt = Base64.decode(preferences.passwordSalt.first(), Base64.DEFAULT)
-                val key = SqlCipherKey(
-                    isEncrypted = true,
-                    password = password!!.encodeToByteArray(),
-                    salt = salt
-                )
-
-                if (ApplicationDependencies.getDatabase().keyIsCorrect(key)) {
-                    ApplicationDependencies.setSqlcipherKey(key)
+            withContext(Dispatchers.Default) {
+                if (!encrypted.value) {
+                    ApplicationDependencies.setSqlcipherKey(SqlCipherKey(isEncrypted = false))
                     cipherKeyLoaded.value = true
+                } else if (encrypted.value && password == null) {
+                    showNoPasswordDialog.value = true
                 } else {
-                    println("Incorrect key")
+                    val salt = Base64.decode(preferences.passwordSalt.first(), Base64.DEFAULT)
+                    val key = SqlCipherKey(
+                        isEncrypted = true,
+                        password = password!!.encodeToByteArray(),
+                        salt = salt
+                    )
+
+                    if (ApplicationDependencies.getDatabase().keyIsCorrect(key)) {
+                        ApplicationDependencies.setSqlcipherKey(key)
+                        cipherKeyLoaded.value = true
+                    } else {
+                        showIncorrectPasswordDialog.value = true
+                    }
                 }
             }
 

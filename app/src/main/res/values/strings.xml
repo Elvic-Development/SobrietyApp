@@ -11,6 +11,12 @@
     <string name="unlock_failed">Unlocking failed</string>
     <string name="unlock_error">Failed to unlock: %s</string>
     <string name="unlock_error_couldnt_get_decrypt_key">Failed to get key to decrypt data</string>
+    <string name="unlock_retrieving_key">Retrieving encryption key</string>
+
+    <string name="error_incorrect_password">Incorrect password entered</string>
+    <string name="error_incorrect_password_description">The database could not be decrypted using the password you entered, please try again.</string>
+    <string name="error_no_password_provided">No password was provided</string>
+    <string name="error_no_password_provided_description">To decrypt the database you must enter the password that was used to encrypt it.</string>
 
     <string name="enable_title">Enable biometric unlocking</string>
     <string name="enable_summary">The database key will be encrypted and can only be decrypted with fingerprint authentication</string>
