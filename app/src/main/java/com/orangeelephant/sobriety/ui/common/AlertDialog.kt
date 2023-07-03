@@ -2,6 +2,7 @@ package com.orangeelephant.sobriety.ui.common
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,12 +44,47 @@ fun LoadingDialog(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WarningDialog(
     onDismiss: () -> Unit,
     @StringRes title: Int,
     @StringRes description: Int
+) {
+    GenericAlertDialog(
+        onConfirm = onDismiss,
+        onDismiss = onDismiss,
+        title = title,
+        description = description,
+        confirmText = R.string.understood,
+        hasCancelButton = false
+    )
+}
+
+@Composable
+fun ConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    @StringRes title: Int,
+    @StringRes description: Int
+) {
+    GenericAlertDialog(
+        onConfirm = onConfirm,
+        onDismiss = onDismiss,
+        title = title,
+        description = description,
+        hasCancelButton = true
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun GenericAlertDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    @StringRes title: Int,
+    @StringRes description: Int,
+    @StringRes confirmText: Int = R.string.okay,
+    hasCancelButton: Boolean
 ) {
     AlertDialog(onDismissRequest = { onDismiss() }) {
         Surface(
@@ -71,11 +107,19 @@ fun WarningDialog(
                 )
                 Spacer(modifier = Modifier.height(5.dp))
 
-                TextButton(
-                    onClick = { onDismiss() },
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text(stringResource(id = R.string.understood))
+                Row(modifier = Modifier.align(Alignment.End)) {
+                    if (hasCancelButton) {
+                        TextButton(
+                            onClick = { onDismiss() },
+                        ) {
+                            Text(stringResource(id = R.string.cancel_button))
+                        }
+                    }
+                    TextButton(
+                        onClick = { onConfirm() },
+                    ) {
+                        Text(stringResource(id = confirmText))
+                    }
                 }
             }
         }

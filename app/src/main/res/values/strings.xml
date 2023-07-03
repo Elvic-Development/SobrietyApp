@@ -50,12 +50,19 @@
     <string name="source_code">Source code</string>
     <string name="source_code_description">Follow this link to view the source code of this app.</string>
 
+    <!-- Preference confirmation -->
+    <string name="disable_biometrics">Disable Biometrics</string>
+    <string name="disable_biometrics_description">Are you sure you want to disable biometrics</string>
+    <string name="disable_encryption">Decrypt database</string>
+    <string name="disable_encryption_description">Are you sure you want to decrypt the database</string>
+
     <!-- General -->
     <string name="cancel_button">Cancel</string>
     <string name="submit_button">Submit</string>
     <string name="create_button">Create</string>
     <string name="reset_button">Reset</string>
     <string name="understood">I understand</string>
+    <string name="okay">Okay</string>
     <string name="loading">Loading</string>
     <string name="or">OR</string>
 
@@ -78,6 +85,10 @@
     <string name="placeholder_counter_name">Name</string>
     <string name="placeholder_counter_reason">Reason (Optional)</string>
     <string name="placeholder_date">dd/mm/yyyy</string>
+
+    <!-- Counter full screen -->
+    <string name="reset_counter">Reset timer</string>
+    <string name="reset_timer_description">Are you sure you want to reset the timer to 0?</string>
 
     <!--- Drawables -->
     <string name="ic_launcher_background">ic_launcher_background</string>

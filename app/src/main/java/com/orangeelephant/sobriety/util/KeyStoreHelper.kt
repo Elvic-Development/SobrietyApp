@@ -17,7 +17,7 @@ class KeyStoreHelper {
     companion object {
         private val TAG = KeyStoreHelper::class.java.simpleName
 
-        private val AES_MODE = "AES/GCM/NoPadding"
+        private const val AES_MODE = "AES/GCM/NoPadding"
         private const val ANDROID_KEY_STORE = "AndroidKeyStore"
         private const val KEY_ALIAS = "sobriety_database_key"
         private const val KEY_SIZE = 256
