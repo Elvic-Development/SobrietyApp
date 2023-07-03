@@ -48,14 +48,15 @@ fun LoadingDialog(
 fun WarningDialog(
     onDismiss: () -> Unit,
     @StringRes title: Int,
-    @StringRes description: Int
+    @StringRes description: Int,
+    @StringRes confirmText: Int = R.string.understood
 ) {
     GenericAlertDialog(
         onConfirm = onDismiss,
         onDismiss = onDismiss,
         title = title,
         description = description,
-        confirmText = R.string.understood,
+        confirmText = confirmText,
         hasCancelButton = false
     )
 }

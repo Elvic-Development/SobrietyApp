@@ -60,6 +60,7 @@
     <string name="cancel_button">Cancel</string>
     <string name="submit_button">Submit</string>
     <string name="create_button">Create</string>
+    <string name="delete_button">Delete</string>
     <string name="reset_button">Reset</string>
     <string name="understood">I understand</string>
     <string name="okay">Okay</string>
@@ -89,6 +90,11 @@
     <!-- Counter full screen -->
     <string name="reset_counter">Reset timer</string>
     <string name="reset_timer_description">Are you sure you want to reset the timer to 0?</string>
+    <string name="delete_counter">Delete Counter</string>
+    <string name="delete_counter_description">Are you sure you want to delete this counter, this can\'t be undone.</string>
+    <string name="deleted_successfully">Counter deleted successfully</string>
+    <string name="couldnt_load_counter">Failed to load counter</string>
+    <string name="couldnt_load_counter_description">Failed to find a counter with this ID in the database</string>
 
     <!--- Drawables -->
     <string name="ic_launcher_background">ic_launcher_background</string>

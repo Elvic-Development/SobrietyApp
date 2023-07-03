@@ -26,4 +26,6 @@ class MockCounterRepository: CounterRepository {
     override fun resetCounter(id: Int, comment: String?): Long {
         return 0L
     }
+
+    override fun deleteCounter(id: Int) { }
 }

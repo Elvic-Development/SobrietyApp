@@ -7,4 +7,5 @@ interface CounterRepository {
     fun getCounter(id: Int): Counter
     fun addCounter(counter: Counter)
     fun resetCounter(id: Int, comment: String?): Long
+    fun deleteCounter(id: Int)
 }

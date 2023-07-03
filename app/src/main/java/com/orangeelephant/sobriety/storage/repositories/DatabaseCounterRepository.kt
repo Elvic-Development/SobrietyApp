@@ -34,7 +34,22 @@ class DatabaseCounterRepository: CounterRepository {
         sobrietyDatabase.counters.resetCounterTimer(id, recordTime)
         sobrietyDatabase.relapses.recordRelapse(id, currentTime, comment)
 
+        LogEvent.i(TAG, "Counter: $id reset successfully")
+
         return recordTime
+    }
+
+    override fun deleteCounter(id: Int) {
+        val db = ApplicationDependencies.getDatabase()
+
+        //cleanup associated records
+        db.relapses.deleteRelapsesForCounter(id)
+        db.reasons.deleteReasonsForCounterId(id)
+
+        //delete record
+        db.counters.deleteCounterById(id)
+
+        LogEvent.i(TAG, "Counter: $id and its associated records were deleted.")
     }
 
     override fun getCounter(id: Int): Counter {

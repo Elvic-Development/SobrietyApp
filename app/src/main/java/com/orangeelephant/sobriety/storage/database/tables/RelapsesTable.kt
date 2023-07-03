@@ -2,6 +2,7 @@ package com.orangeelephant.sobriety.storage.database.tables
 
 import androidx.core.content.contentValuesOf
 import com.orangeelephant.sobriety.storage.database.helpers.OpenHelper
+import net.sqlcipher.database.SQLiteDatabase
 
 class RelapsesTable(private val openHelper: OpenHelper) {
     companion object {
@@ -33,5 +34,13 @@ class RelapsesTable(private val openHelper: OpenHelper) {
         )
 
         return db.insert(TABLE_NAME_RELAPSES, null, contentValues)
+    }
+
+    fun deleteRelapsesForCounter(counterId: Int) {
+        val deleteRecordsSql = """DELETE FROM $TABLE_NAME_RELAPSES 
+                                  WHERE $COLUMN_ASSOCIATED_COUNTER = $counterId"""
+
+        val db: SQLiteDatabase = openHelper.getWritableDatabase()
+        db.execSQL(deleteRecordsSql)
     }
 }
