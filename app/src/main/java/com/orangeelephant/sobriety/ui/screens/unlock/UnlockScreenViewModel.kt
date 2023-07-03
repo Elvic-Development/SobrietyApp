@@ -68,7 +68,7 @@ class UnlockScreenViewModel @Inject constructor(
                 if (!encrypted.value) {
                     ApplicationDependencies.setSqlcipherKey(SqlCipherKey(isEncrypted = false))
                     cipherKeyLoaded.value = true
-                } else if (encrypted.value && password == null) {
+                } else if (encrypted.value && (password == null || password == "")) {
                     showNoPasswordDialog.value = true
                 } else {
                     val salt = Base64.decode(preferences.passwordSalt.first(), Base64.DEFAULT)

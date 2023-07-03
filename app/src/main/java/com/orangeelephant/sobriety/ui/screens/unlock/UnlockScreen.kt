@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +31,7 @@ import com.orangeelephant.sobriety.MainActivity
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.Screen
 import com.orangeelephant.sobriety.ui.common.LoadingDialog
+import com.orangeelephant.sobriety.ui.common.PasswordInputField
 import com.orangeelephant.sobriety.ui.common.WarningDialog
 
 @Composable
@@ -71,16 +71,17 @@ fun UnlockScreen(
             Spacer(modifier = Modifier.height(40.dp))
 
             if (viewModel.loadingValues.value) {
-                Text("LOADING...")
+                LoadingDialog(label = R.string.loading)
             } else if (viewModel.fingerprintUnlockEnabled.value || viewModel.encrypted.value) {
                 if (viewModel.encrypted.value) {
                     val password = remember { mutableStateOf("") }
 
-                    OutlinedTextField(
-                        value = password.value,
-                        onValueChange = { password.value = it },
-                        label = { Text(stringResource(R.string.password)) }
-                    )
+                    PasswordInputField (
+                        password
+                    ) {
+                        viewModel.onSubmitPassword(password.value)
+                    }
+
                     Button(
                         onClick = { viewModel.onSubmitPassword(password.value) },
                         enabled = password.value != ""

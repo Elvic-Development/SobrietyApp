@@ -56,6 +56,7 @@
     <string name="create_button">Create</string>
     <string name="reset_button">Reset</string>
     <string name="understood">I understand</string>
+    <string name="loading">Loading</string>
 
     <!-- Database password -->
     <string name="create_password_dialog">Create password</string>

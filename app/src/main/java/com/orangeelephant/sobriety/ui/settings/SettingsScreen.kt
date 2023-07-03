@@ -28,6 +28,7 @@ import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.LoadingDialog
+import com.orangeelephant.sobriety.ui.common.PasswordInputField
 import com.orangeelephant.sobriety.util.SobrietyPreferences
 import com.orangeelephant.sobriety.util.dataStore
 
@@ -197,11 +198,9 @@ fun SetupPassword(
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(5.dp))
-                OutlinedTextField (
-                    value = password.value,
-                    onValueChange = { password.value = it },
-                    label = { Text(stringResource(R.string.password)) }
-                )
+                PasswordInputField(password = password) {
+                    onConfirm(password.value)
+                }
                 Spacer(modifier = Modifier.height(10.dp))
                 TextButton(
                     onClick = { onConfirm(password.value) },
