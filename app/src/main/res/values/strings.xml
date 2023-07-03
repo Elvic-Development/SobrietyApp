@@ -3,18 +3,33 @@
     <string name="source_code_url" translatable="false">https://github.com/orange-elephant/SobrietyApp</string>
 
     <!--Strings app unlocking -->
-    <string name="prompt_unlock_button">Tap here to unlock</string>
+    <string name="prompt_unlock_button">Tap here to use biometrics</string>
     <string name="unlock_title">Fingerprint unlock</string>
     <string name="unlock_subtitle">Use your fingerprint to gain access</string>
     <string name="unlock_negative_button">Cancel</string>
     <string name="unlock_successful">Unlocked successfully</string>
     <string name="unlock_failed">Unlocking failed</string>
     <string name="unlock_error">Failed to unlock: %s</string>
+    <string name="unlock_error_couldnt_get_decrypt_key">Failed to get key to decrypt data</string>
+    <string name="unlock_retrieving_key">Retrieving encryption key</string>
 
+    <string name="error_incorrect_password">Incorrect password entered</string>
+    <string name="error_incorrect_password_description">The database could not be decrypted using the password you entered, please try again.</string>
+    <string name="error_no_password_provided">No password was provided</string>
+    <string name="error_no_password_provided_description">To decrypt the database you must enter the password that was used to encrypt it.</string>
+
+    <string name="enable_title">Enable biometric unlocking</string>
+    <string name="enable_summary">The database key will be encrypted and can only be decrypted with fingerprint authentication</string>
+    <string name="enable_success">Biometric unlock enabled successfully</string>
+    <string name="disable_success">Biometric unlock disabled successfully</string>
     <string name="enable_error_no_hardware">No biometric hardware</string>
     <string name="enable_error_hardware_unavailable">Hardware unavailable</string>
     <string name="enable_error_no_biometric_enrolled">No authentication types enrolled</string>
     <string name="enable_error_unknowm">Unexpected issue with biometrics</string>
+    <string name="enable_error_couldnt_get_encrypt_key">Encryption key was invalidated, please try again.</string>
+
+    <string name="biometric_unlock_invalidated">Biometric unlock invalidated</string>
+    <string name="biometric_unlock_invalidated_summary">Biometric unlock has been disabled, most likely because you added or removed biometrics recently. You need to re-enable it in settings.</string>
 
     <!-- Preference Titles -->
     <string name="settings">Settings</string>
@@ -40,6 +55,9 @@
     <string name="submit_button">Submit</string>
     <string name="create_button">Create</string>
     <string name="reset_button">Reset</string>
+    <string name="understood">I understand</string>
+    <string name="loading">Loading</string>
+    <string name="or">OR</string>
 
     <!-- Database password -->
     <string name="create_password_dialog">Create password</string>

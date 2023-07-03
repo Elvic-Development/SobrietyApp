@@ -8,11 +8,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.ui.theme.SobrietyTheme
 import com.orangeelephant.sobriety.util.SobrietyPreferences
@@ -23,6 +25,10 @@ import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
+    companion object {
+        private val TAG = MainActivity::class.java.simpleName
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!ApplicationDependencies.isInitialised()) {
             ApplicationDependencies.init(application)
@@ -34,6 +40,7 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 SobrietyPreferences(applicationContext).language.collect {
+                    LogEvent.i(TAG, "Updating language to $it")
                     setLocale(it)
                 }
             }
@@ -44,6 +51,7 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 SobrietyPreferences(applicationContext).theme.collect {
+                    LogEvent.i(TAG, "Updating theme to $it")
                     themePreference.value = it
                 }
             }
@@ -52,11 +60,13 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 SobrietyPreferences(applicationContext).dynamicColours.collect {
+                    LogEvent.i(TAG, "Updating dynamic colours to $it")
                     dynamicColoursPreference.value = it
                 }
             }
         }
 
+        installSplashScreen()
         setContent {
             SobrietyTheme (
                 themePreference = themePreference,
@@ -85,7 +95,7 @@ class MainActivity : FragmentActivity() {
 
         // if language is unchanged on activity recreate then abort
         if (currentLocale == newLocale) {
-            println("Locale unchanged")
+            LogEvent.i(TAG, "Locale unchanged")
             return
         }
 

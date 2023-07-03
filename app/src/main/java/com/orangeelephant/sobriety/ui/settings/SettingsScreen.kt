@@ -23,11 +23,13 @@ import com.jamal.composeprefs3.ui.prefs.ListPref
 import com.jamal.composeprefs3.ui.prefs.SwitchPref
 import com.jamal.composeprefs3.ui.prefs.TextPref
 import com.orangeelephant.sobriety.BuildConfig
+import com.orangeelephant.sobriety.MainActivity
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
+import com.orangeelephant.sobriety.ui.common.LoadingDialog
+import com.orangeelephant.sobriety.ui.common.PasswordInputField
 import com.orangeelephant.sobriety.util.SobrietyPreferences
-import com.orangeelephant.sobriety.util.canEnableAuthentication
 import com.orangeelephant.sobriety.util.dataStore
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -36,7 +38,7 @@ fun SettingsScreen(
     navController: NavController,
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val localContext = LocalContext.current
+    val localContext = LocalContext.current as MainActivity
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     val showCreatePassword = remember { mutableStateOf(false) }
@@ -98,7 +100,11 @@ fun SettingsScreen(
                         title = stringResource(id = R.string.biometric_unlock),
                         summary = stringResource(id = R.string.biometric_unlock_description),
                         defaultChecked = false,
-                        enabled = canEnableAuthentication(localContext)
+                        onCheckedChange = { newValue ->
+                            settingsViewModel.onToggleFingerprint(
+                                localContext,
+                                newValue
+                            )}
                     )
                     if (settingsViewModel.encryptedWithPassword.value) {
                         TextPref(
@@ -154,28 +160,22 @@ fun SettingsScreen(
         }
         
         if (isEncryptingDb.value || isDecryptingDb.value) {
-            AlertDialog(onDismissRequest = { /* Don't dismiss */ }) {
-                Surface(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .wrapContentHeight(),
-                    shape = MaterialTheme.shapes.large
-                ) {
-                    val message = if ( isEncryptingDb.value ) {
-                        stringResource(id = R.string.encryption_in_progress)
-                    } else {
-                        stringResource(id = R.string.decryption_in_progress)
-                    }
-                    Text(message)
-                }
+            val message = if ( isEncryptingDb.value ) {
+                R.string.encryption_in_progress
+            } else {
+                R.string.decryption_in_progress
             }
+            LoadingDialog(label = message)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetupPassword(onDismiss: () -> Unit, onConfirm: (password: String) -> Unit) {
+fun SetupPassword(
+    onDismiss: () -> Unit,
+    onConfirm: (password: String) -> Unit
+) {
     val password = remember { mutableStateOf("") }
 
     AlertDialog(onDismissRequest = { onDismiss() }) {
@@ -198,11 +198,9 @@ fun SetupPassword(onDismiss: () -> Unit, onConfirm: (password: String) -> Unit) 
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(5.dp))
-                OutlinedTextField (
-                    value = password.value,
-                    onValueChange = { password.value = it },
-                    label = { Text(stringResource(R.string.password)) }
-                )
+                PasswordInputField(password = password) {
+                    onConfirm(password.value)
+                }
                 Spacer(modifier = Modifier.height(10.dp))
                 TextButton(
                     onClick = { onConfirm(password.value) },

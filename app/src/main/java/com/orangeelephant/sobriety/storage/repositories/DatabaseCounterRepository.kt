@@ -1,11 +1,17 @@
 package com.orangeelephant.sobriety.storage.repositories
 
 import com.orangeelephant.sobriety.ApplicationDependencies
+import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.models.Counter
 import java.util.Calendar
 
 class DatabaseCounterRepository: CounterRepository {
+    companion object {
+        private val TAG = DatabaseCounterRepository::class.java.simpleName
+    }
+
     override fun getAllCounters(): List<Counter> {
+        LogEvent.i(TAG, "Loading all counters from DB")
         return ApplicationDependencies.getDatabase().counters.getAllCounters()
     }
 
