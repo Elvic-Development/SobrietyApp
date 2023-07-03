@@ -24,7 +24,9 @@ import com.orangeelephant.sobriety.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoadingDialog(@StringRes label: Int) {
+fun LoadingDialog(
+    @StringRes label: Int = R.string.loading
+) {
     AlertDialog(onDismissRequest = { /* Don't dismiss */ }) {
         Surface(
             modifier = Modifier

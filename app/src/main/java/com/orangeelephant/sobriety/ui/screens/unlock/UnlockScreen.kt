@@ -32,6 +32,7 @@ import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.Screen
 import com.orangeelephant.sobriety.ui.common.LoadingDialog
 import com.orangeelephant.sobriety.ui.common.PasswordInputField
+import com.orangeelephant.sobriety.ui.common.TextDivider
 import com.orangeelephant.sobriety.ui.common.WarningDialog
 
 @Composable
@@ -57,6 +58,7 @@ fun UnlockScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(innerPadding)
+                .padding(horizontal = 30.dp)
                 .fillMaxSize()
         ) {
             Icon(
@@ -68,10 +70,10 @@ fun UnlockScreen(
                 style = MaterialTheme.typography.headlineLarge
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(60.dp))
 
             if (viewModel.loadingValues.value) {
-                LoadingDialog(label = R.string.loading)
+                LoadingDialog()
             } else if (viewModel.fingerprintUnlockEnabled.value || viewModel.encrypted.value) {
                 if (viewModel.encrypted.value) {
                     val password = remember { mutableStateOf("") }
@@ -81,13 +83,17 @@ fun UnlockScreen(
                     ) {
                         viewModel.onSubmitPassword(password.value)
                     }
-
+                    Spacer(Modifier.height(10.dp))
                     Button(
                         onClick = { viewModel.onSubmitPassword(password.value) },
                         enabled = password.value != ""
                     ) {
                         Text(stringResource(id = R.string.submit_button))
                     }
+                }
+                
+                if (viewModel.fingerprintUnlockEnabled.value && viewModel.encrypted.value) {
+                    TextDivider(text = R.string.or)
                 }
 
                 if (viewModel.fingerprintUnlockEnabled.value) {
