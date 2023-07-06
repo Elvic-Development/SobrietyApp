@@ -106,5 +106,5 @@
     <string name="dark_mode">Dark</string>
 
     <!-- Duration -->
-    <string name="duration_string">%1$d days, %2$d hours, %3$d minutes, and %4$d seconds.</string>
+    <string name="duration_string">%1$d years, %2$d days, %3$d hours, %4$d minutes, and %5$d seconds.</string>
 </resources>
