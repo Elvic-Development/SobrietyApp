@@ -27,35 +27,31 @@ class CounterFullScreenViewModel(
         private val TAG = CounterFullScreenViewModel::class.java.simpleName
     }
 
+    val duration: MutableState<Duration> = mutableStateOf(Duration())
+    val counter: MutableState<Counter?> = mutableStateOf(null)
+
     init {
         LogEvent.i(TAG, "Creating view model for counter id $counterId")
-        viewModelScope.launch {
-            while (true) {
-                delay(1000)
-                counter.value?.let {
-                    duration.value = CounterViewUtil.getDurationFromStartTime(it.startTimeMillis)
-                }
-            }
-        }
-    }
-
-    val duration: MutableState<Duration> = mutableStateOf(Duration())
-
-    private val _counter = mutableStateOf(
-        try {
+        counter.value = try {
             counterRepository.getCounter(counterId)
         } catch (e: CursorIndexOutOfBoundsException) {
             null
         }
-    )
-    val counter: MutableState<Counter?>
-        get() = _counter
 
+        viewModelScope.launch {
+            while (true) {
+                counter.value?.let {
+                    duration.value = CounterViewUtil.getDurationFromStartTime(it.startTimeMillis)
+                }
+                delay(1000)
+            }
+        }
+    }
 
     fun onResetCounter() {
         val startTimeMillis = Calendar.getInstance().timeInMillis
         val newRecord = counterRepository.resetCounter(counterId, null)
-        _counter.value = _counter.value?.copy(
+        counter.value = counter.value?.copy(
             startTimeMillis = startTimeMillis,
             recordTimeSoberInMillis = newRecord,
             currentDurationString = CounterViewUtil.formatDurationAsString(startTimeMillis)
