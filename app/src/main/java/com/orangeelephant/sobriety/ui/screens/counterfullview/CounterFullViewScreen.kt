@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,9 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.orangeelephant.sobriety.R
+import com.orangeelephant.sobriety.storage.models.Relapse
+import com.orangeelephant.sobriety.storage.repositories.mock.MockCounterRepository
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.ConfirmationDialog
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
@@ -99,6 +105,20 @@ fun CounterFullView(
                 MileStoneProgressTracker(
                     counterFullScreenViewModel.duration.value
                 )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                LazyColumn (
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            top = innerPadding.calculateTopPadding(),
+                            bottom = 0.dp
+                        )
+                ) {
+                    items(counterFullScreenViewModel.relapses, key = { it.id }) { relapse ->
+                        RelapseView(relapse)
+                    }
+                }
             }
 
             if (showResetDialog.value) {
@@ -173,4 +193,26 @@ fun RecordRelapse(
             }
         }
     }
+}
+
+@Composable
+fun RelapseView(relapse: Relapse) {
+    Row {
+        Text("${relapse.time}")
+
+        relapse.comment?.let {
+            Text(it)
+        } ?: run {
+            Text("No comment", color = MaterialTheme.colorScheme.outline)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun CounterFullPreview() {
+    CounterFullView(
+        counterFullScreenViewModel = CounterFullScreenViewModel(1, MockCounterRepository()),
+        navController = rememberNavController()
+    )
 }

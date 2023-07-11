@@ -3,6 +3,7 @@ package com.orangeelephant.sobriety.storage.repositories
 import com.orangeelephant.sobriety.ApplicationDependencies
 import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.models.Counter
+import com.orangeelephant.sobriety.storage.models.Relapse
 import java.util.Calendar
 
 class DatabaseCounterRepository: CounterRepository {
@@ -54,5 +55,9 @@ class DatabaseCounterRepository: CounterRepository {
 
     override fun getCounter(id: Int): Counter {
         return ApplicationDependencies.getDatabase().counters.getCounterById(id)
+    }
+
+    override fun getRelapsesForCounter(counterId: Int): List<Relapse> {
+        return ApplicationDependencies.getDatabase().relapses.getRelapsesForCounter(counterId)
     }
 }
