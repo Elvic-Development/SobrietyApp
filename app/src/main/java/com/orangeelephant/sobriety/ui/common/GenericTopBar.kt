@@ -14,10 +14,26 @@ fun GenericTopAppBar(
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {}
 ) {
+    GenericTopAppBar(
+        title = stringResource(title),
+        scrollBehavior = scrollBehavior,
+        navigationIcon = navigationIcon,
+        actions = actions
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GenericTopAppBar(
+    title: String,
+    scrollBehavior: TopAppBarScrollBehavior,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {}
+) {
     TopAppBar(
         title = {
             Text(
-                text = stringResource(title),
+                text = title,
                 style = MaterialTheme.typography.headlineLarge,
             )
         },

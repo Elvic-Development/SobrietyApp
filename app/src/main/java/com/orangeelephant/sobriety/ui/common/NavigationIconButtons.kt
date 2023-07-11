@@ -6,7 +6,9 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.orangeelephant.sobriety.Screen
 
 @Composable
@@ -23,4 +25,16 @@ fun SettingsLink(navController: NavController) {
     }) {
         Icon(Icons.Filled.Settings, contentDescription = "Settings")
     }
+}
+
+@Preview
+@Composable
+fun BackIconPreview() {
+    BackIcon(onClick = {})
+}
+
+@Preview
+@Composable
+fun SettingsIconPreview() {
+    SettingsLink(rememberNavController())
 }

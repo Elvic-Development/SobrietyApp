@@ -9,12 +9,17 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
-import com.orangeelephant.sobriety.ui.screens.CounterFullView
-import com.orangeelephant.sobriety.ui.screens.create.CreateCounter
+import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullView
+import com.orangeelephant.sobriety.ui.screens.CreateCounter
+import com.orangeelephant.sobriety.ui.screens.unlock.UnlockScreen
+import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullScreenViewModel
 import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
 import com.orangeelephant.sobriety.ui.settings.SettingsScreen
 
 sealed class Screen(val route: String) {
+    // Unlock screen
+    object Unlock: Screen("unlock")
+
     // Home screen
     object Home: Screen("home")
 
@@ -36,11 +41,20 @@ fun SobrietyAppNavigation(
     navController: NavHostController,
     context: Context
 ) {
-    NavHost(navController, startDestination = Screen.Home.route) {
+    val startDestination = Screen.Unlock.route
+
+    NavHost(navController, startDestination = startDestination) {
+        addUnlockNavigation(navController)
         addHomeNavigation(navController)
-        addCounterFullViewNavigation(context)
+        addCounterFullViewNavigation(context, navController)
         addCreateCounterNavigation(navController)
         addSettingsNavigation(navController)
+    }
+}
+
+fun NavGraphBuilder.addUnlockNavigation(navController: NavHostController) {
+    composable(route = Screen.Unlock.route) {
+        UnlockScreen(navController)
     }
 }
 
@@ -50,7 +64,7 @@ fun NavGraphBuilder.addHomeNavigation(navController: NavHostController) {
     }
 }
 
-fun NavGraphBuilder.addCounterFullViewNavigation(context: Context) {
+fun NavGraphBuilder.addCounterFullViewNavigation(context: Context, navController: NavHostController) {
     composable(
         route = Screen.CounterFullView.route,
         arguments = listOf(
@@ -62,7 +76,10 @@ fun NavGraphBuilder.addCounterFullViewNavigation(context: Context) {
         val counterId = backStackEntry.arguments?.getInt("counterId")
 
         counterId?.let {
-            CounterFullView(counterId = counterId)
+            CounterFullView(
+                counterFullScreenViewModel = CounterFullScreenViewModel(counterId),
+                navController = navController
+            )
         } ?: run {
             Toast.makeText(context, "No counterID provided", Toast.LENGTH_LONG).show()
         }
