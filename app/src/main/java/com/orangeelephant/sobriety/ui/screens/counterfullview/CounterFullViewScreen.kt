@@ -49,7 +49,9 @@ fun CounterFullView(
     val showResetDialog = remember { mutableStateOf(false) }
     val showDeleteDialog = remember { mutableStateOf(false) }
 
-    counterFullScreenViewModel.counter.value?.let {
+    val counter = remember { counterFullScreenViewModel.counter }
+
+    counter.value?.let {
         Scaffold(
             topBar = {
                 GenericTopAppBar(

@@ -41,8 +41,6 @@ fun MileStoneProgressTracker(
             )
 
             val angle = duration.seconds * 6f
-            println(60f)
-            println(angle)
             drawArc(
                 color = primaryColor,
                 startAngle = -90f,
