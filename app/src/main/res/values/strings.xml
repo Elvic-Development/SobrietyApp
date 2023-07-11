@@ -71,13 +71,10 @@
     <string name="decrypt_fail_current_key_null">Unable to decrypt database as current key is null</string>
 
     <!--- counter creation -->
-    <string name="create_counter">Create Counter</string>
-    <string name="create_counter_name">What is the name of your counter?</string>
-    <string name="create_counter_start_date">When did you begin?</string>
-    <string name="create_counter_reason">Why are you doing this?</string>
-    <string name="placeholder_counter_name">Name</string>
-    <string name="placeholder_counter_reason">Reason (Optional)</string>
-    <string name="placeholder_date">dd/mm/yyyy</string>
+    <string name="create_counter">New Sobriety</string>
+    <string name="placeholder_counter_name">What are you staying sober from?</string>
+    <string name="placeholder_counter_reason">Reason for sobriety? (optional)</string>
+    <string name="placeholder_date">When did you become sober?</string>
 
     <!--- Drawables -->
     <string name="ic_launcher_background">ic_launcher_background</string>

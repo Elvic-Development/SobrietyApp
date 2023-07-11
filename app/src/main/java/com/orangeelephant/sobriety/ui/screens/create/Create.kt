@@ -1,40 +1,38 @@
-package com.orangeelephant.sobriety.ui.screens
+package com.orangeelephant.sobriety.ui.screens.create
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
-import java.text.DateFormat
-import java.util.Date
-import java.util.Locale
-
-
+import com.orangeelephant.sobriety.ui.common.SinglePhotoPicker
+import java.net.URI
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateCounter(navController: NavController) {
+fun CreateCounter(
+    navController: NavController,
+    createViewModel: CreateViewModel = viewModel()
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val createConditionsMet by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -67,8 +65,10 @@ fun CreateCounter(navController: NavController) {
                 Spacer(modifier = Modifier.width(30.dp))
 
                 Button(
-                    enabled = createConditionsMet,
-                    onClick = { /*TODO*/ },
+                    enabled = createViewModel.createConditionsMet,
+                    onClick = {
+                              /*TODO*/
+                              },
                     content = {
                         Text(text = stringResource(id = R.string.create_button))
                     },
@@ -85,7 +85,8 @@ fun CreateCounter(navController: NavController) {
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
         ) {
-            Creation()
+
+            Creation(CreateViewModel())
         }
     }
 }
@@ -93,13 +94,14 @@ fun CreateCounter(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Creation() {
+fun Creation(
+    createViewModel: CreateViewModel = viewModel()
+) {
     val context = LocalContext.current
-    var nameText by remember { mutableStateOf("")}
-    var dateText by remember { mutableStateOf("")}
-    var reasonText by remember { mutableStateOf("")}
+    val packageName = context.packageName
+    val datePickerState = rememberDatePickerState()
     var isDialogOpen by remember { mutableStateOf(false) }
-    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = System.currentTimeMillis())
+
 
     if (isDialogOpen) {
         DatePickerDialog(
@@ -108,14 +110,14 @@ fun Creation() {
                 Button(
                     onClick = {
                         isDialogOpen = false
-                        dateText = convertMillisecondsToDate(datePickerState.selectedDateMillis)
+                        createViewModel.dateVal = datePickerState.selectedDateMillis
                     }
                 ) {
                     Text(text = context.getString(R.string.submit_button))
                 }
             },
             dismissButton = {
-                Button(
+                OutlinedButton(
                     onClick = { isDialogOpen = false },
                 ) {
                     Text(text = context.getString(R.string.cancel_button))
@@ -134,88 +136,113 @@ fun Creation() {
             .padding(16.dp)
     ) {
 
-        // name
-        Text(
-            text = context.getString(R.string.create_counter_name),
-            style = MaterialTheme.typography.titleMedium,
-        )
-
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth(),
-            value = nameText,
-            onValueChange = { nameText = it },
-            label = { Text(stringResource(R.string.placeholder_counter_name)) }
-        )
-
         Spacer(modifier = Modifier.height(16.dp))
 
-        //date
-        Text(
-            text = context.getString(R.string.create_counter_start_date),
-            style = MaterialTheme.typography.titleMedium,
-        )
+        // photo
+        SinglePhotoPicker(createViewModel.selectedImageUri)
+        { uri ->
+            createViewModel.selectedImageUri = uri
+        }
+
+        if (createViewModel.selectedImageUri == null) {
+            createViewModel.selectedImageUri = Uri.parse("android.resource://$packageName/${R.drawable.image1}")
+        }
+
+        Spacer(modifier = Modifier.height(64.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            OutlinedTextField(
+            Icon(
+                painter = painterResource(id = R.drawable.ic_no_drink),
+                contentDescription = stringResource(id = R.string.ic_no_drink),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                value = dateText,
-                onValueChange = { dateText = it },
-                label = { Text(context.getString(R.string.placeholder_date)) }
+                    .scale(0.80f)
+                    .padding(end = 8.dp)
 
             )
-
-
-            IconButton(
-                onClick = {
-                    isDialogOpen = true
-                },
-                modifier = Modifier.padding(start = 8.dp, top = 8.dp) // Add padding to the left and top of the IconButton
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_calendar),
-                    contentDescription = stringResource(id = R.string.ic_calendar)
-                )
-            }
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f),
+                value = createViewModel.nameText,
+                onValueChange = { createViewModel.nameText = it },
+                label = { Text(stringResource(R.string.placeholder_counter_name)) }
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // reason
-        Text(
-            text = context.getString(R.string.create_counter_reason),
-            style = MaterialTheme.typography.titleMedium,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_calendar),
+                contentDescription = stringResource(id = R.string.ic_calendar),
+                modifier = Modifier
+                    .scale(0.80f)
+                    .padding(end = 8.dp)
 
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth(),
-            value = reasonText,
-            onValueChange = { reasonText = it },
-            label = { Text(context.getString(R.string.placeholder_counter_reason)) }
-        )
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                value = createViewModel.getDateText(),
+                onValueChange = { /*TODO*/ },
+                label = { Text(context.getString(R.string.placeholder_date)) },
+
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            isDialogOpen = true
+                        },
+                        modifier = Modifier
+                            .scale(0.7f)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_edit_calendar),
+                            contentDescription = stringResource(id = R.string.ic_calendar)
+                        )
+                    }
+                }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+           Icon(
+                painter = painterResource(id = R.drawable.ic_notes),
+                contentDescription = stringResource(id = R.string.ic_calendar),
+                modifier = Modifier
+                    .scale(0.80f)
+                    .padding(end = 8.dp)
+
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                value = createViewModel.reasonText,
+                onValueChange = { createViewModel.reasonText = it },
+                label = { Text(context.getString(R.string.placeholder_counter_reason)) }
+            )
+        }
+
+
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
-
-fun convertMillisecondsToDate(utcMilliseconds: Long?): String {
-    if (utcMilliseconds == null) {
-        return ""
-    }
-
-    val dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault())
-    val date = Date(utcMilliseconds)
-    return dateFormat.format(date)
-}
-
 
 // create compostable preview
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun CreateCounterPreview() {
     CreateCounter(rememberNavController())
 }
+

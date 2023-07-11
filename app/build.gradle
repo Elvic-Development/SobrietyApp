@@ -65,6 +65,7 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.6.0'
     implementation 'androidx.biometric:biometric-ktx:1.2.0-alpha05'
     implementation 'com.lambdapioneer.argon2kt:argon2kt:1.4.0'
+    implementation "io.coil-kt:coil-compose:2.1.0"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
