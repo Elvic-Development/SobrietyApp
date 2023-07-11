@@ -30,6 +30,7 @@ import com.orangeelephant.sobriety.ui.common.ConfirmationDialog
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.LoadingDialog
 import com.orangeelephant.sobriety.ui.common.PasswordInputField
+import com.orangeelephant.sobriety.ui.common.SobrietyAlertDialog
 import com.orangeelephant.sobriety.util.SobrietyPreferences
 import com.orangeelephant.sobriety.util.dataStore
 
@@ -208,37 +209,30 @@ fun SetupPassword(
 ) {
     val password = remember { mutableStateOf("") }
 
-    AlertDialog(onDismissRequest = { onDismiss() }) {
-        Surface(
-            modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large
-        ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                Text(
-                    stringResource(id = R.string.create_password_dialog),
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                Text(
-                    stringResource(id = R.string.create_password_description),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                PasswordInputField(password = password) {
-                    onConfirm(password.value)
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                TextButton(
-                    onClick = { onConfirm(password.value) },
-                    enabled = password.value != "",
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text(stringResource(id = R.string.encrypt_database))
-                }
+    SobrietyAlertDialog(onDismiss = onDismiss) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(
+                stringResource(id = R.string.create_password_dialog),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                stringResource(id = R.string.create_password_description),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            PasswordInputField(password = password) {
+                onConfirm(password.value)
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            TextButton(
+                onClick = { onConfirm(password.value) },
+                enabled = password.value != "",
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text(stringResource(id = R.string.encrypt_database))
             }
         }
     }

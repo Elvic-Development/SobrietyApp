@@ -88,8 +88,9 @@
     <string name="placeholder_date">dd/mm/yyyy</string>
 
     <!-- Counter full screen -->
-    <string name="reset_counter">Reset timer</string>
-    <string name="reset_timer_description">Are you sure you want to reset the timer to 0?</string>
+    <string name="record_relapse">Record a relapse</string>
+    <string name="record_relapse_description">Warning: This cannot be undone. You can optionally add a comment.</string>
+    <string name="record_relapse_comment">Comments</string>
     <string name="delete_counter">Delete Counter</string>
     <string name="delete_counter_description">Are you sure you want to delete this counter, this can\'t be undone.</string>
     <string name="deleted_successfully">Counter deleted successfully</string>

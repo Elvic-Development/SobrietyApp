@@ -25,21 +25,30 @@ import com.orangeelephant.sobriety.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoadingDialog(
-    @StringRes label: Int = R.string.loading
+fun SobrietyAlertDialog (
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit
 ) {
-    AlertDialog(onDismissRequest = { /* Don't dismiss */ }) {
+    AlertDialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = Modifier
                 .wrapContentWidth()
-                .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large
-        ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                Text(stringResource(id = label), modifier = Modifier.align(CenterHorizontally))
-                Spacer(modifier = Modifier.height(10.dp))
-                CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
-            }
+                .wrapContentHeight(unbounded = true),
+            shape = MaterialTheme.shapes.large,
+            content = content
+        )
+    }
+}
+
+@Composable
+fun LoadingDialog(
+    @StringRes label: Int = R.string.loading
+) {
+    SobrietyAlertDialog(onDismiss = { /* Don't dismiss */ }) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(stringResource(id = label), modifier = Modifier.align(CenterHorizontally))
+            Spacer(modifier = Modifier.height(10.dp))
+            CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
         }
     }
 }
@@ -77,7 +86,6 @@ fun ConfirmationDialog(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GenericAlertDialog(
     onConfirm: () -> Unit,
@@ -87,40 +95,33 @@ private fun GenericAlertDialog(
     @StringRes confirmText: Int = R.string.okay,
     hasCancelButton: Boolean
 ) {
-    AlertDialog(onDismissRequest = { onDismiss() }) {
-        Surface(
-            modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large
-        ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                Text(
-                    stringResource(id = title),
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                Text(
-                    stringResource(id = description),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.height(5.dp))
+    SobrietyAlertDialog(onDismiss = onDismiss) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(
+                stringResource(id = title),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                stringResource(id = description),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(5.dp))
 
-                Row(modifier = Modifier.align(Alignment.End)) {
-                    if (hasCancelButton) {
-                        TextButton(
-                            onClick = { onDismiss() },
-                        ) {
-                            Text(stringResource(id = R.string.cancel_button))
-                        }
-                    }
+            Row(modifier = Modifier.align(Alignment.End)) {
+                if (hasCancelButton) {
                     TextButton(
-                        onClick = { onConfirm() },
+                        onClick = { onDismiss() },
                     ) {
-                        Text(stringResource(id = confirmText))
+                        Text(stringResource(id = R.string.cancel_button))
                     }
+                }
+                TextButton(
+                    onClick = { onConfirm() },
+                ) {
+                    Text(stringResource(id = confirmText))
                 }
             }
         }

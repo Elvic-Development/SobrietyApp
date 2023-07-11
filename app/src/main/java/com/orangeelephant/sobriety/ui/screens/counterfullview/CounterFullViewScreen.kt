@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -31,6 +34,7 @@ import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.ConfirmationDialog
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.MileStoneProgressTracker
+import com.orangeelephant.sobriety.ui.common.SobrietyAlertDialog
 import com.orangeelephant.sobriety.ui.common.WarningDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,14 +100,12 @@ fun CounterFullView(
             }
 
             if (showResetDialog.value) {
-                ConfirmationDialog(
-                    onConfirm = {
-                        counterFullScreenViewModel.onResetCounter()
-                        showResetDialog.value = false
-                    },
+                RecordRelapse(
                     onDismiss = { showResetDialog.value = false },
-                    title = R.string.reset_counter,
-                    description = R.string.reset_timer_description
+                    onConfirm = { comment ->
+                        counterFullScreenViewModel.onResetCounter(comment)
+                        showResetDialog.value = false
+                    }
                 )
             } else if (showDeleteDialog.value) {
                 ConfirmationDialog(
@@ -124,5 +126,49 @@ fun CounterFullView(
             description = R.string.couldnt_load_counter_description,
             confirmText = R.string.okay
         )
+    }
+}
+
+@Composable
+fun RecordRelapse(
+    onDismiss: () -> Unit,
+    onConfirm: (reason: String?) -> Unit
+) {
+    val relapseReason = remember { mutableStateOf("") }
+
+    SobrietyAlertDialog(onDismiss = onDismiss) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(
+                stringResource(id = R.string.record_relapse),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                stringResource(id = R.string.record_relapse_description),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            OutlinedTextField(
+                value = relapseReason.value,
+                onValueChange = { relapseReason.value = it },
+                label = { Text(stringResource(R.string.record_relapse_comment)) },
+                maxLines = 4
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            TextButton(
+                onClick = {
+                    if (relapseReason.value == "") {
+                        onConfirm(null)
+                    } else {
+                        onConfirm(relapseReason.value)
+                    }
+                },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text(stringResource(id = R.string.okay))
+            }
+        }
     }
 }

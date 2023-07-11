@@ -48,9 +48,9 @@ class CounterFullScreenViewModel(
         }
     }
 
-    fun onResetCounter() {
+    fun onResetCounter(comment: String?) {
         val startTimeMillis = Calendar.getInstance().timeInMillis
-        val newRecord = counterRepository.resetCounter(counterId, null)
+        val newRecord = counterRepository.resetCounter(counterId, comment)
         counter.value = counter.value?.copy(
             startTimeMillis = startTimeMillis,
             recordTimeSoberInMillis = newRecord,
