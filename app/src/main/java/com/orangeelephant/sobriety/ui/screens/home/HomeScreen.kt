@@ -49,6 +49,7 @@ fun HomeScreen(
         }
     ) { innerPadding ->
         LazyColumn (
+            contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding() + 80.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(

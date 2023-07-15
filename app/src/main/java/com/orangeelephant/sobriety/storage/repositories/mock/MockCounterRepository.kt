@@ -1,6 +1,7 @@
 package com.orangeelephant.sobriety.storage.repositories.mock
 
 import com.orangeelephant.sobriety.storage.models.Counter
+import com.orangeelephant.sobriety.storage.models.Relapse
 import com.orangeelephant.sobriety.storage.repositories.CounterRepository
 
 class MockCounterRepository: CounterRepository {
@@ -16,7 +17,14 @@ class MockCounterRepository: CounterRepository {
     }
 
     override fun getCounter(id: Int): Counter {
-        return Counter(1, "GREAT", 0L, 0L)
+        return allCounters[0]
+    }
+
+    override fun getRelapsesForCounter(counterId: Int): List<Relapse> {
+        return listOf(
+            Relapse(1, 1, 0L, "Nope"),
+            Relapse(2, 1, 0L, "big sad")
+        )
     }
 
     override fun addCounter(counter: Counter) {
@@ -26,4 +34,6 @@ class MockCounterRepository: CounterRepository {
     override fun resetCounter(id: Int, comment: String?): Long {
         return 0L
     }
+
+    override fun deleteCounter(id: Int) { }
 }

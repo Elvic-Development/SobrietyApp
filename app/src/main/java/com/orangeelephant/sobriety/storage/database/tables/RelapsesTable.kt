@@ -1,10 +1,17 @@
 package com.orangeelephant.sobriety.storage.database.tables
 
 import androidx.core.content.contentValuesOf
+import androidx.core.database.getStringOrNull
+import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.database.helpers.OpenHelper
+import com.orangeelephant.sobriety.storage.models.Relapse
+import net.sqlcipher.Cursor
+import net.sqlcipher.database.SQLiteDatabase
 
 class RelapsesTable(private val openHelper: OpenHelper) {
     companion object {
+        private val TAG = RelapsesTable::class.java.simpleName
+
         const val TABLE_NAME_RELAPSES = "relapses"
 
         private const val COLUMN_ID = "_id"
@@ -33,5 +40,40 @@ class RelapsesTable(private val openHelper: OpenHelper) {
         )
 
         return db.insert(TABLE_NAME_RELAPSES, null, contentValues)
+    }
+
+    fun getRelapsesForCounter(counterId: Int): List<Relapse> {
+        val db: SQLiteDatabase = openHelper.getReadableDatabase()
+        val relapses: ArrayList<Relapse> = ArrayList()
+        val relapseSql = """
+            SELECT * FROM $TABLE_NAME_RELAPSES 
+            WHERE $COLUMN_ASSOCIATED_COUNTER = $counterId
+            """
+
+        val cursor: Cursor = db.rawQuery(relapseSql, null)
+
+        if (cursor.count > 0) {
+            while (cursor.moveToNext()) {
+                val id: Int = cursor.getInt(0)
+                val assocCounter: Int = cursor.getInt(1)
+                val time: Long = cursor.getLong(2)
+                val comment: String? = cursor.getStringOrNull(3)
+
+                relapses.add(Relapse(id, assocCounter, time, comment))
+            }
+        } else {
+            LogEvent.i(TAG, "Counter id $counterId has no associated relapses.")
+        }
+        cursor.close()
+
+        return relapses
+    }
+
+    fun deleteRelapsesForCounter(counterId: Int) {
+        val deleteRecordsSql = """DELETE FROM $TABLE_NAME_RELAPSES 
+                                  WHERE $COLUMN_ASSOCIATED_COUNTER = $counterId"""
+
+        val db: SQLiteDatabase = openHelper.getWritableDatabase()
+        db.execSQL(deleteRecordsSql)
     }
 }

@@ -84,6 +84,12 @@ class CountersTable(private val openHelper: OpenHelper) {
         db.execSQL(sql)
     }
 
+    fun deleteCounterById(counterId: Int) {
+        val deleteRecordSql = """DELETE FROM $TABLE_NAME_COUNTERS 
+                                 WHERE $COLUMN_ID = $counterId"""
+        openHelper.getWritableDatabase().execSQL(deleteRecordSql)
+    }
+
 
     /**
      * used to save a counter object to the database
