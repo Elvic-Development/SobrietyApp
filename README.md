@@ -1,6 +1,6 @@
-# EachDay for Android
+# Lotus for Android
 
-Welcome to EachDay's android repository. EachDay is a mobile application (for Android Oreo and above) to allow users to track what they are trying to be sober from.
+Welcome to Lotus's android repository. EachDay is a mobile application (for Android Oreo and above) to allow users to track what they are trying to be sober from.
 
 ## Features
 - A
