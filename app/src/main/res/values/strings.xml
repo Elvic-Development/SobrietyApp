@@ -53,7 +53,7 @@
     <!-- General -->
     <string name="cancel_button">Cancel</string>
     <string name="submit_button">Submit</string>
-    <string name="create_button">Create</string>
+    <string name="create_button">Add</string>
     <string name="reset_button">Reset</string>
     <string name="understood">I understand</string>
     <string name="loading">Loading</string>
@@ -71,10 +71,13 @@
     <string name="decrypt_fail_current_key_null">Unable to decrypt database as current key is null</string>
 
     <!--- counter creation -->
-    <string name="create_counter">New Sobriety</string>
-    <string name="placeholder_counter_name">What are you staying sober from?</string>
-    <string name="placeholder_counter_reason">Reason for sobriety? (optional)</string>
-    <string name="placeholder_date">When did you become sober?</string>
+    <string name="create_counter">Add Addiction</string>
+    <string name="create_counter_name">What would you like to name this tracker?</string>
+    <string name="create_counter_start_date">When did you being your sobriety?</string>
+    <string name="create_counter_reason">Why is this important to you?</string>
+    <string name="placeholder_counter_name">Name</string>
+    <string name="placeholder_counter_reason">Reason (Optional)</string>
+    <string name="placeholder_date">dd/mm/yyyy</string>
 
     <!--- Drawables -->
     <string name="ic_launcher_background">ic_launcher_background</string>

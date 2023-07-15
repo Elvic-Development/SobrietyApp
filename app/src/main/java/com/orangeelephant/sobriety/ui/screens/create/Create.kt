@@ -1,8 +1,10 @@
 package com.orangeelephant.sobriety.ui.screens.create
 
 import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,6 +17,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,7 +27,9 @@ import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.SinglePhotoPicker
-import java.net.URI
+import java.text.DateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,7 +107,6 @@ fun Creation(
     val datePickerState = rememberDatePickerState()
     var isDialogOpen by remember { mutableStateOf(false) }
 
-
     if (isDialogOpen) {
         DatePickerDialog(
             onDismissRequest = { isDialogOpen = false },
@@ -111,6 +115,8 @@ fun Creation(
                     onClick = {
                         isDialogOpen = false
                         createViewModel.dateVal = datePickerState.selectedDateMillis
+                        createViewModel.dateText = convertMillisecondsToDate(datePickerState.selectedDateMillis)
+
                     }
                 ) {
                     Text(text = context.getString(R.string.submit_button))
@@ -139,104 +145,86 @@ fun Creation(
         Spacer(modifier = Modifier.height(16.dp))
 
         // photo
+
+        if (createViewModel.selectedImageUri == null) {
+            createViewModel.selectedImageUri = Uri.parse("android.resource://$packageName/drawable/image1"
+            )
+        }
+
         SinglePhotoPicker(createViewModel.selectedImageUri)
         { uri ->
             createViewModel.selectedImageUri = uri
         }
 
-        if (createViewModel.selectedImageUri == null) {
-            createViewModel.selectedImageUri = Uri.parse("android.resource://$packageName/${R.drawable.image1}")
-        }
-
         Spacer(modifier = Modifier.height(64.dp))
+
+        // name
+        Text(
+            text = context.getString(R.string.create_counter_name),
+            style = MaterialTheme.typography.titleMedium,
+        )
+
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth(),
+            value = createViewModel.nameText,
+            onValueChange = { createViewModel.nameText = it },
+            label = { Text(stringResource(R.string.placeholder_counter_name)) }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        //date
+        Text(
+            text = context.getString(R.string.create_counter_start_date),
+            style = MaterialTheme.typography.titleMedium,
+        )
 
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .clickable(onClick = { isDialogOpen = true }),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_no_drink),
-                contentDescription = stringResource(id = R.string.ic_no_drink),
-                modifier = Modifier
-                    .scale(0.80f)
-                    .padding(end = 8.dp)
-
-            )
             OutlinedTextField(
-                modifier = Modifier
-                    .weight(1f),
-                value = createViewModel.nameText,
-                onValueChange = { createViewModel.nameText = it },
-                label = { Text(stringResource(R.string.placeholder_counter_name)) }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_calendar),
-                contentDescription = stringResource(id = R.string.ic_calendar),
-                modifier = Modifier
-                    .scale(0.80f)
-                    .padding(end = 8.dp)
-
-            )
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                value = createViewModel.getDateText(),
-                onValueChange = { /*TODO*/ },
+                modifier = Modifier.fillMaxWidth(),
+                value = createViewModel.dateText,
+                onValueChange = { createViewModel.dateText = it.take(10) },
                 label = { Text(context.getString(R.string.placeholder_date)) },
-
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            isDialogOpen = true
-                        },
-                        modifier = Modifier
-                            .scale(0.7f)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_edit_calendar),
-                            contentDescription = stringResource(id = R.string.ic_calendar)
-                        )
-                    }
-                }
+                enabled = false
             )
         }
+
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-           Icon(
-                painter = painterResource(id = R.drawable.ic_notes),
-                contentDescription = stringResource(id = R.string.ic_calendar),
-                modifier = Modifier
-                    .scale(0.80f)
-                    .padding(end = 8.dp)
+        // reason
+        Text(
+            text = context.getString(R.string.create_counter_reason),
+            style = MaterialTheme.typography.titleMedium,
+        )
 
-            )
-            OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                value = createViewModel.reasonText,
-                onValueChange = { createViewModel.reasonText = it },
-                label = { Text(context.getString(R.string.placeholder_counter_reason)) }
-            )
-        }
-
-
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth(),
+            value = createViewModel.reasonText,
+            onValueChange = { createViewModel.reasonText = it },
+            label = { Text(context.getString(R.string.placeholder_counter_reason)) }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
     }
+}
+
+//utcmillisecond to date
+fun convertMillisecondsToDate(utcMilliseconds: Long?): String {
+    if (utcMilliseconds == null) {
+        return ""
+    }
+    val dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault())
+    val date = Date(utcMilliseconds)
+    return dateFormat.format(date)
 }
 
 // create compostable preview

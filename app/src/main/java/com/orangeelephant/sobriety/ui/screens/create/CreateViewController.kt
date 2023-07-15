@@ -23,28 +23,16 @@ import java.util.Locale
 class CreateViewModel() : ViewModel() {
     var nameText: String by mutableStateOf("")
     var dateVal: Long? by mutableStateOf(null)
+    var dateText: String by mutableStateOf("")
     var reasonText: String by mutableStateOf("")
     var selectedImageUri: Uri? by mutableStateOf<Uri?>(null)
 
     var createConditionsMet by mutableStateOf(false)
 
     //getters
-    fun getDateText(): String {
-        return convertMillisecondsToDate(dateVal)
-    }
 
     fun getImageBlob(): ByteArray? {
         return convertUriToBlob(selectedImageUri)
-    }
-
-    //utcmillisecond to date
-    private fun convertMillisecondsToDate(utcMilliseconds: Long?): String {
-        if (utcMilliseconds == null) {
-            return ""
-        }
-        val dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault())
-        val date = Date(utcMilliseconds)
-        return dateFormat.format(date)
     }
 
     //convert uri to byte array
