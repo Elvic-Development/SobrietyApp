@@ -1,10 +1,8 @@
 package com.orangeelephant.sobriety.ui.screens.create
 
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,11 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -136,32 +131,35 @@ fun Creation(
     }
 
     Column(
-        verticalArrangement = Arrangement.Bottom,
+        verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // photo
 
-        if (createViewModel.selectedImageUri == null) {
-            createViewModel.selectedImageUri = Uri.parse("android.resource://$packageName/drawable/image1"
-            )
-        }
+        SinglePhotoPicker(
+            selectedImageUri = createViewModel.selectedImageUri,
+            onImageSelected = { uri ->
+                createViewModel.selectedImageUri.value = uri
+            }
+        )
+    }
 
-        SinglePhotoPicker(createViewModel.selectedImageUri)
-        { uri ->
-            createViewModel.selectedImageUri = uri
-        }
-
-        Spacer(modifier = Modifier.height(64.dp))
+    Column (
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            ) {
 
         // name
         Text(
             text = context.getString(R.string.create_counter_name),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleSmall,
         )
 
         OutlinedTextField(
@@ -172,12 +170,12 @@ fun Creation(
             label = { Text(stringResource(R.string.placeholder_counter_name)) }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         //date
         Text(
             text = context.getString(R.string.create_counter_start_date),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleSmall,
         )
 
         Row(
@@ -191,18 +189,15 @@ fun Creation(
                 value = createViewModel.dateText,
                 onValueChange = { createViewModel.dateText = it.take(10) },
                 label = { Text(context.getString(R.string.placeholder_date)) },
-                enabled = false
             )
         }
 
-
-
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // reason
         Text(
             text = context.getString(R.string.create_counter_reason),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleSmall,
         )
 
         OutlinedTextField(
@@ -213,7 +208,6 @@ fun Creation(
             label = { Text(context.getString(R.string.placeholder_counter_reason)) }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 

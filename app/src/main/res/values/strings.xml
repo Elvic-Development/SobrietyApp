@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Sobriety</string>
-    <string name="source_code_url" translatable="false">https://github.com/orange-elephant/SobrietyApp</string>
+    <string name="app_name">Lotus</string>
+    <string name="source_code_url" translatable="false">https://github.com/Elevic-Development/SobrietyAndroid</string>
 
     <!--Strings app unlocking -->
     <string name="prompt_unlock_button">Tap here to use biometrics</string>
@@ -70,10 +70,16 @@
     <string name="decryption_in_progress">Decrypting database</string>
     <string name="decrypt_fail_current_key_null">Unable to decrypt database as current key is null</string>
 
+    <!-- Image -->
+    <string name="add_image">Add picture</string>
+    <string name="remove_image">Remove</string>
+    <string name="change_image">Change</string>
+    <string name="image_description">This is a user selected image</string>
+
     <!--- counter creation -->
-    <string name="create_counter">Add Addiction</string>
-    <string name="create_counter_name">What would you like to name this tracker?</string>
-    <string name="create_counter_start_date">When did you being your sobriety?</string>
+    <string name="create_counter">Add Tracker</string>
+    <string name="create_counter_name">What would you like to name this??</string>
+    <string name="create_counter_start_date">When did you begin?</string>
     <string name="create_counter_reason">Why is this important to you?</string>
     <string name="placeholder_counter_name">Name</string>
     <string name="placeholder_counter_reason">Reason (Optional)</string>
@@ -85,6 +91,9 @@
     <string name="ic_description">ic_description</string>
     <string name="ic_person">ic_person</string>
     <string name="ic_no_drink">ic_no_drink</string>
+    <string name="ic_add_photo">ic_add_photo</string>
+    <string name="ic_edit">ic_edit</string>
+    <string name="ic_bin">ic_bin</string>
 
     <!-- Theme preferences -->
     <string name="system_default">System default</string>

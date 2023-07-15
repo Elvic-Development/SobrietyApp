@@ -2,6 +2,7 @@ package com.orangeelephant.sobriety.ui.screens.create
 
 import android.content.ContentResolver
 import android.net.Uri
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 
@@ -25,15 +26,13 @@ class CreateViewModel() : ViewModel() {
     var dateVal: Long? by mutableStateOf(null)
     var dateText: String by mutableStateOf("")
     var reasonText: String by mutableStateOf("")
-    var selectedImageUri: Uri? by mutableStateOf<Uri?>(null)
+    val selectedImageUri: MutableState<Uri?> = mutableStateOf(null)
 
     var createConditionsMet by mutableStateOf(false)
 
     //getters
 
-    fun getImageBlob(): ByteArray? {
-        return convertUriToBlob(selectedImageUri)
-    }
+
 
     //convert uri to byte array
     private fun convertUriToBlob(uri: Uri?): ByteArray? {
