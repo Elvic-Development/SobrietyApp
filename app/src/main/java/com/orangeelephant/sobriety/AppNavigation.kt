@@ -25,7 +25,7 @@ sealed class Screen(val route: String) {
 
     // Counter full view
     object CounterFullView: Screen("counterFullView/{counterId}") {
-        fun createRoute(counterId: Int) = "counterFullView/$counterId"
+        fun createRoute(counterId: Long) = "counterFullView/$counterId"
     }
 
     // Add counter screen
@@ -69,11 +69,11 @@ fun NavGraphBuilder.addCounterFullViewNavigation(context: Context, navController
         route = Screen.CounterFullView.route,
         arguments = listOf(
             navArgument("counterId") {
-                type = NavType.IntType
+                type = NavType.LongType
             }
         )
     ) {backStackEntry ->
-        val counterId = backStackEntry.arguments?.getInt("counterId")
+        val counterId = backStackEntry.arguments?.getLong("counterId")
 
         counterId?.let {
             CounterFullView(

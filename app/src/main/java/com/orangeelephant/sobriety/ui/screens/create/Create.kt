@@ -18,13 +18,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.orangeelephant.sobriety.R
+import com.orangeelephant.sobriety.Screen
 import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.ClickableOutlinedTextField
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.CircleImagePicker
 import com.orangeelephant.sobriety.ui.common.convertMillisecondsToDate
-import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository
 import com.orangeelephant.sobriety.storage.repositories.mock.MockCounterRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,9 +99,17 @@ fun CreateScreen(
                 Button(
                     enabled = createConditionsMet,
                     onClick = {
-
-
-
+                        val newCounter = Counter(-1,
+                            createScreenViewModel.nameText,
+                            createScreenViewModel.dateVal!!,
+                            0)
+                        createScreenViewModel.onCreateCounter(
+                            newCounter,
+                            createScreenViewModel.reasonText,
+                            onCounterCreated = {counterId -> navController.navigate(
+                                route = Screen.CounterFullView.createRoute(counterId = counterId)
+                            )}
+                            )
                     },
                     content = {
                         Text(text = stringResource(id = R.string.create_button))

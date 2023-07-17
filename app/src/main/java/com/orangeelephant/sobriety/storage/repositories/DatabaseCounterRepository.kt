@@ -3,7 +3,6 @@ package com.orangeelephant.sobriety.storage.repositories
 import com.orangeelephant.sobriety.ApplicationDependencies
 import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.models.Counter
-import com.orangeelephant.sobriety.storage.models.Reason
 import com.orangeelephant.sobriety.storage.models.Relapse
 import java.util.Calendar
 
@@ -17,17 +16,17 @@ class DatabaseCounterRepository: CounterRepository {
         return ApplicationDependencies.getDatabase().counters.getAllCounters()
     }
 
-    override fun addCounter(counter: Counter, reasons: List<String>): Long {
+    override fun addCounter(counter: Counter, list: List<String>): Long {
         val db = ApplicationDependencies.getDatabase()
         val counterID = db.counters.saveCounterObjectToDb(counter)
-        for (reason in reasons){
-            db.reasons.addReasonForCounter(counterID.toInt(), reason)
+        for (reason in list){
+            db.reasons.addReasonForCounter(counterID, reason)
         }
 
         return counterID
     }
 
-    override fun resetCounter(id: Int, comment: String?): Long {
+    override fun resetCounter(id: Long, comment: String?): Long {
         val currentTime = Calendar.getInstance().timeInMillis
         val currentCounter = getCounter(id)
         val elapsedTime = currentTime - currentCounter.startTimeMillis
@@ -47,7 +46,7 @@ class DatabaseCounterRepository: CounterRepository {
         return recordTime
     }
 
-    override fun deleteCounter(id: Int) {
+    override fun deleteCounter(id: Long) {
         val db = ApplicationDependencies.getDatabase()
 
         //cleanup associated records
@@ -60,11 +59,11 @@ class DatabaseCounterRepository: CounterRepository {
         LogEvent.i(TAG, "Counter: $id and its associated records were deleted.")
     }
 
-    override fun getCounter(id: Int): Counter {
+    override fun getCounter(id: Long): Counter {
         return ApplicationDependencies.getDatabase().counters.getCounterById(id)
     }
 
-    override fun getRelapsesForCounter(counterId: Int): List<Relapse> {
+    override fun getRelapsesForCounter(counterId: Long): List<Relapse> {
         return ApplicationDependencies.getDatabase().relapses.getRelapsesForCounter(counterId)
     }
 }

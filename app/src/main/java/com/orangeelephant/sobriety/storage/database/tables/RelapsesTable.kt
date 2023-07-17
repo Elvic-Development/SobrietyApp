@@ -31,7 +31,7 @@ class RelapsesTable(private val openHelper: OpenHelper) {
             """
     }
 
-    fun recordRelapse(associatedCounterId: Int, time: Long, comment: String?): Long {
+    fun recordRelapse(associatedCounterId: Long, time: Long, comment: String?): Long {
         val db = openHelper.getWritableDatabase()
         val contentValues = contentValuesOf(
             COLUMN_ASSOCIATED_COUNTER to associatedCounterId,
@@ -42,7 +42,7 @@ class RelapsesTable(private val openHelper: OpenHelper) {
         return db.insert(TABLE_NAME_RELAPSES, null, contentValues)
     }
 
-    fun getRelapsesForCounter(counterId: Int): List<Relapse> {
+    fun getRelapsesForCounter(counterId: Long): List<Relapse> {
         val db: SQLiteDatabase = openHelper.getReadableDatabase()
         val relapses: ArrayList<Relapse> = ArrayList()
         val relapseSql = """
@@ -55,7 +55,7 @@ class RelapsesTable(private val openHelper: OpenHelper) {
         if (cursor.count > 0) {
             while (cursor.moveToNext()) {
                 val id: Int = cursor.getInt(0)
-                val assocCounter: Int = cursor.getInt(1)
+                val assocCounter: Long = cursor.getLong(1)
                 val time: Long = cursor.getLong(2)
                 val comment: String? = cursor.getStringOrNull(3)
 
@@ -69,7 +69,7 @@ class RelapsesTable(private val openHelper: OpenHelper) {
         return relapses
     }
 
-    fun deleteRelapsesForCounter(counterId: Int) {
+    fun deleteRelapsesForCounter(counterId: Long) {
         val deleteRecordsSql = """DELETE FROM $TABLE_NAME_RELAPSES 
                                   WHERE $COLUMN_ASSOCIATED_COUNTER = $counterId"""
 

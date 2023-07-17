@@ -4,7 +4,7 @@ import com.orangeelephant.sobriety.util.CounterViewUtil
 import java.util.Calendar
 
 data class Counter(
-    val id: Int,
+    val id: Long,
     val name: String,
     val startTimeMillis: Long,
     val recordTimeSoberInMillis: Long,

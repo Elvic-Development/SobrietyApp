@@ -16,11 +16,11 @@ class MockCounterRepository: CounterRepository {
         return allCounters
     }
 
-    override fun getCounter(id: Int): Counter {
+    override fun getCounter(id: Long): Counter {
         return allCounters[0]
     }
 
-    override fun getRelapsesForCounter(counterId: Int): List<Relapse> {
+    override fun getRelapsesForCounter(counterId: Long): List<Relapse> {
         return listOf(
             Relapse(1, 1, 0L, "Nope"),
             Relapse(2, 1, 0L, "big sad")
@@ -32,9 +32,9 @@ class MockCounterRepository: CounterRepository {
         return 0L
     }
 
-    override fun resetCounter(id: Int, comment: String?): Long {
+    override fun resetCounter(id: Long, comment: String?): Long {
         return 0L
     }
 
-    override fun deleteCounter(id: Int) { }
+    override fun deleteCounter(id: Long) { }
 }
