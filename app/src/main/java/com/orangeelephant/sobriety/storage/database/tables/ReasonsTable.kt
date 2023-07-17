@@ -1,6 +1,7 @@
 package com.orangeelephant.sobriety.storage.database.tables
 
 import androidx.core.content.contentValuesOf
+import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.database.helpers.OpenHelper
 import com.orangeelephant.sobriety.storage.models.Reason
 import net.sqlcipher.Cursor
@@ -9,6 +10,8 @@ import net.sqlcipher.database.SQLiteDatabase
 
 class ReasonsTable(private val openHelper: OpenHelper) {
     companion object {
+        private val TAG = ReasonsTable::class.java.simpleName
+
         private const val TABLE_NAME_REASONS = "reasons"
 
         private const val COLUMN_ID = "_id"
@@ -39,7 +42,7 @@ class ReasonsTable(private val openHelper: OpenHelper) {
                 reasons.add(Reason(reasonId, counterId, sobrietyReason))
             }
         } else {
-            //LogEvent.i(TAG, "Counter id $counterId has no associated sobriety reasons.")
+            LogEvent.i(TAG, "Counter id $counterId has no associated sobriety reasons.")
         }
         reasonsCursor.close()
         return reasons

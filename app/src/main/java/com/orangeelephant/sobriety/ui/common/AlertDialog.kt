@@ -2,6 +2,7 @@ package com.orangeelephant.sobriety.ui.common
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,58 +25,103 @@ import com.orangeelephant.sobriety.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoadingDialog(
-    @StringRes label: Int = R.string.loading
+fun SobrietyAlertDialog (
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit
 ) {
-    AlertDialog(onDismissRequest = { /* Don't dismiss */ }) {
+    AlertDialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = Modifier
                 .wrapContentWidth()
-                .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large
-        ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                Text(stringResource(id = label), modifier = Modifier.align(CenterHorizontally))
-                Spacer(modifier = Modifier.height(10.dp))
-                CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
-            }
+                .wrapContentHeight(unbounded = true),
+            shape = MaterialTheme.shapes.large,
+            content = content
+        )
+    }
+}
+
+@Composable
+fun LoadingDialog(
+    @StringRes label: Int = R.string.loading
+) {
+    SobrietyAlertDialog(onDismiss = { /* Don't dismiss */ }) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(stringResource(id = label), modifier = Modifier.align(CenterHorizontally))
+            Spacer(modifier = Modifier.height(10.dp))
+            CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WarningDialog(
     onDismiss: () -> Unit,
     @StringRes title: Int,
+    @StringRes description: Int,
+    @StringRes confirmText: Int = R.string.understood
+) {
+    GenericAlertDialog(
+        onConfirm = onDismiss,
+        onDismiss = onDismiss,
+        title = title,
+        description = description,
+        confirmText = confirmText,
+        hasCancelButton = false
+    )
+}
+
+@Composable
+fun ConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    @StringRes title: Int,
     @StringRes description: Int
 ) {
-    AlertDialog(onDismissRequest = { onDismiss() }) {
-        Surface(
-            modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large
-        ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                Text(
-                    stringResource(id = title),
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                Text(
-                    stringResource(id = description),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.height(5.dp))
+    GenericAlertDialog(
+        onConfirm = onConfirm,
+        onDismiss = onDismiss,
+        title = title,
+        description = description,
+        hasCancelButton = true
+    )
+}
 
+@Composable
+private fun GenericAlertDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    @StringRes title: Int,
+    @StringRes description: Int,
+    @StringRes confirmText: Int = R.string.okay,
+    hasCancelButton: Boolean
+) {
+    SobrietyAlertDialog(onDismiss = onDismiss) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(
+                stringResource(id = title),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                stringResource(id = description),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+
+            Row(modifier = Modifier.align(Alignment.End)) {
+                if (hasCancelButton) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                    ) {
+                        Text(stringResource(id = R.string.cancel_button))
+                    }
+                }
                 TextButton(
-                    onClick = { onDismiss() },
-                    modifier = Modifier.align(Alignment.End)
+                    onClick = { onConfirm() },
                 ) {
-                    Text(stringResource(id = R.string.understood))
+                    Text(stringResource(id = confirmText))
                 }
             }
         }

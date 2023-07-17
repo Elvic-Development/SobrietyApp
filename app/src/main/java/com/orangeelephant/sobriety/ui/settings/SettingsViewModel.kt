@@ -151,4 +151,10 @@ class SettingsViewModel @Inject constructor(
             }
         }
     }
+
+    fun onCancelBiometricDisable() {
+        viewModelScope.launch {
+            preferences.setBiometricsEnabled(true)
+        }
+    }
 }
