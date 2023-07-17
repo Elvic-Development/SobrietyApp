@@ -78,12 +78,9 @@
 
     <!--- counter creation -->
     <string name="create_counter">Add Tracker</string>
-    <string name="create_counter_name">What would you like to name this??</string>
-    <string name="create_counter_start_date">When did you begin?</string>
-    <string name="create_counter_reason">Why is this important to you?</string>
     <string name="placeholder_counter_name">Name</string>
-    <string name="placeholder_counter_reason">Reason (Optional)</string>
-    <string name="placeholder_date">dd/mm/yyyy</string>
+    <string name="placeholder_counter_reason">Reason (optional)</string>
+    <string name="placeholder_date"> Date (dd/mm/yyyy)</string>
 
     <!--- Drawables -->
     <string name="ic_launcher_background">ic_launcher_background</string>

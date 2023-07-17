@@ -2,6 +2,7 @@ package com.orangeelephant.sobriety.ui.common
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -26,7 +26,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.datastore.preferences.core.stringPreferencesKey
 import coil.compose.AsyncImage
 import com.orangeelephant.sobriety.R
 
@@ -39,7 +38,6 @@ fun SinglePhotoPicker(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri -> onImageSelected(uri) }
     )
-
     val isImageSelected = selectedImageUri.value != null
 
     Column(
@@ -69,13 +67,16 @@ fun SinglePhotoPicker(
 
         Row {
             if (isImageSelected) {
-                TextButton(onClick = { singlePhotoDialog.launch( PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }) {
+                TextButton(onClick = {
+                    changeImage(selectedImageUri, singlePhotoDialog)
+                }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_edit),
                         contentDescription = stringResource(R.string.change_image),
                         modifier = Modifier
                             .size(20.dp)
-                            .padding(end = 4.dp))
+                            .padding(end = 4.dp)
+                    )
 
                     Text(stringResource(R.string.change_image))
                 }
@@ -85,15 +86,42 @@ fun SinglePhotoPicker(
                         contentDescription = stringResource(R.string.remove_image),
                         modifier = Modifier
                             .size(20.dp)
-                            .padding(end = 4.dp))
+                            .padding(end = 4.dp)
+                    )
 
                     Text(stringResource(R.string.remove_image))
                 }
             } else {
-                TextButton(onClick = { singlePhotoDialog.launch( PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }) {
+                TextButton(onClick = {
+                    singlePhotoDialog.launch(
+                        PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                        )
+                    )
+                }) {
                     Text(stringResource(R.string.add_image))
                 }
             }
         }
     }
 }
+fun changeImage(selectedImageUri: MutableState<Uri?> , singlePhotoDialog: ActivityResultLauncher<PickVisualMediaRequest>) {
+    //broken
+    // changes image :tick:
+    // if image isnt changed it should revert to last selected image :cross:
+    // good first issue
+
+    var currentImageUri = selectedImageUri
+
+    singlePhotoDialog.launch(
+        PickVisualMediaRequest(
+            ActivityResultContracts.PickVisualMedia.ImageOnly
+        )
+    )
+
+    if (currentImageUri.value == null) {
+        selectedImageUri.value = currentImageUri.value
+    }
+}
+
+
