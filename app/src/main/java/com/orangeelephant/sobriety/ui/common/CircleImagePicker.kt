@@ -2,7 +2,6 @@ package com.orangeelephant.sobriety.ui.common
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -30,15 +31,24 @@ import coil.compose.AsyncImage
 import com.orangeelephant.sobriety.R
 
 @Composable
-fun SinglePhotoPicker(
+fun CircleImagePicker(
     selectedImageUri: MutableState<Uri?>,
     onImageSelected: (Uri?) -> Unit,
 ) {
-    val singlePhotoDialog = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> onImageSelected(uri) }
-    )
     val isImageSelected = selectedImageUri.value != null
+    var previousUri: Uri? = null
+
+    val singlePhotoDialog = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            previousUri = uri
+            onImageSelected(uri)
+        } else {
+            // No URI is selected, revert to the previous one if available
+            previousUri?.let { onImageSelected(it) }
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -55,20 +65,40 @@ fun SinglePhotoPicker(
                 },
             contentAlignment = Alignment.Center
         ) {
-            AsyncImage(
-                model = selectedImageUri.value,
-                contentDescription = stringResource(R.string.image_description),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
+
+            if (selectedImageUri.value == null){
+                Button(
+                    onClick = { singlePhotoDialog.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                    modifier = Modifier
+                        .size(150.dp)
+                        .clip(CircleShape)
+                ){
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_add_photo),
+                        contentDescription = null,
+                        modifier = Modifier.size(60.dp))
+                }
+            } else{
+                AsyncImage(
+                    model = selectedImageUri.value,
+                    contentDescription = stringResource(R.string.image_description),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
         }
 
         Row {
             if (isImageSelected) {
+
+                // change
                 TextButton(onClick = {
-                    changeImage(selectedImageUri, singlePhotoDialog)
+                    singlePhotoDialog.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
                 }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_edit),
@@ -80,7 +110,10 @@ fun SinglePhotoPicker(
 
                     Text(stringResource(R.string.change_image))
                 }
-                TextButton(onClick = { selectedImageUri.value = null }) {
+
+                // remove
+                TextButton(onClick = { selectedImageUri.value = null })
+                {
                     Icon(
                         painter = painterResource(R.drawable.ic_bin),
                         contentDescription = stringResource(R.string.remove_image),
@@ -88,10 +121,11 @@ fun SinglePhotoPicker(
                             .size(20.dp)
                             .padding(end = 4.dp)
                     )
-
                     Text(stringResource(R.string.remove_image))
                 }
+
             } else {
+                //
                 TextButton(onClick = {
                     singlePhotoDialog.launch(
                         PickVisualMediaRequest(
@@ -103,24 +137,6 @@ fun SinglePhotoPicker(
                 }
             }
         }
-    }
-}
-fun changeImage(selectedImageUri: MutableState<Uri?> , singlePhotoDialog: ActivityResultLauncher<PickVisualMediaRequest>) {
-    //broken
-    // changes image :tick:
-    // if image isnt changed it should revert to last selected image :cross:
-    // good first issue
-
-    var currentImageUri = selectedImageUri
-
-    singlePhotoDialog.launch(
-        PickVisualMediaRequest(
-            ActivityResultContracts.PickVisualMedia.ImageOnly
-        )
-    )
-
-    if (currentImageUri.value == null) {
-        selectedImageUri.value = currentImageUri.value
     }
 }
 

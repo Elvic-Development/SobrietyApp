@@ -21,7 +21,7 @@ import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.ClickableOutlinedTextField
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
-import com.orangeelephant.sobriety.ui.common.SinglePhotoPicker
+import com.orangeelephant.sobriety.ui.common.CircleImagePicker
 import com.orangeelephant.sobriety.ui.common.convertMillisecondsToDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,7 +124,7 @@ fun CreateCounter(
                     .padding(16.dp)
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
-                SinglePhotoPicker(
+                CircleImagePicker(
                     selectedImageUri = createViewModel.selectedImageUri,
                     onImageSelected = { uri -> createViewModel.selectedImageUri.value = uri }
                 )
