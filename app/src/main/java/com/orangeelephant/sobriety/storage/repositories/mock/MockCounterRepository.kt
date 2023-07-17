@@ -27,8 +27,9 @@ class MockCounterRepository: CounterRepository {
         )
     }
 
-    override fun addCounter(counter: Counter) {
+    override fun addCounter(counter: Counter, list: List<String>): Long {
         allCounters.add(counter)
+        return 0L
     }
 
     override fun resetCounter(id: Int, comment: String?): Long {

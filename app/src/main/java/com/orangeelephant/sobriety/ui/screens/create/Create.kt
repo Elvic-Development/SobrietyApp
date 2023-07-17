@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.orangeelephant.sobriety.R
+import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.ClickableOutlinedTextField
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
@@ -98,6 +99,8 @@ fun CreateScreen(
                 Button(
                     enabled = createConditionsMet,
                     onClick = {
+
+
 
                     },
                     content = {

@@ -3,6 +3,7 @@ package com.orangeelephant.sobriety.storage.repositories
 import com.orangeelephant.sobriety.ApplicationDependencies
 import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.models.Counter
+import com.orangeelephant.sobriety.storage.models.Reason
 import com.orangeelephant.sobriety.storage.models.Relapse
 import java.util.Calendar
 
@@ -16,8 +17,14 @@ class DatabaseCounterRepository: CounterRepository {
         return ApplicationDependencies.getDatabase().counters.getAllCounters()
     }
 
-    override fun addCounter(counter: Counter) {
-        ApplicationDependencies.getDatabase().counters.saveCounterObjectToDb(counter)
+    override fun addCounter(counter: Counter, reasons: List<String>): Long {
+        val db = ApplicationDependencies.getDatabase()
+        val counterID = db.counters.saveCounterObjectToDb(counter)
+        for (reason in reasons){
+            db.reasons.addReasonForCounter(counterID.toInt(), reason)
+        }
+
+        return counterID
     }
 
     override fun resetCounter(id: Int, comment: String?): Long {

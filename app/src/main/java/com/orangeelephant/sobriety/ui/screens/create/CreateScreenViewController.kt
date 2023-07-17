@@ -7,20 +7,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.orangeelephant.sobriety.storage.models.Counter
+import com.orangeelephant.sobriety.storage.models.Reason
 import com.orangeelephant.sobriety.storage.repositories.CounterRepository
 import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository
 
 
 class CreateScreenViewModel(
-    counterRepository: CounterRepository = DatabaseCounterRepository()
+    private val counterRepository: CounterRepository = DatabaseCounterRepository()
 ): ViewModel() {
     var nameText: String by mutableStateOf("")
     var dateVal: Long? by mutableStateOf(null)
     var reasonText: String by mutableStateOf("")
     val selectedImageUri: MutableState<Uri?> = mutableStateOf(null)
+    var counterID: Long? by mutableStateOf(null)
 
-    fun addCounter(counter: Counter, counterRepository: CounterRepository){
-
+    fun onCreateCounter(counter: Counter, reason: Reason) {
+        counterID= counterRepository.addCounter(counter)
     }
 
 }
