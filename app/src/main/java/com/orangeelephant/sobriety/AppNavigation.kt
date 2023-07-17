@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullView
-import com.orangeelephant.sobriety.ui.screens.create.CreateCounter
+import com.orangeelephant.sobriety.ui.screens.create.CreateScreen
 import com.orangeelephant.sobriety.ui.screens.unlock.UnlockScreen
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullScreenViewModel
 import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
@@ -88,7 +88,7 @@ fun NavGraphBuilder.addCounterFullViewNavigation(context: Context, navController
 
 fun NavGraphBuilder.addCreateCounterNavigation(navController: NavHostController) {
     composable(route = Screen.AddCounter.route) {
-        CreateCounter(navController = navController)
+        CreateScreen(navController = navController)
     }
 
 }

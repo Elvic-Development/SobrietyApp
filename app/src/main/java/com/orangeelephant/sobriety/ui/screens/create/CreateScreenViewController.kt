@@ -6,13 +6,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.orangeelephant.sobriety.storage.models.Counter
+import com.orangeelephant.sobriety.storage.repositories.CounterRepository
+import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository
 
-class CreateViewModel() : ViewModel() {
+
+class CreateScreenViewModel(
+    counterRepository: CounterRepository = DatabaseCounterRepository()
+): ViewModel() {
     var nameText: String by mutableStateOf("")
     var dateVal: Long? by mutableStateOf(null)
     var reasonText: String by mutableStateOf("")
     val selectedImageUri: MutableState<Uri?> = mutableStateOf(null)
 
+    fun addCounter(counter: Counter, counterRepository: CounterRepository){
+
+    }
 
 }
 //    //convert uri to byte array

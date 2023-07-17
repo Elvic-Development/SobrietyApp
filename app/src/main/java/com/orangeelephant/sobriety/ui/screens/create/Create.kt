@@ -23,15 +23,17 @@ import com.orangeelephant.sobriety.ui.common.ClickableOutlinedTextField
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.CircleImagePicker
 import com.orangeelephant.sobriety.ui.common.convertMillisecondsToDate
+import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository
+import com.orangeelephant.sobriety.storage.repositories.mock.MockCounterRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateCounter(
+fun CreateScreen(
     navController: NavController,
-    createViewModel: CreateViewModel = viewModel()
+    createScreenViewModel: CreateScreenViewModel = viewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val createConditionsMet = (createViewModel.nameText != "") && (createViewModel.dateVal != null)
+    val createConditionsMet = (createScreenViewModel.nameText != "") && (createScreenViewModel.dateVal != null)
     val context = LocalContext.current
     val datePickerState = rememberDatePickerState()
     var isDialogOpen by remember { mutableStateOf(false) }
@@ -45,7 +47,7 @@ fun CreateCounter(
                 Button(
                     onClick = {
                         isDialogOpen = false
-                        createViewModel.dateVal = datePickerState.selectedDateMillis
+                        createScreenViewModel.dateVal = datePickerState.selectedDateMillis
                     }
                 ) {
                     Text(text = context.getString(R.string.submit_button))
@@ -95,7 +97,9 @@ fun CreateCounter(
 
                 Button(
                     enabled = createConditionsMet,
-                    onClick = { },
+                    onClick = {
+
+                    },
                     content = {
                         Text(text = stringResource(id = R.string.create_button))
                     },
@@ -125,8 +129,8 @@ fun CreateCounter(
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
                 CircleImagePicker(
-                    selectedImageUri = createViewModel.selectedImageUri,
-                    onImageSelected = { uri -> createViewModel.selectedImageUri.value = uri }
+                    selectedImageUri = createScreenViewModel.selectedImageUri,
+                    onImageSelected = { uri -> createScreenViewModel.selectedImageUri.value = uri }
                 )
             }
 
@@ -141,8 +145,8 @@ fun CreateCounter(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    value = createViewModel.nameText,
-                    onValueChange = { createViewModel.nameText = it },
+                    value = createScreenViewModel.nameText,
+                    onValueChange = { createScreenViewModel.nameText = it },
                     label = { Text(stringResource(R.string.placeholder_counter_name)) }
                 )
 
@@ -151,7 +155,7 @@ fun CreateCounter(
                 // date
                 ClickableOutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value =  TextFieldValue(convertMillisecondsToDate(createViewModel.dateVal)),
+                    value =  TextFieldValue(convertMillisecondsToDate(createScreenViewModel.dateVal)),
                     onClick = { isDialogOpen = true },
                     label = { Text(context.getString(R.string.placeholder_date)) }
                 )
@@ -162,8 +166,8 @@ fun CreateCounter(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    value = createViewModel.reasonText,
-                    onValueChange = { createViewModel.reasonText = it },
+                    value = createScreenViewModel.reasonText,
+                    onValueChange = { createScreenViewModel.reasonText = it },
                     label = { Text(context.getString(R.string.placeholder_counter_reason)) }
                 )
             }
@@ -175,6 +179,9 @@ fun CreateCounter(
 @Preview
 @Composable
 fun CreateCounterPreview() {
-    CreateCounter(rememberNavController())
+    CreateScreen(
+        navController = rememberNavController(),
+        createScreenViewModel = CreateScreenViewModel(MockCounterRepository())
+    )
 }
 
