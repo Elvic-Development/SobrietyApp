@@ -1,13 +1,18 @@
 package com.orangeelephant.sobriety.ui.screens.create
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -38,6 +43,9 @@ fun CreateScreen(
     val context = LocalContext.current
     val datePickerState = rememberDatePickerState()
     var isDialogOpen by remember { mutableStateOf(false) }
+    var numberOfTextFields by remember { mutableIntStateOf(1) }
+
+    val textValues = remember { mutableStateListOf<TextFieldValue>() }
 
 
     // date picker
@@ -103,14 +111,13 @@ fun CreateScreen(
                             createScreenViewModel.nameText,
                             createScreenViewModel.dateVal!!,
                             0)
-                        createScreenViewModel.onCreateCounter(
-                            newCounter,
-                            createScreenViewModel.reasonText,
-                            onCounterCreated = {counterId -> navController.navigate(
-                                route = Screen.CounterFullView.createRoute(counterId = counterId)
-                            )}
-                            )
-                    },
+                            createScreenViewModel.onCreateCounter(
+                                newCounter,
+                                createScreenViewModel.reasonText,
+                                onCounterCreated = { counterId ->
+                                    navController.navigate(route = Screen.CounterFullView.createRoute(counterId = counterId))
+                                })
+                              },
                     content = {
                         Text(text = stringResource(id = R.string.create_button))
                     },
@@ -148,8 +155,11 @@ fun CreateScreen(
             // user input
             Column (
                 verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .padding(40.dp)
+                    .padding(bottom = 100.dp, top = 40.dp, start = 40.dp, end = 40.dp )
+                    .verticalScroll(rememberScrollState()) // Enable vertical scrolling
+
             ) {
 
                 // name
@@ -173,14 +183,30 @@ fun CreateScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // reason
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    value = createScreenViewModel.reasonText,
-                    onValueChange = { createScreenViewModel.reasonText = it },
-                    label = { Text(context.getString(R.string.placeholder_counter_reason)) }
-                )
+                // reasons
+                if (numberOfTextFields > textValues.size) {
+                    repeat(numberOfTextFields - textValues.size) {
+                        textValues.add(TextFieldValue())
+                    }
+                }
+
+                for (i in 0 until numberOfTextFields) {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = textValues[i],
+                        onValueChange = { textValues[i] = it },
+                        label = { Text(stringResource(R.string.placeholder_counter_reason, i + 1)) }
+
+                    )
+                }
+
+                if (textValues[0] != TextFieldValue("")) {
+                    Button(
+                        onClick = { numberOfTextFields++ }
+                    ) {
+                        Text(text = context.getString(R.string.add_additional_reason))
+                    }
+                }
             }
         }
     }

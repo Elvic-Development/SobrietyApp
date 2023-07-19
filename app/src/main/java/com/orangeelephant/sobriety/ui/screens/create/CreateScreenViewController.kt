@@ -17,6 +17,7 @@ class CreateScreenViewModel(
     var nameText: String by mutableStateOf("")
     var dateVal: Long? by mutableStateOf(null)
     var reasonText: String by mutableStateOf("")
+    var reasonList: List<String> by mutableStateOf(emptyList())
     val selectedImageUri: MutableState<Uri?> = mutableStateOf(null)
 
     fun onCreateCounter(counter: Counter, reason: String, onCounterCreated: (counterID: Long) -> Unit) {
