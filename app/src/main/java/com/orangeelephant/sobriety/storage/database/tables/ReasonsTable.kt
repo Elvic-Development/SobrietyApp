@@ -27,7 +27,7 @@ class ReasonsTable(private val openHelper: OpenHelper) {
             """
     }
 
-    fun getReasonsForCounter(counterId: Int): ArrayList<Reason> {
+    fun getReasonsForCounter(counterId: Long): ArrayList<Reason> {
         val db: SQLiteDatabase = openHelper.getReadableDatabase()
         val reasons: ArrayList<Reason> = ArrayList()
         val reasonSql = "SELECT * FROM reasons WHERE $COLUMN_COUNTER_ID = $counterId"
@@ -36,7 +36,7 @@ class ReasonsTable(private val openHelper: OpenHelper) {
         if (reasonsCursor.count > 0) {
             while (reasonsCursor.moveToNext()) {
                 val reasonId: Int = reasonsCursor.getInt(0)
-                val counterId: Int = reasonsCursor.getInt(1)
+                val counterId: Long = reasonsCursor.getLong(1)
                 val sobrietyReason: String = reasonsCursor.getString(2)
 
                 reasons.add(Reason(reasonId, counterId, sobrietyReason))
@@ -48,7 +48,7 @@ class ReasonsTable(private val openHelper: OpenHelper) {
         return reasons
     }
 
-    fun deleteReasonsForCounterId(counterId: Int) {
+    fun deleteReasonsForCounterId(counterId: Long) {
         val sqlReasonRecords = """DELETE FROM $TABLE_NAME_REASONS 
                                   WHERE $COLUMN_COUNTER_ID = $counterId"""
 
@@ -56,7 +56,7 @@ class ReasonsTable(private val openHelper: OpenHelper) {
         db.execSQL(sqlReasonRecords)
     }
 
-    fun addReasonForCounter(counterId: Int, reason: String) {
+    fun addReasonForCounter(counterId: Long, reason: String) {
         val db: SQLiteDatabase = openHelper.getWritableDatabase()
         val contentValues = contentValuesOf(
             COLUMN_COUNTER_ID to counterId,

@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Sobriety</string>
-    <string name="source_code_url" translatable="false">https://github.com/orange-elephant/SobrietyApp</string>
+    <string name="app_name">Lotus</string>
+    <string name="source_code_url" translatable="false">https://github.com/Elevic-Development/SobrietyAndroid</string>
 
     <!--Strings app unlocking -->
     <string name="prompt_unlock_button">Tap here to use biometrics</string>
@@ -59,7 +59,7 @@
     <!-- General -->
     <string name="cancel_button">Cancel</string>
     <string name="submit_button">Submit</string>
-    <string name="create_button">Create</string>
+    <string name="create_button">Add</string>
     <string name="delete_button">Delete</string>
     <string name="reset_button">Reset</string>
     <string name="understood">I understand</string>
@@ -78,14 +78,18 @@
     <string name="decryption_in_progress">Decrypting database</string>
     <string name="decrypt_fail_current_key_null">Unable to decrypt database as current key is null</string>
 
+    <!-- Image -->
+    <string name="add_image">Add picture</string>
+    <string name="remove_image">Remove</string>
+    <string name="change_image">Change</string>
+    <string name="image_description">This is a user selected image</string>
+
     <!--- counter creation -->
-    <string name="create_counter">Create Counter</string>
-    <string name="create_counter_name">What is the name of your counter?</string>
-    <string name="create_counter_start_date">When did you begin?</string>
-    <string name="create_counter_reason">Why are you doing this?</string>
+    <string name="create_counter">Add Tracker</string>
     <string name="placeholder_counter_name">Name</string>
-    <string name="placeholder_counter_reason">Reason (Optional)</string>
-    <string name="placeholder_date">dd/mm/yyyy</string>
+    <string name="placeholder_counter_reason">Reason %1$d (optional)</string>
+    <string name="placeholder_date"> Date (dd/mm/yyyy)</string>
+    <string name="add_additional_reason"> Add Another Reason</string>
 
     <!-- Counter full screen -->
     <string name="record_relapse">Record a relapse</string>
@@ -100,6 +104,12 @@
     <!--- Drawables -->
     <string name="ic_launcher_background">ic_launcher_background</string>
     <string name="ic_calendar">ic_calendar</string>
+    <string name="ic_description">ic_description</string>
+    <string name="ic_person">ic_person</string>
+    <string name="ic_no_drink">ic_no_drink</string>
+    <string name="ic_add_photo">ic_add_photo</string>
+    <string name="ic_edit">ic_edit</string>
+    <string name="ic_bin">ic_bin</string>
 
     <!-- Theme preferences -->
     <string name="system_default">System default</string>

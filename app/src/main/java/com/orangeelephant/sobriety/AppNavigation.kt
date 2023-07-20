@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullView
-import com.orangeelephant.sobriety.ui.screens.CreateCounter
+import com.orangeelephant.sobriety.ui.screens.create.CreateScreen
 import com.orangeelephant.sobriety.ui.screens.unlock.UnlockScreen
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullScreenViewModel
 import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
@@ -25,7 +25,7 @@ sealed class Screen(val route: String) {
 
     // Counter full view
     object CounterFullView: Screen("counterFullView/{counterId}") {
-        fun createRoute(counterId: Int) = "counterFullView/$counterId"
+        fun createRoute(counterId: Long) = "counterFullView/$counterId"
     }
 
     // Add counter screen
@@ -69,11 +69,11 @@ fun NavGraphBuilder.addCounterFullViewNavigation(context: Context, navController
         route = Screen.CounterFullView.route,
         arguments = listOf(
             navArgument("counterId") {
-                type = NavType.IntType
+                type = NavType.LongType
             }
         )
     ) {backStackEntry ->
-        val counterId = backStackEntry.arguments?.getInt("counterId")
+        val counterId = backStackEntry.arguments?.getLong("counterId")
 
         counterId?.let {
             CounterFullView(
@@ -88,7 +88,7 @@ fun NavGraphBuilder.addCounterFullViewNavigation(context: Context, navController
 
 fun NavGraphBuilder.addCreateCounterNavigation(navController: NavHostController) {
     composable(route = Screen.AddCounter.route) {
-        CreateCounter(navController = navController)
+        CreateScreen(navController = navController)
     }
 
 }

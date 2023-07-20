@@ -29,7 +29,7 @@ class CountersTable(private val openHelper: OpenHelper) {
             """
     }
 
-    fun getCounterById(counterId: Int): Counter {
+    fun getCounterById(counterId: Long): Counter {
         val db: SQLiteDatabase = openHelper.getReadableDatabase()
         val sql = """SELECT * FROM $TABLE_NAME_COUNTERS 
                      WHERE $COLUMN_ID = $counterId
@@ -60,7 +60,7 @@ class CountersTable(private val openHelper: OpenHelper) {
         val counters: ArrayList<Counter> = ArrayList(cursor.count)
 
         while (cursor.moveToNext()) {
-            val id: Int = cursor.getInt(0)
+            val id: Long = cursor.getLong(0)
             val name: String = cursor.getString(1)
             val time: Long = cursor.getLong(2)
             val recordtime: Long = cursor.getLong(3)
@@ -72,7 +72,7 @@ class CountersTable(private val openHelper: OpenHelper) {
         return counters
     }
 
-    fun resetCounterTimer(counterId: Int, recordTime: Long) {
+    fun resetCounterTimer(counterId: Long, recordTime: Long) {
         val timeNow: Long = Date().time
         val sql = """
             UPDATE $TABLE_NAME_COUNTERS
@@ -84,7 +84,7 @@ class CountersTable(private val openHelper: OpenHelper) {
         db.execSQL(sql)
     }
 
-    fun deleteCounterById(counterId: Int) {
+    fun deleteCounterById(counterId: Long) {
         val deleteRecordSql = """DELETE FROM $TABLE_NAME_COUNTERS 
                                  WHERE $COLUMN_ID = $counterId"""
         openHelper.getWritableDatabase().execSQL(deleteRecordSql)

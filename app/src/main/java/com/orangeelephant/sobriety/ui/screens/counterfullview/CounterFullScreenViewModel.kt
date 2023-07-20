@@ -23,7 +23,7 @@ import net.sqlcipher.CursorIndexOutOfBoundsException
 import java.util.Calendar
 
 class CounterFullScreenViewModel(
-    private val counterId: Int,
+    private val counterId: Long,
     private val counterRepository: CounterRepository = DatabaseCounterRepository()
 ): ViewModel() {
     companion object {
