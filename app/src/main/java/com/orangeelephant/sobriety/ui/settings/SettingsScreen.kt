@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.jamal.composeprefs3.ui.GroupHeader
 import com.jamal.composeprefs3.ui.PrefsScreen
 import com.jamal.composeprefs3.ui.prefs.ListPref
@@ -37,7 +36,7 @@ import com.orangeelephant.sobriety.util.dataStore
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SettingsScreen(
-    navController: NavController,
+    popBack: () -> Unit,
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
     val localContext = LocalContext.current as MainActivity
@@ -51,9 +50,7 @@ fun SettingsScreen(
         topBar = { GenericTopAppBar (
             title = R.string.settings,
             scrollBehavior = scrollBehavior,
-            navigationIcon = { BackIcon(onClick = {
-                navController.popBackStack()
-            })}
+            navigationIcon = { BackIcon(onClick = popBack)}
         )},
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
@@ -201,7 +198,6 @@ fun SettingsScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupPassword(
     onDismiss: () -> Unit,

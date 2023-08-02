@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.models.Counter
@@ -77,9 +76,9 @@ class CounterFullScreenViewModel(
         }
     }
 
-    fun onDeleteCounter(context: Context, navController: NavController) {
+    fun onDeleteCounter(context: Context, popBack: () -> Unit) {
         counterRepository.deleteCounter(counterId)
         Toast.makeText(context, R.string.deleted_successfully, Toast.LENGTH_LONG).show()
-        navController.popBackStack()
+        popBack()
     }
 }

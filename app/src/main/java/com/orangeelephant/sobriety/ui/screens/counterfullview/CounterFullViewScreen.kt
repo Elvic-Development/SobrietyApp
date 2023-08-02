@@ -36,8 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.storage.models.Reason
 import com.orangeelephant.sobriety.storage.models.Relapse
@@ -54,7 +52,7 @@ import com.orangeelephant.sobriety.util.CounterViewUtil
 @Composable
 fun CounterFullView(
     counterFullScreenViewModel: CounterFullScreenViewModel,
-    navController: NavController
+    popBack: () -> Unit
 ) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -72,7 +70,7 @@ fun CounterFullView(
                     scrollBehavior = scrollBehavior,
                     navigationIcon = {
                         BackIcon(onClick = {
-                            navController.popBackStack()
+                            popBack()
                         })
                     }
                 )
@@ -166,7 +164,7 @@ fun CounterFullView(
             } else if (showDeleteDialog.value) {
                 ConfirmationDialog(
                     onConfirm = {
-                        counterFullScreenViewModel.onDeleteCounter(context, navController)
+                        counterFullScreenViewModel.onDeleteCounter(context, popBack)
                         showDeleteDialog.value = false
                     },
                     onDismiss = { showDeleteDialog.value = false },
@@ -177,7 +175,7 @@ fun CounterFullView(
         }
     } ?: run {
         WarningDialog(
-            onDismiss = { navController.popBackStack() },
+            onDismiss = { popBack() },
             title = R.string.couldnt_load_counter,
             description = R.string.couldnt_load_counter_description,
             confirmText = R.string.okay
@@ -274,6 +272,6 @@ fun ReasonView(reason: Reason) {
 fun CounterFullPreview() {
     CounterFullView(
         counterFullScreenViewModel = CounterFullScreenViewModel(1, MockCounterRepository()),
-        navController = rememberNavController()
+        popBack = {}
     )
 }
