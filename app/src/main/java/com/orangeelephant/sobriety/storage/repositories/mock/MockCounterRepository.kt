@@ -1,6 +1,7 @@
 package com.orangeelephant.sobriety.storage.repositories.mock
 
 import com.orangeelephant.sobriety.storage.models.Counter
+import com.orangeelephant.sobriety.storage.models.Reason
 import com.orangeelephant.sobriety.storage.models.Relapse
 import com.orangeelephant.sobriety.storage.repositories.CounterRepository
 
@@ -24,6 +25,13 @@ class MockCounterRepository: CounterRepository {
         return listOf(
             Relapse(1, 1, 0L, "Nope"),
             Relapse(2, 1, 0L, "big sad")
+        )
+    }
+
+    override fun getReasonsForCounter(counterId: Int): List<Reason> {
+        return listOf(
+            Reason(0, 1, "Yo"),
+            Reason(2, 1, "hdabsfkjfh")
         )
     }
 

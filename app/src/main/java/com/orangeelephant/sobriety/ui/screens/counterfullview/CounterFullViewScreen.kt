@@ -1,9 +1,11 @@
 package com.orangeelephant.sobriety.ui.screens.counterfullview
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
@@ -30,11 +33,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.orangeelephant.sobriety.R
+import com.orangeelephant.sobriety.storage.models.Reason
 import com.orangeelephant.sobriety.storage.models.Relapse
 import com.orangeelephant.sobriety.storage.repositories.mock.MockCounterRepository
 import com.orangeelephant.sobriety.ui.common.BackIcon
@@ -43,6 +48,7 @@ import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.MileStoneProgressTracker
 import com.orangeelephant.sobriety.ui.common.SobrietyAlertDialog
 import com.orangeelephant.sobriety.ui.common.WarningDialog
+import com.orangeelephant.sobriety.util.CounterViewUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,6 +81,9 @@ fun CounterFullView(
             floatingActionButton = {
                 Row {
                     OutlinedButton(
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = MaterialTheme.colorScheme.background
+                        ),
                         onClick = { showDeleteDialog.value = true },
                         content = {
                             Text(text = stringResource(id = R.string.delete_button))
@@ -97,27 +106,50 @@ fun CounterFullView(
             },
             floatingActionButtonPosition = FabPosition.Center
         ) { innerPadding ->
-            Column(
+            LazyColumn (
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                MileStoneProgressTracker(
-                    counterFullScreenViewModel.duration.value
+                    .padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
+                    .padding(horizontal = 20.dp),
+                horizontalAlignment = Alignment.Start,
+                contentPadding = PaddingValues(
+                    bottom = innerPadding.calculateBottomPadding() + 100.dp
                 )
-                Spacer(modifier = Modifier.height(20.dp))
-
-                LazyColumn (
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            top = innerPadding.calculateTopPadding(),
-                            bottom = 0.dp
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Column (
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        MileStoneProgressTracker(
+                            counterFullScreenViewModel.duration.value
                         )
-                ) {
-                    items(counterFullScreenViewModel.relapses, key = { it.id }) { relapse ->
+                    }
+                    Spacer(modifier = Modifier.height(40.dp))
+                }
+
+                if (counterFullScreenViewModel.reasons.size > 0) {
+                    item {
+                        Text(
+                            stringResource(id = R.string.associated_reasons),
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    }
+                    items(counterFullScreenViewModel.reasons) { reason ->
+                        ReasonView(reason)
+                    }
+                }
+
+                if (counterFullScreenViewModel.relapses.size > 0) {
+                    item {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(
+                            stringResource(id = R.string.past_recorded_relapses),
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    }
+                    items(counterFullScreenViewModel.relapses) { relapse ->
                         RelapseView(relapse)
                     }
                 }
@@ -199,14 +231,41 @@ fun RecordRelapse(
 
 @Composable
 fun RelapseView(relapse: Relapse) {
+    Spacer(modifier = Modifier.height(5.dp))
     Row {
-        Text("${relapse.time}")
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            CounterViewUtil.convertMillisecondsToDate(relapse.time),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.width(70.dp)
+        )
 
+        Spacer(modifier = Modifier.width(10.dp))
         relapse.comment?.let {
-            Text(it)
+            Text(
+                it,
+                style = MaterialTheme.typography.bodyLarge,
+            )
         } ?: run {
-            Text("No comment", color = MaterialTheme.colorScheme.outline)
+            Text(
+                "No comment",
+                color = MaterialTheme.colorScheme.outline,
+                style = MaterialTheme.typography.bodyLarge,
+            )
         }
+    }
+}
+
+@Composable
+fun ReasonView(reason: Reason) {
+    Spacer(modifier = Modifier.height(5.dp))
+    Row {
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            reason.reason,
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }
 

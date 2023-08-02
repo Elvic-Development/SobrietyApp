@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Sobriety</string>
+    <string name="app_name">Lotus</string>
+    <string name="app_name_extended">Lotus: Sobriety Tracker</string>
     <string name="source_code_url" translatable="false">https://github.com/orange-elephant/SobrietyApp</string>
 
     <!--Strings app unlocking -->
@@ -96,6 +97,8 @@
     <string name="deleted_successfully">Counter deleted successfully</string>
     <string name="couldnt_load_counter">Failed to load counter</string>
     <string name="couldnt_load_counter_description">Failed to find a counter with this ID in the database</string>
+    <string name="past_recorded_relapses">Recorded relapses</string>
+    <string name="associated_reasons">Reasons for sobriety</string>
 
     <!--- Drawables -->
     <string name="ic_launcher_background">ic_launcher_background</string>

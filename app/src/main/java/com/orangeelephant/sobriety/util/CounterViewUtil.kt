@@ -2,7 +2,10 @@ package com.orangeelephant.sobriety.util
 
 import com.orangeelephant.sobriety.ApplicationDependencies
 import com.orangeelephant.sobriety.R
+import java.text.DateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 data class Duration (
     val years: Long = 0,
@@ -60,5 +63,14 @@ object CounterViewUtil {
             minutes = elapsedMinutes,
             seconds = elapsedSeconds
         )
+    }
+
+    fun convertMillisecondsToDate(utcMilliseconds: Long?): String {
+        if (utcMilliseconds == null) {
+            return ""
+        }
+        val dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault())
+        val date = Date(utcMilliseconds)
+        return dateFormat.format(date)
     }
 }

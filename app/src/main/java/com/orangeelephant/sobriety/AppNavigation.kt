@@ -17,21 +17,12 @@ import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
 import com.orangeelephant.sobriety.ui.settings.SettingsScreen
 
 sealed class Screen(val route: String) {
-    // Unlock screen
     object Unlock: Screen("unlock")
-
-    // Home screen
     object Home: Screen("home")
-
-    // Counter full view
     object CounterFullView: Screen("counterFullView/{counterId}") {
         fun createRoute(counterId: Int) = "counterFullView/$counterId"
     }
-
-    // Add counter screen
     object AddCounter: Screen("addCounter")
-
-    // Settings screen
     object Settings: Screen("settings")
 }
 

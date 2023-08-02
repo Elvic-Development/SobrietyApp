@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.models.Counter
+import com.orangeelephant.sobriety.storage.models.Reason
 import com.orangeelephant.sobriety.storage.models.Relapse
 import com.orangeelephant.sobriety.storage.repositories.CounterRepository
 import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository
@@ -32,6 +33,7 @@ class CounterFullScreenViewModel(
 
     val duration: MutableState<Duration> = mutableStateOf(Duration())
     val counter: MutableState<Counter?> = mutableStateOf(null)
+    val reasons: SnapshotStateList<Reason> = mutableStateListOf()
     val relapses: SnapshotStateList<Relapse> = mutableStateListOf()
 
     init {
@@ -45,6 +47,9 @@ class CounterFullScreenViewModel(
         counter.value?.let {
             relapses.apply {
                 addAll(counterRepository.getRelapsesForCounter(it.id))
+            }
+            reasons.apply {
+                addAll(counterRepository.getReasonsForCounter(it.id))
             }
         }
 
