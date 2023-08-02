@@ -21,6 +21,10 @@ class DatabaseCounterRepository: CounterRepository {
         ApplicationDependencies.getDatabase().counters.saveCounterObjectToDb(counter)
     }
 
+    override fun addReasonForCounter(counterId: Int, reason: String) {
+        ApplicationDependencies.getDatabase().reasons.addReasonForCounter(counterId, reason)
+    }
+
     override fun resetCounter(id: Int, comment: String?): Long {
         val currentTime = Calendar.getInstance().timeInMillis
         val currentCounter = getCounter(id)

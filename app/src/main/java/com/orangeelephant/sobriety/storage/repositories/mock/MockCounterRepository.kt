@@ -39,6 +39,10 @@ class MockCounterRepository: CounterRepository {
         allCounters.add(counter)
     }
 
+    override fun addReasonForCounter(counterId: Int, reason: String) {
+
+    }
+
     override fun resetCounter(id: Int, comment: String?): Long {
         return 0L
     }

@@ -81,4 +81,12 @@ class CounterFullScreenViewModel(
         Toast.makeText(context, R.string.deleted_successfully, Toast.LENGTH_LONG).show()
         popBack()
     }
+
+    fun onAddReason(reason: String) {
+        counterRepository.addReasonForCounter(counterId, reason)
+
+        reasons.apply {
+            add(Reason(-1, counterId, reason))
+        }
+    }
 }

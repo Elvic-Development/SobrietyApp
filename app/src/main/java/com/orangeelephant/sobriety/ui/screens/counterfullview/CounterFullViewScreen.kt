@@ -13,9 +13,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -26,6 +32,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -59,6 +66,8 @@ fun CounterFullView(
 
     val showResetDialog = remember { mutableStateOf(false) }
     val showDeleteDialog = remember { mutableStateOf(false) }
+    val showAddReasonDialog = remember { mutableStateOf(false) }
+    val menuExpanded = remember { mutableStateOf(false) }
 
     val counter = remember { counterFullScreenViewModel.counter }
 
@@ -72,7 +81,11 @@ fun CounterFullView(
                         BackIcon(onClick = {
                             popBack()
                         })
-                    }
+                    },
+                    actions = { DropdownOptionsMenu(
+                        menuExpanded,
+                        showAddReasonDialog
+                    )}
                 )
             },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -171,6 +184,14 @@ fun CounterFullView(
                     title = R.string.delete_counter,
                     description = R.string.delete_counter_description
                 )
+            } else if (showAddReasonDialog.value) {
+                AddReason(
+                    onDismiss = { showAddReasonDialog.value = false },
+                    onAddReason = { reason ->
+                        counterFullScreenViewModel.onAddReason(reason)
+                        showAddReasonDialog.value = false
+                    }
+                )
             }
         }
     } ?: run {
@@ -180,6 +201,68 @@ fun CounterFullView(
             description = R.string.couldnt_load_counter_description,
             confirmText = R.string.okay
         )
+    }
+}
+
+@Composable
+fun DropdownOptionsMenu(
+    menuExpanded: MutableState<Boolean>,
+    showAddReason: MutableState<Boolean>
+) {
+    IconButton(onClick = {
+        menuExpanded.value = !menuExpanded.value
+    }) {
+        Icon(
+            imageVector = Icons.Filled.MoreVert,
+            contentDescription = stringResource(id = R.string.more_options)
+        )
+    }
+    DropdownMenu(
+        expanded = menuExpanded.value,
+        onDismissRequest = { menuExpanded.value = false }
+    ) {
+        DropdownMenuItem(
+            text = {
+                Text(stringResource(id = R.string.add_a_reason))
+            },
+            onClick = {
+                showAddReason.value = true
+                menuExpanded.value = false
+            },
+        )
+    }
+}
+
+@Composable
+fun AddReason(
+    onDismiss: () -> Unit,
+    onAddReason: (newReason: String) -> Unit
+) {
+    val newReason = remember { mutableStateOf("") }
+
+    SobrietyAlertDialog(onDismiss = onDismiss) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(
+                stringResource(id = R.string.record_relapse),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            OutlinedTextField(
+                value = newReason.value,
+                onValueChange = { newReason.value = it },
+                label = { Text(stringResource(R.string.reason_input)) },
+                maxLines = 4
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            TextButton(
+                enabled = newReason.value != "",
+                onClick = { onAddReason(newReason.value) },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text(stringResource(id = R.string.okay))
+            }
+        }
     }
 }
 
