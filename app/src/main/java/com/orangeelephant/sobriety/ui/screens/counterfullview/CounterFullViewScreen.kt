@@ -159,6 +159,19 @@ fun CounterFullView(
                             stringResource(id = R.string.past_recorded_relapses),
                             style = MaterialTheme.typography.headlineMedium
                         )
+                        // show initial start time before relapses
+                        counterFullScreenViewModel.counter.value?.let {
+                            if (it.initialStartTime != null) {
+                                RelapseView(
+                                    relapse = Relapse(
+                                        -1,
+                                        it.id,
+                                        it.initialStartTime,
+                                        stringResource(id = R.string.initial_start_time)
+                                    )
+                                )
+                            }
+                        }
                     }
                     items(counterFullScreenViewModel.relapses) { relapse ->
                         RelapseView(relapse)

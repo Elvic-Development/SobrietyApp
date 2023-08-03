@@ -1,6 +1,7 @@
 package com.orangeelephant.sobriety.storage.database.tables
 
 import androidx.core.content.contentValuesOf
+import androidx.core.database.getLongOrNull
 import com.orangeelephant.sobriety.storage.database.helpers.OpenHelper
 import com.orangeelephant.sobriety.storage.models.Counter
 import net.sqlcipher.Cursor
@@ -55,7 +56,7 @@ class CountersTable(private val openHelper: OpenHelper) {
         val name: String = cursor.getString(1)
         val time: Long = cursor.getLong(2)
         val recordtime: Long = cursor.getLong(3)
-        val initialStartTime: Long = cursor.getLong(4)
+        val initialStartTime: Long? = cursor.getLongOrNull(4)
         val creationTimestamp: Long = cursor.getLong(5)
         cursor.close()
 
@@ -84,7 +85,7 @@ class CountersTable(private val openHelper: OpenHelper) {
             val name: String = cursor.getString(1)
             val time: Long = cursor.getLong(2)
             val recordtime: Long = cursor.getLong(3)
-            val initialStartTime: Long = cursor.getLong(4)
+            val initialStartTime: Long? = cursor.getLongOrNull(4)
             val creationTimestamp: Long = cursor.getLong(5)
 
             counters.add(Counter(id, name, time, recordtime, initialStartTime, creationTimestamp))

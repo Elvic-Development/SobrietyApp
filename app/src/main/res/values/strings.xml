@@ -102,6 +102,7 @@
     <string name="associated_reasons">Reasons for sobriety</string>
     <string name="add_a_reason">Add a reason</string>
     <string name="reason_input">Reason</string>
+    <string name="initial_start_time">Initial start time</string>
 
     <!--- Drawables -->
     <string name="ic_launcher_background">ic_launcher_background</string>

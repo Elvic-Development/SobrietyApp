@@ -8,7 +8,7 @@ data class Counter(
     val name: String,
     val startTimeMillis: Long,
     val recordTimeSoberInMillis: Long,
-    val initialStartTime: Long,
+    val initialStartTime: Long?,
     val creationTime: Long,
     val currentDurationString: String = CounterViewUtil.formatDurationAsString(
         Calendar.getInstance().timeInMillis - startTimeMillis
