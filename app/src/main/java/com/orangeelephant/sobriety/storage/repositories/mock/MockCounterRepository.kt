@@ -7,10 +7,10 @@ import com.orangeelephant.sobriety.storage.repositories.CounterRepository
 
 class MockCounterRepository: CounterRepository {
     private val allCounters = mutableListOf(
-        Counter(1, "GREAT", 0L, 0L, "Duration string here"),
-        Counter(2, "Bad", 0L, 0L, "Duration string here"),
-        Counter(3, "afdsgag", 0L, 0L, "Duration string here"),
-        Counter(4, "afdgd", 0L, 0L, "Duration string here"),
+        Counter(1, "GREAT", 0L, 0L, 0L, 0L,  "Duration string here"),
+        Counter(2, "Bad", 0L, 0L, 0L, 0L, "Duration string here"),
+        Counter(3, "afdsgag", 0L, 0L, 0L, 0L, "Duration string here"),
+        Counter(4, "afdgd", 0L, 0L, 0L, 0L, "Duration string here"),
     )
 
     override fun getAllCounters(): List<Counter> {
