@@ -26,6 +26,10 @@ class SobrietyDatabase(context: Context) {
         encryptPlaintextDb(context, originalFile, newKey, version)
     }
 
+    fun changeKey(oldKey: ByteArray, newKey: ByteArray) {
+        openHelper.reKey(String(oldKey), String(newKey))
+    }
+
     fun decrypt(context: Context, oldKey: ByteArray) {
         val database = openHelper.getReadableDatabase(oldKey)
         val originalFile = File(database.path)

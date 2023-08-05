@@ -44,6 +44,8 @@
     <string name="biometric_unlock_description">Require unlocking the app with device screenlock</string>
     <string name="encrypt_db_with_password">Encrypt database with password</string>
     <string name="encrypt_db_with_password_summary">The database will be encrypted using this password</string>
+    <string name="change_db_password">Change database password</string>
+    <string name="change_db_password_summary">The database will be re-encrypted using the new password</string>
     <string name="decrypt_db">Disable password unlock</string>
     <string name="decrypt_db_summary">The database will be decrypted if you do this</string>
     <string name="about">About</string>
@@ -74,7 +76,11 @@
     <string name="create_password_dialog">Create password</string>
     <string name="create_password_description">The database will be encrypted using this password, if you forget it then all data will be inaccessible.</string>
     <string name="encrypt_database">Encrypt database</string>
+    <string name="change_password_dialog">Change password</string>
+    <string name="change_password_description">The database will be re-encrypted using this password, if you forget it then all data will be inaccessible.</string>
+    <string name="confirm_change_password">Confirm change</string>
     <string name="password">Password</string>
+    <string name="new_password">New password</string>
     <string name="encrypted_successfully">Database has been encrypted successfully</string>
     <string name="decrypted_successfully">Database has been decrypted successfully</string>
     <string name="encryption_in_progress">Encrypting database</string>

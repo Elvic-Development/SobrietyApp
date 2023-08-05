@@ -3,11 +3,14 @@ package com.orangeelephant.sobriety.ui.settings
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -42,9 +45,10 @@ fun SettingsScreen(
     val localContext = LocalContext.current as MainActivity
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    val showCreatePassword = remember { mutableStateOf(false) }
-    val showDisableBioConfirmation = remember { mutableStateOf(false) }
-    val showDecryptConfirmation = remember { mutableStateOf(false) }
+    var showCreatePassword by remember { mutableStateOf(false) }
+    var showChangePassword by remember { mutableStateOf(false) }
+    var showDisableBioConfirmation by remember { mutableStateOf(false) }
+    var showDecryptConfirmation by remember { mutableStateOf(false) }
 
     Scaffold (
         topBar = { GenericTopAppBar (
@@ -103,22 +107,28 @@ fun SettingsScreen(
                             if (newValue) {
                                 settingsViewModel.onToggleFingerprint(localContext, true)
                             } else {
-                                showDisableBioConfirmation.value = true
+                                showDisableBioConfirmation = true
                             }
                         }
                     )
                     if (settingsViewModel.encryptedWithPassword.value) {
                         TextPref(
+                            title = stringResource(id = R.string.change_db_password),
+                            summary = stringResource(id = R.string.change_db_password_summary),
+                            onClick = { showChangePassword = true },
+                            enabled = true
+                        )
+                        TextPref(
                             title = stringResource(id = R.string.decrypt_db),
                             summary = stringResource(id = R.string.decrypt_db_summary),
-                            onClick = { showDecryptConfirmation.value = true },
+                            onClick = { showDecryptConfirmation = true },
                             enabled = true
                         )
                     } else {
                         TextPref(
                             title = stringResource(id = R.string.encrypt_db_with_password),
                             summary = stringResource(id = R.string.encrypt_db_with_password_summary),
-                            onClick = { showCreatePassword.value = true },
+                            onClick = { showCreatePassword = true },
                             enabled = true
                         )
                     }
@@ -150,13 +160,30 @@ fun SettingsScreen(
             }
         }
 
-        if (showCreatePassword.value) {
-            SetupPassword(
-                onDismiss = { showCreatePassword.value = false },
+        if (showCreatePassword) {
+            ManagePasswordDialog(
+                onDismiss = { showCreatePassword = false },
                 onConfirm = { password -> 
-                    settingsViewModel.onEncryptWithPassword(localContext, password)
-                    showCreatePassword.value = false
-                }
+                    settingsViewModel.onSetPassword(localContext, password)
+                    showCreatePassword = false
+                },
+                title = R.string.create_password_dialog,
+                description = R.string.create_password_description,
+                btnPosLabel = R.string.encrypt_database
+            )
+        }
+
+        if (showChangePassword) {
+            ManagePasswordDialog(
+                onDismiss = { showChangePassword = false },
+                onConfirm = { password ->
+                    settingsViewModel.onSetPassword(localContext, password)
+                    showChangePassword = false
+                },
+                title = R.string.change_password_dialog,
+                description = R.string.change_password_description,
+                btnPosLabel = R.string.confirm_change_password,
+                inputBoxLabel = R.string.new_password
             )
         }
         
@@ -169,27 +196,27 @@ fun SettingsScreen(
             LoadingDialog(label = message)
         }
 
-        if (showDisableBioConfirmation.value) {
+        if (showDisableBioConfirmation) {
             ConfirmationDialog(
                 onConfirm = {
                     settingsViewModel.onToggleFingerprint(localContext, false)
-                    showDisableBioConfirmation.value = false
+                    showDisableBioConfirmation = false
                 },
                 onDismiss = {
                     settingsViewModel.onCancelBiometricDisable()
-                    showDisableBioConfirmation.value = false
+                    showDisableBioConfirmation = false
                 },
                 title = R.string.disable_biometrics,
                 description = R.string.disable_biometrics_description
             )
-        } else if (showDecryptConfirmation.value) {
+        } else if (showDecryptConfirmation) {
             ConfirmationDialog(
                 onConfirm = {
                     settingsViewModel.onDecrypt(localContext)
-                    showDecryptConfirmation.value = false
+                    showDecryptConfirmation = false
                 },
                 onDismiss = {
-                    showDecryptConfirmation.value = false
+                    showDecryptConfirmation = false
                 },
                 title = R.string.disable_encryption,
                 description = R.string.disable_encryption_description
@@ -199,27 +226,34 @@ fun SettingsScreen(
 }
 
 @Composable
-fun SetupPassword(
+fun ManagePasswordDialog(
     onDismiss: () -> Unit,
-    onConfirm: (password: String) -> Unit
+    onConfirm: (password: String) -> Unit,
+    @StringRes title: Int,
+    @StringRes description: Int,
+    @StringRes btnPosLabel: Int,
+    @StringRes inputBoxLabel: Int = R.string.password
 ) {
     val password = remember { mutableStateOf("") }
 
     SobrietyAlertDialog(onDismiss = onDismiss) {
         Column(modifier = Modifier.padding(20.dp)) {
             Text(
-                stringResource(id = R.string.create_password_dialog),
+                stringResource(id = title),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                stringResource(id = R.string.create_password_description),
+                stringResource(id = description),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(5.dp))
-            PasswordInputField(password = password) {
+            PasswordInputField(
+                password = password,
+                label = inputBoxLabel
+            ) {
                 onConfirm(password.value)
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -228,7 +262,7 @@ fun SetupPassword(
                 enabled = password.value != "",
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text(stringResource(id = R.string.encrypt_database))
+                Text(stringResource(id = btnPosLabel))
             }
         }
     }

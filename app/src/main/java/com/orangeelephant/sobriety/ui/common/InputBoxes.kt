@@ -1,5 +1,6 @@
 package com.orangeelephant.sobriety.ui.common
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,12 +17,13 @@ import com.orangeelephant.sobriety.R
 @Composable
 fun PasswordInputField(
     password: MutableState<String>,
+    @StringRes label: Int = R.string.password,
     onDone: KeyboardActionScope.() -> Unit
 ) {
     OutlinedTextField(
         value = password.value,
         onValueChange = { password.value = it },
-        label = { Text(stringResource(R.string.password)) },
+        label = { Text(stringResource(label)) },
         singleLine = true,
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
