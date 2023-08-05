@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -33,8 +32,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -49,6 +50,7 @@ import com.orangeelephant.sobriety.storage.models.Relapse
 import com.orangeelephant.sobriety.storage.repositories.mock.MockCounterRepository
 import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.ConfirmationDialog
+import com.orangeelephant.sobriety.ui.common.ExpandableList
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.MileStoneProgressTracker
 import com.orangeelephant.sobriety.ui.common.SobrietyAlertDialog
@@ -64,14 +66,13 @@ fun CounterFullView(
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    val showResetDialog = remember { mutableStateOf(false) }
-    val showDeleteDialog = remember { mutableStateOf(false) }
     val showAddReasonDialog = remember { mutableStateOf(false) }
-    val menuExpanded = remember { mutableStateOf(false) }
 
-    val counter = remember { counterFullScreenViewModel.counter }
+    var showResetDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    val counter by remember { counterFullScreenViewModel.counter }
 
-    counter.value?.let {
+    counter?.let {
         Scaffold(
             topBar = {
                 GenericTopAppBar(
@@ -83,7 +84,6 @@ fun CounterFullView(
                         })
                     },
                     actions = { DropdownOptionsMenu(
-                        menuExpanded,
                         showAddReasonDialog
                     )}
                 )
@@ -95,7 +95,7 @@ fun CounterFullView(
                         colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = MaterialTheme.colorScheme.background
                         ),
-                        onClick = { showDeleteDialog.value = true },
+                        onClick = { showDeleteDialog = true },
                         content = {
                             Text(text = stringResource(id = R.string.delete_button))
                         },
@@ -105,7 +105,7 @@ fun CounterFullView(
                     )
                     Spacer(modifier = Modifier.width(30.dp))
                     Button(
-                        onClick = { showResetDialog.value = true },
+                        onClick = { showResetDialog = true },
                         content = {
                             Text(text = stringResource(id = R.string.reset_button))
                         },
@@ -142,58 +142,43 @@ fun CounterFullView(
 
                 if (counterFullScreenViewModel.reasons.size > 0) {
                     item {
-                        Text(
-                            stringResource(id = R.string.associated_reasons),
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-                    }
-                    items(counterFullScreenViewModel.reasons) { reason ->
-                        ReasonView(reason)
+                        ExpandableList (
+                            R.string.associated_reasons,
+                            counterFullScreenViewModel.reasons
+                        ) { reason ->
+                            ReasonView(reason)
+                        }
                     }
                 }
 
                 if (counterFullScreenViewModel.relapses.size > 0) {
                     item {
                         Spacer(modifier = Modifier.height(20.dp))
-                        Text(
-                            stringResource(id = R.string.past_recorded_relapses),
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-                        // show initial start time before relapses
-                        counterFullScreenViewModel.counter.value?.let {
-                            if (it.initialStartTime != null) {
-                                RelapseView(
-                                    relapse = Relapse(
-                                        -1,
-                                        it.id,
-                                        it.initialStartTime,
-                                        stringResource(id = R.string.initial_start_time)
-                                    )
-                                )
-                            }
+                        ExpandableList(
+                            title = R.string.past_recorded_relapses,
+                            items = counterFullScreenViewModel.relapses)
+                        { relapse ->
+                            RelapseView(relapse)
                         }
-                    }
-                    items(counterFullScreenViewModel.relapses) { relapse ->
-                        RelapseView(relapse)
                     }
                 }
             }
 
-            if (showResetDialog.value) {
+            if (showResetDialog) {
                 RecordRelapse(
-                    onDismiss = { showResetDialog.value = false },
+                    onDismiss = { showResetDialog = false },
                     onConfirm = { comment ->
                         counterFullScreenViewModel.onResetCounter(comment)
-                        showResetDialog.value = false
+                        showResetDialog = false
                     }
                 )
-            } else if (showDeleteDialog.value) {
+            } else if (showDeleteDialog) {
                 ConfirmationDialog(
                     onConfirm = {
                         counterFullScreenViewModel.onDeleteCounter(context, popBack)
-                        showDeleteDialog.value = false
+                        showDeleteDialog = false
                     },
-                    onDismiss = { showDeleteDialog.value = false },
+                    onDismiss = { showDeleteDialog = false },
                     title = R.string.delete_counter,
                     description = R.string.delete_counter_description
                 )
@@ -219,11 +204,12 @@ fun CounterFullView(
 
 @Composable
 fun DropdownOptionsMenu(
-    menuExpanded: MutableState<Boolean>,
     showAddReason: MutableState<Boolean>
 ) {
+    var menuExpanded by remember { mutableStateOf(false) }
+
     IconButton(onClick = {
-        menuExpanded.value = !menuExpanded.value
+        menuExpanded = !menuExpanded
     }) {
         Icon(
             imageVector = Icons.Filled.MoreVert,
@@ -231,8 +217,8 @@ fun DropdownOptionsMenu(
         )
     }
     DropdownMenu(
-        expanded = menuExpanded.value,
-        onDismissRequest = { menuExpanded.value = false }
+        expanded = menuExpanded,
+        onDismissRequest = { menuExpanded = false }
     ) {
         DropdownMenuItem(
             text = {
@@ -240,7 +226,7 @@ fun DropdownOptionsMenu(
             },
             onClick = {
                 showAddReason.value = true
-                menuExpanded.value = false
+                menuExpanded = false
             },
         )
     }
@@ -342,8 +328,14 @@ fun RelapseView(relapse: Relapse) {
                 style = MaterialTheme.typography.bodyLarge,
             )
         } ?: run {
-            Text(
-                "No comment",
+            val text: String = if (relapse.id == -1) {
+                stringResource(id = R.string.initial_start_time)
+            } else {
+                stringResource(id = R.string.no_comment)
+            }
+
+            Text (
+                text,
                 color = MaterialTheme.colorScheme.outline,
                 style = MaterialTheme.typography.bodyLarge,
             )

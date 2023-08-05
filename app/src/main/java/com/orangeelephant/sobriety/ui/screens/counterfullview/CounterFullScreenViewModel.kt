@@ -46,6 +46,10 @@ class CounterFullScreenViewModel(
         counter.value?.let {
             relapses.apply {
                 addAll(counterRepository.getRelapsesForCounter(it.id))
+                // display the initial start time at end if available
+                it.initialStartTime?.let {
+                    add(Relapse(-1, counterId, it, null))
+                }
             }
             reasons.apply {
                 addAll(counterRepository.getReasonsForCounter(it.id))

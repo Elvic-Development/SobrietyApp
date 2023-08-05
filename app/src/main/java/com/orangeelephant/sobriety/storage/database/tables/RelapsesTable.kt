@@ -48,6 +48,7 @@ class RelapsesTable(private val openHelper: OpenHelper) {
         val relapseSql = """
             SELECT * FROM $TABLE_NAME_RELAPSES 
             WHERE $COLUMN_ASSOCIATED_COUNTER = $counterId
+            ORDER BY $COLUMN_RELAPSE_TIME DESC
             """
 
         val cursor: Cursor = db.rawQuery(relapseSql, null)
