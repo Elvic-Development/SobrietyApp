@@ -23,8 +23,8 @@ class MockCounterRepository: CounterRepository {
 
     override fun getRelapsesForCounter(counterId: Int): List<Relapse> {
         return listOf(
-            Relapse(1, 1, 0L, "Nope"),
-            Relapse(2, 1, 0L, "big sad")
+            Relapse(1, 1, 0L, "Nope", 0L),
+            Relapse(2, 1, 0L, "big sad", 0L)
         )
     }
 
@@ -43,7 +43,7 @@ class MockCounterRepository: CounterRepository {
 
     }
 
-    override fun resetCounter(id: Int, comment: String?): Long {
+    override fun resetCounter(id: Int, relapseTime: Long, comment: String?): Long {
         return 0L
     }
 

@@ -3,6 +3,7 @@ package com.orangeelephant.sobriety.storage.models
 data class Relapse(
     val id: Int,
     val counterId: Int,
-    val time: Long,
-    val comment: String?
+    val relapseTime: Long,
+    val comment: String?,
+    val recordedAtTime: Long
 )

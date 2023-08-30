@@ -11,6 +11,6 @@ interface CounterRepository {
     fun getReasonsForCounter(counterId: Int): List<Reason>
     fun addCounter(counter: Counter)
     fun addReasonForCounter(counterId: Int, reason: String)
-    fun resetCounter(id: Int, comment: String?): Long
+    fun resetCounter(id: Int, relapseTime: Long, comment: String?): Long
     fun deleteCounter(id: Int)
 }
