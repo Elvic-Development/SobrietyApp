@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Sobriety</string>
+    <string name="app_name">Lotus</string>
+    <string name="app_name_extended">Lotus: Sobriety Tracker</string>
     <string name="source_code_url" translatable="false">https://github.com/orange-elephant/SobrietyApp</string>
 
     <!--Strings app unlocking -->
@@ -43,6 +44,8 @@
     <string name="biometric_unlock_description">Require unlocking the app with device screenlock</string>
     <string name="encrypt_db_with_password">Encrypt database with password</string>
     <string name="encrypt_db_with_password_summary">The database will be encrypted using this password</string>
+    <string name="change_db_password">Change database password</string>
+    <string name="change_db_password_summary">The database will be re-encrypted using the new password</string>
     <string name="decrypt_db">Disable password unlock</string>
     <string name="decrypt_db_summary">The database will be decrypted if you do this</string>
     <string name="about">About</string>
@@ -66,12 +69,18 @@
     <string name="okay">Okay</string>
     <string name="loading">Loading</string>
     <string name="or">OR</string>
+    <string name="more_options">More options</string>
+    <string name="show_more">Show more</string>
 
     <!-- Database password -->
     <string name="create_password_dialog">Create password</string>
     <string name="create_password_description">The database will be encrypted using this password, if you forget it then all data will be inaccessible.</string>
     <string name="encrypt_database">Encrypt database</string>
+    <string name="change_password_dialog">Change password</string>
+    <string name="change_password_description">The database will be re-encrypted using this password, if you forget it then all data will be inaccessible.</string>
+    <string name="confirm_change_password">Confirm change</string>
     <string name="password">Password</string>
+    <string name="new_password">New password</string>
     <string name="encrypted_successfully">Database has been encrypted successfully</string>
     <string name="decrypted_successfully">Database has been decrypted successfully</string>
     <string name="encryption_in_progress">Encrypting database</string>
@@ -96,6 +105,12 @@
     <string name="deleted_successfully">Counter deleted successfully</string>
     <string name="couldnt_load_counter">Failed to load counter</string>
     <string name="couldnt_load_counter_description">Failed to find a counter with this ID in the database</string>
+    <string name="past_recorded_relapses">Recorded relapses</string>
+    <string name="associated_reasons">Reasons for sobriety</string>
+    <string name="add_a_reason">Add a reason</string>
+    <string name="reason_input">Reason</string>
+    <string name="initial_start_time">Initial start time</string>
+    <string name="no_comment">No comment</string>
 
     <!--- Drawables -->
     <string name="ic_launcher_background">ic_launcher_background</string>

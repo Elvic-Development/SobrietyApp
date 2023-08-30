@@ -17,21 +17,12 @@ import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
 import com.orangeelephant.sobriety.ui.settings.SettingsScreen
 
 sealed class Screen(val route: String) {
-    // Unlock screen
     object Unlock: Screen("unlock")
-
-    // Home screen
     object Home: Screen("home")
-
-    // Counter full view
     object CounterFullView: Screen("counterFullView/{counterId}") {
         fun createRoute(counterId: Int) = "counterFullView/$counterId"
     }
-
-    // Add counter screen
     object AddCounter: Screen("addCounter")
-
-    // Settings screen
     object Settings: Screen("settings")
 }
 
@@ -54,13 +45,29 @@ fun SobrietyAppNavigation(
 
 fun NavGraphBuilder.addUnlockNavigation(navController: NavHostController) {
     composable(route = Screen.Unlock.route) {
-        UnlockScreen(navController)
+        UnlockScreen(
+            navigateToHome = {
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(Screen.Unlock.route) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
     }
 }
 
 fun NavGraphBuilder.addHomeNavigation(navController: NavHostController) {
     composable(route = Screen.Home.route) {
-        HomeScreen(navController)
+        HomeScreen(
+            onClickSettings = { navController.navigate(route = Screen.Settings.route) },
+            onClickAddCounter = { navController.navigate(route = Screen.AddCounter.route) },
+            onOpenCounter = { counterId: Int ->
+                navController.navigate(
+                    route = Screen.CounterFullView.createRoute(counterId = counterId)
+                )
+            }
+        )
     }
 }
 
@@ -78,7 +85,7 @@ fun NavGraphBuilder.addCounterFullViewNavigation(context: Context, navController
         counterId?.let {
             CounterFullView(
                 counterFullScreenViewModel = CounterFullScreenViewModel(counterId),
-                navController = navController
+                popBack = { navController.popBackStack() }
             )
         } ?: run {
             Toast.makeText(context, "No counterID provided", Toast.LENGTH_LONG).show()
@@ -88,13 +95,13 @@ fun NavGraphBuilder.addCounterFullViewNavigation(context: Context, navController
 
 fun NavGraphBuilder.addCreateCounterNavigation(navController: NavHostController) {
     composable(route = Screen.AddCounter.route) {
-        CreateCounter(navController = navController)
+        CreateCounter(popBack = { navController.popBackStack() })
     }
 
 }
 
 fun NavGraphBuilder.addSettingsNavigation(navController: NavHostController) {
     composable(route = Screen.Settings.route) {
-        SettingsScreen(navController = navController)
+        SettingsScreen(popBack = { navController.popBackStack() })
     }
 }

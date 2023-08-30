@@ -49,7 +49,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun onEncryptWithPassword(context: FragmentActivity, password: String) {
+    fun onSetPassword(context: FragmentActivity, password: String) {
         viewModelScope.launch {
             isEncryptingDb.value = true
             var biometricsEnabledPreviously: Boolean
@@ -57,7 +57,7 @@ class SettingsViewModel @Inject constructor(
             withContext(Dispatchers.Default) {
                 val salt = Argon2().genSalt()
 
-                val key = SqlCipherKey(
+                val newKey = SqlCipherKey(
                     isEncrypted = true,
                     password = password.encodeToByteArray(),
                     salt = salt
@@ -67,9 +67,16 @@ class SettingsViewModel @Inject constructor(
                 preferences.setBiometricsEnabled(false)
 
                 preferences.setPasswordSalt(Base64.encodeToString(salt, Base64.DEFAULT))
-                preferences.setEncryptedByPassword(true)
-                ApplicationDependencies.getDatabase().encrypt(context, key.keyBytes!!)
-                ApplicationDependencies.setSqlcipherKey(key)
+
+                // re-key encrypted db
+                if (preferences.encryptedByPassword.first()) {
+                    val currentKey = ApplicationDependencies.getSqlCipherKey().keyBytes!!
+                    ApplicationDependencies.getDatabase().changeKey(currentKey, newKey.keyBytes!!)
+                } else {
+                    preferences.setEncryptedByPassword(true)
+                    ApplicationDependencies.getDatabase().encrypt(context, newKey.keyBytes!!)
+                }
+                ApplicationDependencies.setSqlcipherKey(newKey)
             }
 
             Toast.makeText(context, R.string.encrypted_successfully, Toast.LENGTH_LONG).show()

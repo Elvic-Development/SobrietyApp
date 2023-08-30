@@ -26,10 +26,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.orangeelephant.sobriety.MainActivity
 import com.orangeelephant.sobriety.R
-import com.orangeelephant.sobriety.Screen
 import com.orangeelephant.sobriety.ui.common.LoadingDialog
 import com.orangeelephant.sobriety.ui.common.PasswordInputField
 import com.orangeelephant.sobriety.ui.common.TextDivider
@@ -37,7 +35,7 @@ import com.orangeelephant.sobriety.ui.common.WarningDialog
 
 @Composable
 fun UnlockScreen(
-    navController: NavController,
+    navigateToHome: () -> Unit,
     viewModel: UnlockScreenViewModel = hiltViewModel()
 ) {
     val activity = LocalContext.current as MainActivity
@@ -45,11 +43,7 @@ fun UnlockScreen(
     val hasShownPrompt = remember { mutableStateOf(false) }
 
     if (viewModel.cipherKeyLoaded.value) {
-        navController.navigate(Screen.Home.route) {
-            popUpTo(Screen.Unlock.route) {
-                inclusive = true
-            }
-        }
+        navigateToHome()
     }
 
     Scaffold { innerPadding ->

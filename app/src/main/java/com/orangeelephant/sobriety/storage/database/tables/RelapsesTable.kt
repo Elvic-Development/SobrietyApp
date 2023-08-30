@@ -15,9 +15,9 @@ class RelapsesTable(private val openHelper: OpenHelper) {
         const val TABLE_NAME_RELAPSES = "relapses"
 
         private const val COLUMN_ID = "_id"
-        private const val COLUMN_ASSOCIATED_COUNTER = "associated_counter"
-        private const val COLUMN_RELAPSE_TIME = "relapse_time_unix_millis"
-        private const val COLUMN_COMMENTS = "comments"
+        const val COLUMN_ASSOCIATED_COUNTER = "associated_counter"
+        const val COLUMN_RELAPSE_TIME = "relapse_time_unix_millis"
+        const val COLUMN_COMMENTS = "comments"
 
         const val CREATE_TABLE_RELAPSES = """
             CREATE TABLE IF NOT EXISTS $TABLE_NAME_RELAPSES (
@@ -48,6 +48,7 @@ class RelapsesTable(private val openHelper: OpenHelper) {
         val relapseSql = """
             SELECT * FROM $TABLE_NAME_RELAPSES 
             WHERE $COLUMN_ASSOCIATED_COUNTER = $counterId
+            ORDER BY $COLUMN_RELAPSE_TIME DESC
             """
 
         val cursor: Cursor = db.rawQuery(relapseSql, null)

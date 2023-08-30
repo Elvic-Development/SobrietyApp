@@ -14,10 +14,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.orangeelephant.sobriety.R
-import com.orangeelephant.sobriety.Screen
 import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.storage.repositories.mock.MockCounterRepository
 import com.orangeelephant.sobriety.ui.common.Fab
@@ -27,8 +24,10 @@ import com.orangeelephant.sobriety.ui.common.SettingsLink
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navController: NavController,
-    homeScreenViewModel: HomeScreenViewModel = viewModel()
+    onClickSettings: () -> Unit,
+    onClickAddCounter: () -> Unit,
+    onOpenCounter: (Int) -> Unit,
+    homeScreenViewModel: HomeScreenViewModel = viewModel(),
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val allCounters = remember { homeScreenViewModel.allCounters }
@@ -37,12 +36,12 @@ fun HomeScreen(
         topBar = { GenericTopAppBar(
             title = R.string.app_name,
             scrollBehavior = scrollBehavior,
-            actions = { SettingsLink(navController) }
+            actions = { SettingsLink(onClickSettings) }
         ) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         floatingActionButton = {
             Fab(
-                onClick = { navController.navigate(route = Screen.AddCounter.route)},
+                onClick = { onClickAddCounter() },
                 icon = Icons.Filled.Add,
                 contentDescription = R.string.create_counter
             )
@@ -58,14 +57,14 @@ fun HomeScreen(
                 )
         ) {
             items(allCounters, key = { it.id }) { counter ->
-                CounterView(counter, navController)
+                CounterView(counter, onOpenCounter)
             }
         }
     }
 }
 
 @Composable
-fun CounterView(counter: Counter, navController: NavController) {
+fun CounterView(counter: Counter, onOpenCounter: (Int) -> Unit) {
     Column(
         modifier = Modifier
             .padding(
@@ -74,9 +73,7 @@ fun CounterView(counter: Counter, navController: NavController) {
             )
             .fillMaxWidth()
             .clickable {
-                navController.navigate(
-                    route = Screen.CounterFullView.createRoute(counterId = counter.id)
-                )
+                onOpenCounter(counter.id)
             }
     ) {
         Text(
@@ -94,7 +91,9 @@ fun CounterView(counter: Counter, navController: NavController) {
 @Composable
 fun HomeScreenPreview() {
     HomeScreen(
-        navController = rememberNavController(),
+        onClickSettings = {},
+        onClickAddCounter = {},
+        onOpenCounter = {},
         homeScreenViewModel = HomeScreenViewModel(MockCounterRepository())
     )
 }

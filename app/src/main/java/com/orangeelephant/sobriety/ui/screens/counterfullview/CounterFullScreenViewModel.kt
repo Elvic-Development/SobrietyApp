@@ -8,10 +8,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.models.Counter
+import com.orangeelephant.sobriety.storage.models.Reason
 import com.orangeelephant.sobriety.storage.models.Relapse
 import com.orangeelephant.sobriety.storage.repositories.CounterRepository
 import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository
@@ -32,6 +32,7 @@ class CounterFullScreenViewModel(
 
     val duration: MutableState<Duration> = mutableStateOf(Duration())
     val counter: MutableState<Counter?> = mutableStateOf(null)
+    val reasons: SnapshotStateList<Reason> = mutableStateListOf()
     val relapses: SnapshotStateList<Relapse> = mutableStateListOf()
 
     init {
@@ -45,6 +46,13 @@ class CounterFullScreenViewModel(
         counter.value?.let {
             relapses.apply {
                 addAll(counterRepository.getRelapsesForCounter(it.id))
+                // display the initial start time at end if available
+                it.initialStartTime?.let {
+                    add(Relapse(-1, counterId, it, null))
+                }
+            }
+            reasons.apply {
+                addAll(counterRepository.getReasonsForCounter(it.id))
             }
         }
 
@@ -72,9 +80,17 @@ class CounterFullScreenViewModel(
         }
     }
 
-    fun onDeleteCounter(context: Context, navController: NavController) {
+    fun onDeleteCounter(context: Context, popBack: () -> Unit) {
         counterRepository.deleteCounter(counterId)
         Toast.makeText(context, R.string.deleted_successfully, Toast.LENGTH_LONG).show()
-        navController.popBackStack()
+        popBack()
+    }
+
+    fun onAddReason(reason: String) {
+        counterRepository.addReasonForCounter(counterId, reason)
+
+        reasons.apply {
+            add(Reason(-1, counterId, reason))
+        }
     }
 }

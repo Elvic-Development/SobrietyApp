@@ -7,9 +7,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.orangeelephant.sobriety.Screen
 
 @Composable
 fun BackIcon(onClick: () -> Unit) {
@@ -19,10 +16,8 @@ fun BackIcon(onClick: () -> Unit) {
 }
 
 @Composable
-fun SettingsLink(navController: NavController) {
-    IconButton(onClick = {
-        navController.navigate(route = Screen.Settings.route)
-    }) {
+fun SettingsLink(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
         Icon(Icons.Filled.Settings, contentDescription = "Settings")
     }
 }
@@ -36,5 +31,5 @@ fun BackIconPreview() {
 @Preview
 @Composable
 fun SettingsIconPreview() {
-    SettingsLink(rememberNavController())
+    SettingsLink(onClick = {})
 }
