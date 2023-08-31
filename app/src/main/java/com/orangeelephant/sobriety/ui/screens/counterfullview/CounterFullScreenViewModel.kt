@@ -15,7 +15,7 @@ import com.orangeelephant.sobriety.storage.models.Reason
 import com.orangeelephant.sobriety.storage.models.Relapse
 import com.orangeelephant.sobriety.storage.repositories.CounterRepository
 import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository
-import com.orangeelephant.sobriety.util.CounterViewUtil
+import com.orangeelephant.sobriety.util.DateTimeFormatUtil
 import com.orangeelephant.sobriety.util.Duration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -58,7 +58,7 @@ class CounterFullScreenViewModel(
         viewModelScope.launch {
             while (true) {
                 counter.value?.let {
-                    duration.value = CounterViewUtil.getDurationFromStartTime(it.startTimeMillis)
+                    duration.value = DateTimeFormatUtil.getDurationFromStartTime(it.startTimeMillis)
                 }
                 delay(1000)
             }
@@ -70,7 +70,7 @@ class CounterFullScreenViewModel(
         counter.value = counter.value?.copy(
             startTimeMillis = timeOfRelapse,
             recordTimeSoberInMillis = newRecord,
-            currentDurationString = CounterViewUtil.formatDurationAsString(timeOfRelapse)
+            currentDurationString = DateTimeFormatUtil.formatDurationAsString(timeOfRelapse)
         )
 
         relapses.apply {

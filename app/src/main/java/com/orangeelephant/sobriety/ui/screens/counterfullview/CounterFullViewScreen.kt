@@ -40,6 +40,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,7 +65,8 @@ import com.orangeelephant.sobriety.ui.common.MileStoneProgressTracker
 import com.orangeelephant.sobriety.ui.common.SobrietyAlertDialog
 import com.orangeelephant.sobriety.ui.common.TimePickerDialog
 import com.orangeelephant.sobriety.ui.common.WarningDialog
-import com.orangeelephant.sobriety.util.CounterViewUtil
+import com.orangeelephant.sobriety.util.DateTimeFormatUtil
+import com.orangeelephant.sobriety.util.toZonedDateTime
 import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -281,22 +283,24 @@ fun RecordRelapse(
     onDismiss: () -> Unit,
     onConfirm: (relapseTime: Long, reason: String?) -> Unit
 ) {
-    // TODO - pretty print date and time, set time selection start values, disallow times later today...
+    // TODO - disallow times later today...
+    var relapseReason by remember { mutableStateOf("") }
+
+    val currentTime = System.currentTimeMillis()
+    val currentLocalDateTime = currentTime.toZonedDateTime()
+    var datePickedMillis by remember {
+        mutableLongStateOf(currentTime - (currentTime % TimeUnit.DAYS.toMillis(1)))
+    }
+    var hourPicked by remember { mutableIntStateOf(currentLocalDateTime.hour) }
+    var minutePicked by remember { mutableIntStateOf(currentLocalDateTime.minute)}
+
     var isDatePickerOpen by remember { mutableStateOf(false) }
     var isTimePickerOpen by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
-    val timePickerState = rememberTimePickerState()
-
-    var relapseReason by remember {
-        mutableStateOf("")
-    }
-    var timePicked by remember {
-        mutableLongStateOf(System.currentTimeMillis() % 86400000)
-    }
-    var datePicked by remember {
-        val currentTime = System.currentTimeMillis()
-        mutableLongStateOf(currentTime - (currentTime % 86400000))
-    }
+    val timePickerState = rememberTimePickerState(
+        initialHour = hourPicked,
+        initialMinute = minutePicked
+    )
 
     SobrietyAlertDialog(onDismiss = onDismiss) {
         Column(modifier = Modifier.padding(20.dp)) {
@@ -323,14 +327,20 @@ fun RecordRelapse(
                 Row(Modifier.clickable {
                     isDatePickerOpen = true
                 }) {
-                    Text(text = CounterViewUtil.convertMillisecondsToDate(datePicked))
+                    Text(text = DateTimeFormatUtil.formatDate(LocalContext.current, datePickedMillis))
                     Icon(Icons.Default.ArrowDropDown, contentDescription = stringResource(id = R.string.select_date))
                 }
 
                 Row(Modifier.clickable {
                     isTimePickerOpen = true
                 }) {
-                    Text(text = "${timePickerState.hour} : ${timePickerState.minute}")
+                    Text(text = DateTimeFormatUtil.formatTime(LocalContext.current,
+                        datePickedMillis.toZonedDateTime()
+                            .withHour(hourPicked)
+                            .withMinute(minutePicked)
+                            .toInstant()
+                            .toEpochMilli()
+                    ))
                     Icon(Icons.Default.ArrowDropDown, contentDescription = stringResource(id = R.string.select_time))
                 }
             }
@@ -338,7 +348,12 @@ fun RecordRelapse(
             Spacer(modifier = Modifier.height(10.dp))
             TextButton(
                 onClick = {
-                    val relapseTime = datePicked + timePicked
+                    val relapseTime = datePickedMillis.toZonedDateTime()
+                                                        .withHour(hourPicked)
+                                                        .withMinute(minutePicked)
+                                                        .toInstant()
+                                                        .toEpochMilli()
+
                     if (relapseReason == "") {
                         onConfirm(relapseTime, null)
                     } else {
@@ -360,7 +375,7 @@ fun RecordRelapse(
                     onClick = {
                         isDatePickerOpen = false
                         datePickerState.selectedDateMillis?.let {
-                            datePicked = it
+                            datePickedMillis = it
                         }
                     }
                 ) {
@@ -387,8 +402,8 @@ fun RecordRelapse(
             },
             onConfirm = {
                 isTimePickerOpen = false
-                timePicked = TimeUnit.HOURS.toMillis(timePickerState.hour.toLong()) +
-                             TimeUnit.MINUTES.toMillis(timePickerState.minute.toLong())
+                hourPicked = timePickerState.hour
+                minutePicked = timePickerState.minute
             })
         {
             TimePicker(state = timePickerState)
@@ -402,10 +417,10 @@ fun RelapseView(relapse: Relapse) {
     Row {
         Spacer(modifier = Modifier.width(10.dp))
         Text(
-            CounterViewUtil.convertMillisecondsToDate(relapse.relapseTime),
+            DateTimeFormatUtil.formatDate(LocalContext.current, relapse.relapseTime),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.width(70.dp)
+            modifier = Modifier.width(90.dp)
         )
 
         Spacer(modifier = Modifier.width(10.dp))
