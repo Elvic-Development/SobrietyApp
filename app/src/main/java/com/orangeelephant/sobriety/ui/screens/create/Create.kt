@@ -48,7 +48,6 @@ fun Create(
     val textValues = remember { mutableStateListOf<TextFieldValue>() }
 
 
-    // date picker
     if (isDialogOpen) {
         DatePickerDialog(
             onDismissRequest = { isDialogOpen = false },
@@ -74,7 +73,6 @@ fun Create(
         }
     }
 
-    // UI
     Scaffold(
         topBar = {
             GenericTopAppBar(
@@ -127,7 +125,6 @@ fun Create(
                 )
             }
         },
-
         floatingActionButtonPosition = FabPosition.Center
 
     ) { innerPadding ->
@@ -137,8 +134,6 @@ fun Create(
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
         ) {
-
-            // photo
             Column(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier
@@ -151,8 +146,6 @@ fun Create(
                     onImageSelected = { uri -> createScreenViewModel.selectedImageUri.value = uri }
                 )
             }
-
-            // user input
             Column (
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -161,8 +154,6 @@ fun Create(
                     .verticalScroll(rememberScrollState()) // Enable vertical scrolling
 
             ) {
-
-                // name
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -170,20 +161,16 @@ fun Create(
                     onValueChange = { createScreenViewModel.nameText = it },
                     label = { Text(stringResource(R.string.placeholder_counter_name)) }
                 )
-
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // date
                 ClickableOutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value =  TextFieldValue(convertMillisecondsToDate(createScreenViewModel.dateVal)),
                     onClick = { isDialogOpen = true },
                     label = { Text(context.getString(R.string.placeholder_date)) }
                 )
-
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // reasons
                 if (numberOfTextFields > textValues.size) {
                     repeat(numberOfTextFields - textValues.size) {
                         textValues.add(TextFieldValue())
