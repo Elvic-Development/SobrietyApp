@@ -212,7 +212,7 @@ fun CreateScreen(
     }
 }
 
-// create compostable preview
+// create composable preview
 @Preview
 @Composable
 fun CreateCounterPreview() {
