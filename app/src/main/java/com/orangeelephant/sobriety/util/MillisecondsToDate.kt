@@ -1,4 +1,4 @@
-package com.orangeelephant.sobriety.ui.common
+package com.orangeelephant.sobriety.util
 
 import java.text.DateFormat
 import java.util.Date

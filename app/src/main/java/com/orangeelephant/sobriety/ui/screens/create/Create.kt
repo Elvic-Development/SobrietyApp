@@ -29,7 +29,7 @@ import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.ClickableOutlinedTextField
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.CircleImagePicker
-import com.orangeelephant.sobriety.ui.common.convertMillisecondsToDate
+import com.orangeelephant.sobriety.util.convertMillisecondsToDate
 import com.orangeelephant.sobriety.storage.repositories.mock.MockCounterRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
