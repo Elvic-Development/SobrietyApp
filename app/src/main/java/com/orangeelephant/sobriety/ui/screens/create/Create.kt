@@ -43,7 +43,7 @@ fun Create(
     val context = LocalContext.current
     val datePickerState = rememberDatePickerState()
     var isDialogOpen by remember { mutableStateOf(false) }
-    var numberOfTextFields by remember { mutableIntStateOf(1) }
+    var numberOfReasonsInputFields by remember { mutableIntStateOf(1) }
 
     val textValues = remember { mutableStateListOf<TextFieldValue>() }
 
@@ -171,13 +171,13 @@ fun Create(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (numberOfTextFields > textValues.size) {
-                    repeat(numberOfTextFields - textValues.size) {
+                if (numberOfReasonsInputFields > textValues.size) {
+                    repeat(numberOfReasonsInputFields - textValues.size) {
                         textValues.add(TextFieldValue())
                     }
                 }
 
-                for (i in 0 until numberOfTextFields) {
+                for (i in 0 until numberOfReasonsInputFields) {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = textValues[i],
@@ -189,7 +189,7 @@ fun Create(
 
                 if (textValues[0] != TextFieldValue("")) {
                     Button(
-                        onClick = { numberOfTextFields++ }
+                        onClick = { numberOfReasonsInputFields++ }
                     ) {
                         Text(text = context.getString(R.string.add_additional_reason))
                     }
