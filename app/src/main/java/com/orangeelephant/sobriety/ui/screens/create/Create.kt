@@ -34,7 +34,7 @@ import com.orangeelephant.sobriety.storage.repositories.mock.MockCounterReposito
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateScreen(
+fun Create(
     navController: NavController,
     createScreenViewModel: CreateScreenViewModel = viewModel()
 ) {
@@ -216,7 +216,7 @@ fun CreateScreen(
 @Preview
 @Composable
 fun CreateCounterPreview() {
-    CreateScreen(
+    Create(
         navController = rememberNavController(),
         createScreenViewModel = CreateScreenViewModel(MockCounterRepository())
     )
