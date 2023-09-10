@@ -71,6 +71,9 @@
     <string name="or">OR</string>
     <string name="more_options">More options</string>
     <string name="show_more">Show more</string>
+    <string name="select_time">Select time</string>
+    <string name="select_date">Select date</string>
+    <string name="today">Today</string>
 
     <!-- Database password -->
     <string name="create_password_dialog">Create password</string>

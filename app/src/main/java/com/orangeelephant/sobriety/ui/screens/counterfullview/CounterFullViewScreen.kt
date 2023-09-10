@@ -1,5 +1,6 @@
 package com.orangeelephant.sobriety.ui.screens.counterfullview
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,9 +14,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,11 +32,16 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,8 +63,11 @@ import com.orangeelephant.sobriety.ui.common.ExpandableList
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.MileStoneProgressTracker
 import com.orangeelephant.sobriety.ui.common.SobrietyAlertDialog
+import com.orangeelephant.sobriety.ui.common.TimePickerDialog
 import com.orangeelephant.sobriety.ui.common.WarningDialog
-import com.orangeelephant.sobriety.util.CounterViewUtil
+import com.orangeelephant.sobriety.util.DateTimeFormatUtil
+import com.orangeelephant.sobriety.util.toZonedDateTime
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -167,8 +179,8 @@ fun CounterFullView(
             if (showResetDialog) {
                 RecordRelapse(
                     onDismiss = { showResetDialog = false },
-                    onConfirm = { comment ->
-                        counterFullScreenViewModel.onResetCounter(comment)
+                    onConfirm = { relapseTime, comment ->
+                        counterFullScreenViewModel.onResetCounter(relapseTime, comment)
                         showResetDialog = false
                     }
                 )
@@ -265,12 +277,30 @@ fun AddReason(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecordRelapse(
     onDismiss: () -> Unit,
-    onConfirm: (reason: String?) -> Unit
+    onConfirm: (relapseTime: Long, reason: String?) -> Unit
 ) {
-    val relapseReason = remember { mutableStateOf("") }
+    // TODO - disallow times later today...
+    var relapseReason by remember { mutableStateOf("") }
+
+    val currentTime = System.currentTimeMillis()
+    val currentLocalDateTime = currentTime.toZonedDateTime()
+    var datePickedMillis by remember {
+        mutableLongStateOf(currentTime - (currentTime % TimeUnit.DAYS.toMillis(1)))
+    }
+    var hourPicked by remember { mutableIntStateOf(currentLocalDateTime.hour) }
+    var minutePicked by remember { mutableIntStateOf(currentLocalDateTime.minute)}
+
+    var isDatePickerOpen by remember { mutableStateOf(false) }
+    var isTimePickerOpen by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
+    val timePickerState = rememberTimePickerState(
+        initialHour = hourPicked,
+        initialMinute = minutePicked
+    )
 
     SobrietyAlertDialog(onDismiss = onDismiss) {
         Column(modifier = Modifier.padding(20.dp)) {
@@ -287,24 +317,96 @@ fun RecordRelapse(
             )
             Spacer(modifier = Modifier.height(5.dp))
             OutlinedTextField(
-                value = relapseReason.value,
-                onValueChange = { relapseReason.value = it },
+                value = relapseReason,
+                onValueChange = { relapseReason = it },
                 label = { Text(stringResource(R.string.record_relapse_comment)) },
                 maxLines = 4
             )
+
+            Row(Modifier.padding(20.dp)) {
+                Row(Modifier.clickable {
+                    isDatePickerOpen = true
+                }) {
+                    Text(text = DateTimeFormatUtil.formatDate(LocalContext.current, datePickedMillis))
+                    Icon(Icons.Default.ArrowDropDown, contentDescription = stringResource(id = R.string.select_date))
+                }
+
+                Row(Modifier.clickable {
+                    isTimePickerOpen = true
+                }) {
+                    Text(text = DateTimeFormatUtil.formatTime(LocalContext.current,
+                        datePickedMillis.toZonedDateTime()
+                            .withHour(hourPicked)
+                            .withMinute(minutePicked)
+                            .toInstant()
+                            .toEpochMilli()
+                    ))
+                    Icon(Icons.Default.ArrowDropDown, contentDescription = stringResource(id = R.string.select_time))
+                }
+            }
+
             Spacer(modifier = Modifier.height(10.dp))
             TextButton(
                 onClick = {
-                    if (relapseReason.value == "") {
-                        onConfirm(null)
+                    val relapseTime = datePickedMillis.toZonedDateTime()
+                                                        .withHour(hourPicked)
+                                                        .withMinute(minutePicked)
+                                                        .toInstant()
+                                                        .toEpochMilli()
+
+                    if (relapseReason == "") {
+                        onConfirm(relapseTime, null)
                     } else {
-                        onConfirm(relapseReason.value)
+                        onConfirm(relapseTime, relapseReason)
                     }
                 },
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Text(stringResource(id = R.string.okay))
             }
+        }
+    }
+
+    if (isDatePickerOpen) {
+        DatePickerDialog(
+            onDismissRequest = { isDatePickerOpen = false },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        isDatePickerOpen = false
+                        datePickerState.selectedDateMillis?.let {
+                            datePickedMillis = it
+                        }
+                    }
+                ) {
+                    Text(text = LocalContext.current.getString(R.string.submit_button))
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { isDatePickerOpen = false }) {
+                    Text(text = LocalContext.current.getString(R.string.cancel_button))
+                }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                dateValidator = { date -> date <= System.currentTimeMillis() }
+            )
+        }
+    }
+
+    if (isTimePickerOpen) {
+        TimePickerDialog(
+            onCancel = {
+                isTimePickerOpen = false
+            },
+            onConfirm = {
+                isTimePickerOpen = false
+                hourPicked = timePickerState.hour
+                minutePicked = timePickerState.minute
+            })
+        {
+            TimePicker(state = timePickerState)
         }
     }
 }
@@ -315,10 +417,10 @@ fun RelapseView(relapse: Relapse) {
     Row {
         Spacer(modifier = Modifier.width(10.dp))
         Text(
-            CounterViewUtil.convertMillisecondsToDate(relapse.time),
+            DateTimeFormatUtil.formatDate(LocalContext.current, relapse.relapseTime),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.width(70.dp)
+            modifier = Modifier.width(90.dp)
         )
 
         Spacer(modifier = Modifier.width(10.dp))

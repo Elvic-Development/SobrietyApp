@@ -15,12 +15,11 @@ import com.orangeelephant.sobriety.storage.models.Reason
 import com.orangeelephant.sobriety.storage.models.Relapse
 import com.orangeelephant.sobriety.storage.repositories.CounterRepository
 import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository
-import com.orangeelephant.sobriety.util.CounterViewUtil
+import com.orangeelephant.sobriety.util.DateTimeFormatUtil
 import com.orangeelephant.sobriety.util.Duration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.sqlcipher.CursorIndexOutOfBoundsException
-import java.util.Calendar
 
 class CounterFullScreenViewModel(
     private val counterId: Int,
@@ -43,40 +42,39 @@ class CounterFullScreenViewModel(
             null
         }
 
-        counter.value?.let {
+        counter.value?.let { counter ->
             relapses.apply {
-                addAll(counterRepository.getRelapsesForCounter(it.id))
+                addAll(counterRepository.getRelapsesForCounter(counter.id))
                 // display the initial start time at end if available
-                it.initialStartTime?.let {
-                    add(Relapse(-1, counterId, it, null))
+                counter.initialStartTime?.let {initialStartTime ->
+                    add(Relapse(-1, counterId, initialStartTime, null, counter.creationTime))
                 }
             }
             reasons.apply {
-                addAll(counterRepository.getReasonsForCounter(it.id))
+                addAll(counterRepository.getReasonsForCounter(counter.id))
             }
         }
 
         viewModelScope.launch {
             while (true) {
                 counter.value?.let {
-                    duration.value = CounterViewUtil.getDurationFromStartTime(it.startTimeMillis)
+                    duration.value = DateTimeFormatUtil.getDurationFromStartTime(it.startTimeMillis)
                 }
                 delay(1000)
             }
         }
     }
 
-    fun onResetCounter(comment: String?) {
-        val startTimeMillis = Calendar.getInstance().timeInMillis
-        val newRecord = counterRepository.resetCounter(counterId, comment)
+    fun onResetCounter(timeOfRelapse: Long, comment: String?) {
+        val newRecord = counterRepository.resetCounter(counterId, timeOfRelapse, comment)
         counter.value = counter.value?.copy(
-            startTimeMillis = startTimeMillis,
+            startTimeMillis = timeOfRelapse,
             recordTimeSoberInMillis = newRecord,
-            currentDurationString = CounterViewUtil.formatDurationAsString(startTimeMillis)
+            currentDurationString = DateTimeFormatUtil.formatDurationAsString(timeOfRelapse)
         )
 
         relapses.apply {
-            add(Relapse(-1, counterId, startTimeMillis, comment))
+            add(Relapse(-1, counterId, timeOfRelapse, comment, System.currentTimeMillis()))
         }
     }
 

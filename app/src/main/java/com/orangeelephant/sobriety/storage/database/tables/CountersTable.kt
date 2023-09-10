@@ -7,8 +7,8 @@ import com.orangeelephant.sobriety.storage.models.Counter
 import net.sqlcipher.Cursor
 import net.sqlcipher.CursorIndexOutOfBoundsException
 import net.sqlcipher.database.SQLiteDatabase
-import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.max
 
 
 class CountersTable(private val openHelper: OpenHelper) {
@@ -95,11 +95,10 @@ class CountersTable(private val openHelper: OpenHelper) {
         return counters
     }
 
-    fun resetCounterTimer(counterId: Int, recordTime: Long) {
-        val timeNow: Long = Date().time
+    fun updateCounterTimer(counterId: Int, newStartTime: Long, newRecordTime: Long) {
         val sql = """
             UPDATE $TABLE_NAME_COUNTERS
-            SET $COLUMN_RECORD_CLEAN_TIME = $recordTime, $COLUMN_CURRENT_START_TIME = $timeNow
+            SET $COLUMN_RECORD_CLEAN_TIME = $newRecordTime, $COLUMN_CURRENT_START_TIME = $newStartTime
             WHERE $COLUMN_ID = $counterId
             """
 
@@ -111,6 +110,60 @@ class CountersTable(private val openHelper: OpenHelper) {
         val deleteRecordSql = """DELETE FROM $TABLE_NAME_COUNTERS 
                                  WHERE $COLUMN_ID = $counterId"""
         openHelper.getWritableDatabase().execSQL(deleteRecordSql)
+    }
+
+    /**
+     * Used to ensure we correctly set the record time when backdating a relapse
+     */
+    fun calculateRecordTimeFromRelapseData(counterId: Int): Long {
+        val sql = """
+            SELECT ${RelapsesTable.COLUMN_RELAPSE_TIME} AS relapse_time
+                FROM ${RelapsesTable.TABLE_NAME_RELAPSES} 
+                WHERE ${RelapsesTable.COLUMN_ASSOCIATED_COUNTER} = $counterId
+            UNION ALL
+            SELECT $COLUMN_INITIAL_START_TIME AS relapse_time
+                FROM $TABLE_NAME_COUNTERS 
+                WHERE $COLUMN_ID = $counterId
+            ORDER BY relapse_time
+        """
+
+        val cursor: Cursor = openHelper.getReadableDatabase().rawQuery(sql, null)
+        val startTimes: ArrayList<Long> = ArrayList()
+        while (cursor.moveToNext()) {
+            //initial start time may be null so exclude it if so
+            cursor.getLongOrNull(0)?.let {
+                startTimes.add(it)
+            }
+        }
+
+        var currentMax = 0L
+        for (i in 1 until startTimes.size) {
+            currentMax = max(startTimes[i] - startTimes[i - 1], currentMax)
+        }
+
+        return currentMax
+    }
+
+    /**
+     * Used to ensure we correctly set the start time when backdating a relapse
+     *
+     * @return latest time of any relapse for the counter or current start time if there are none
+     */
+    fun getMostRecentRelapseTime(counterId: Int): Long {
+        val sql = """
+            SELECT MAX(relapse_time_unix_millis) 
+            FROM ${RelapsesTable.TABLE_NAME_RELAPSES}
+            WHERE ${RelapsesTable.COLUMN_ASSOCIATED_COUNTER} = $counterId
+        """
+
+        val cursor = openHelper.getReadableDatabase().rawQuery(sql, null)
+        val mostRecentRelapse = if (cursor.moveToFirst()) cursor.getLongOrNull(0) else null
+
+        mostRecentRelapse?.let {
+            return mostRecentRelapse
+        } ?: run {
+            return getCounterById(counterId).startTimeMillis
+        }
     }
 
 

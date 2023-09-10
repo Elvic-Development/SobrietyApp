@@ -1,6 +1,6 @@
 package com.orangeelephant.sobriety.storage.models
 
-import com.orangeelephant.sobriety.util.CounterViewUtil
+import com.orangeelephant.sobriety.util.DateTimeFormatUtil
 import java.util.Calendar
 
 data class Counter(
@@ -10,7 +10,7 @@ data class Counter(
     val recordTimeSoberInMillis: Long,
     val initialStartTime: Long?,
     val creationTime: Long,
-    val currentDurationString: String = CounterViewUtil.formatDurationAsString(
+    val currentDurationString: String = DateTimeFormatUtil.formatDurationAsString(
         Calendar.getInstance().timeInMillis - startTimeMillis
     )
 )

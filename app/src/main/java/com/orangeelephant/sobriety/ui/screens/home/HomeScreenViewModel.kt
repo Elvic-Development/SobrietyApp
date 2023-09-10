@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.storage.repositories.CounterRepository
-import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository import com.orangeelephant.sobriety.util.CounterViewUtil
+import com.orangeelephant.sobriety.storage.repositories.DatabaseCounterRepository
+import com.orangeelephant.sobriety.util.DateTimeFormatUtil
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -22,7 +23,7 @@ class HomeScreenViewModel(
                 for (i in 0 until _allCounters.size) {
                     val counter = _allCounters[i]
                     _allCounters[i] = counter.copy(
-                        currentDurationString = CounterViewUtil.formatDurationAsString(
+                        currentDurationString = DateTimeFormatUtil.formatDurationAsString(
                             Calendar.getInstance().timeInMillis - counter.startTimeMillis
                         )
                     )

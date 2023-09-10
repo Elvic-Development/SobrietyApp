@@ -5,7 +5,6 @@ import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.models.Counter
 import com.orangeelephant.sobriety.storage.models.Reason
 import com.orangeelephant.sobriety.storage.models.Relapse
-import java.util.Calendar
 
 class DatabaseCounterRepository: CounterRepository {
     companion object {
@@ -25,20 +24,15 @@ class DatabaseCounterRepository: CounterRepository {
         ApplicationDependencies.getDatabase().reasons.addReasonForCounter(counterId, reason)
     }
 
-    override fun resetCounter(id: Int, comment: String?): Long {
-        val currentTime = Calendar.getInstance().timeInMillis
-        val currentCounter = getCounter(id)
-        val elapsedTime = currentTime - currentCounter.startTimeMillis
-        val recordTime = if (currentCounter.recordTimeSoberInMillis < elapsedTime) {
-            elapsedTime
-        } else {
-            currentCounter.recordTimeSoberInMillis
-        }
+    override fun resetCounter(id: Int, relapseTime: Long, comment: String?): Long {
+        val db = ApplicationDependencies.getDatabase()
+        db.relapses.recordRelapse(id, relapseTime, comment)
 
-        val sobrietyDatabase = ApplicationDependencies.getDatabase()
+        // since relapses may not be inserted chronologically this info must be calculated
+        val newStartTime = db.counters.getMostRecentRelapseTime(id)
+        val recordTime = db.counters.calculateRecordTimeFromRelapseData(id)
 
-        sobrietyDatabase.counters.resetCounterTimer(id, recordTime)
-        sobrietyDatabase.relapses.recordRelapse(id, currentTime, comment)
+        db.counters.updateCounterTimer(id, newStartTime, recordTime)
 
         LogEvent.i(TAG, "Counter: $id reset successfully")
 
