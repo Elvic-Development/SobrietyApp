@@ -88,7 +88,7 @@
     <string name="create_counter">Add Tracker</string>
     <string name="placeholder_counter_name">Name</string>
     <string name="placeholder_counter_reason">Reason %1$d (optional)</string>
-    <string name="placeholder_date"> Date (dd/mm/yyyy)</string>
+    <string name="placeholder_date"> Date </string>
     <string name="add_additional_reason"> Add Another Reason</string>
 
     <!-- Counter full screen -->
