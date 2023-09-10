@@ -29,12 +29,12 @@ import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.ClickableOutlinedTextField
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.CircleImagePicker
-import com.orangeelephant.sobriety.ui.common.convertMillisecondsToDate
+import com.orangeelephant.sobriety.util.convertMillisecondsToDate
 import com.orangeelephant.sobriety.storage.repositories.mock.MockCounterRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateScreen(
+fun Create(
     navController: NavController,
     createScreenViewModel: CreateScreenViewModel = viewModel()
 ) {
@@ -43,12 +43,11 @@ fun CreateScreen(
     val context = LocalContext.current
     val datePickerState = rememberDatePickerState()
     var isDialogOpen by remember { mutableStateOf(false) }
-    var numberOfTextFields by remember { mutableIntStateOf(1) }
+    var numberOfReasonsInputFields by remember { mutableIntStateOf(1) }
 
     val textValues = remember { mutableStateListOf<TextFieldValue>() }
 
 
-    // date picker
     if (isDialogOpen) {
         DatePickerDialog(
             onDismissRequest = { isDialogOpen = false },
@@ -74,7 +73,6 @@ fun CreateScreen(
         }
     }
 
-    // UI
     Scaffold(
         topBar = {
             GenericTopAppBar(
@@ -127,7 +125,6 @@ fun CreateScreen(
                 )
             }
         },
-
         floatingActionButtonPosition = FabPosition.Center
 
     ) { innerPadding ->
@@ -137,8 +134,6 @@ fun CreateScreen(
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
         ) {
-
-            // photo
             Column(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier
@@ -151,8 +146,6 @@ fun CreateScreen(
                     onImageSelected = { uri -> createScreenViewModel.selectedImageUri.value = uri }
                 )
             }
-
-            // user input
             Column (
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -161,8 +154,6 @@ fun CreateScreen(
                     .verticalScroll(rememberScrollState()) // Enable vertical scrolling
 
             ) {
-
-                // name
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -170,27 +161,23 @@ fun CreateScreen(
                     onValueChange = { createScreenViewModel.nameText = it },
                     label = { Text(stringResource(R.string.placeholder_counter_name)) }
                 )
-
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // date
                 ClickableOutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value =  TextFieldValue(convertMillisecondsToDate(createScreenViewModel.dateVal)),
                     onClick = { isDialogOpen = true },
                     label = { Text(context.getString(R.string.placeholder_date)) }
                 )
-
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // reasons
-                if (numberOfTextFields > textValues.size) {
-                    repeat(numberOfTextFields - textValues.size) {
+                if (numberOfReasonsInputFields > textValues.size) {
+                    repeat(numberOfReasonsInputFields - textValues.size) {
                         textValues.add(TextFieldValue())
                     }
                 }
 
-                for (i in 0 until numberOfTextFields) {
+                for (i in 0 until numberOfReasonsInputFields) {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = textValues[i],
@@ -202,7 +189,7 @@ fun CreateScreen(
 
                 if (textValues[0] != TextFieldValue("")) {
                     Button(
-                        onClick = { numberOfTextFields++ }
+                        onClick = { numberOfReasonsInputFields++ }
                     ) {
                         Text(text = context.getString(R.string.add_additional_reason))
                     }
@@ -212,11 +199,11 @@ fun CreateScreen(
     }
 }
 
-// create compostable preview
+// create composable preview
 @Preview
 @Composable
 fun CreateCounterPreview() {
-    CreateScreen(
+    Create(
         navController = rememberNavController(),
         createScreenViewModel = CreateScreenViewModel(MockCounterRepository())
     )
