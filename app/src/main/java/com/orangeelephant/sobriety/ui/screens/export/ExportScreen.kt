@@ -2,6 +2,7 @@ package com.orangeelephant.sobriety.ui.screens.export
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,7 +32,7 @@ fun ExportScreen(
 ) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val selectFolderLauncher = rememberLauncherForActivityResult(
+    val selectOutputFileLauncher = rememberLauncherForActivityResult(
         CreateDocument("application/x-sqlite3")
     ) { uri ->
         uri?.let {
@@ -39,6 +40,15 @@ fun ExportScreen(
         } ?: run {
             Toast.makeText(context, context.getString(R.string.failed_to_select_file_location), Toast.LENGTH_LONG).show()
         }
+    }
+
+    val selectImportDbFileLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let {
+            exportScreenViewModel.onImportPlaintextDatabase(uri, context)
+        }
+        // TODO error msg
     }
 
     Scaffold (
@@ -58,7 +68,13 @@ fun ExportScreen(
                 .fillMaxSize()
         ) {
             Button(onClick = {
-                exportScreenViewModel.onLaunchSelectFolder(selectFolderLauncher)
+                exportScreenViewModel.onLaunchSelectFolder(selectOutputFileLauncher)
+            }) {
+
+            }
+
+            Button(onClick = {
+                exportScreenViewModel.onLaunchSelectImportFile(selectImportDbFileLauncher)
             }) {
 
             }

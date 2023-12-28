@@ -4,6 +4,7 @@ import android.content.Context
 import com.orangeelephant.sobriety.logging.LogEvent
 import net.sqlcipher.database.SQLiteDatabase
 import java.io.File
+import java.io.InputStream
 import java.io.OutputStream
 
 private const val TAG = "SqlCipherHelper"
@@ -79,6 +80,16 @@ fun exportPlaintextDatabaseFile(context: Context, originalFile: File, exportOutp
         }
         tmpExportFile.delete()
     }
+}
+
+fun replaceDatabaseWithImportedFile(context: Context, originalFile: File, inputStream: InputStream) {
+    originalFile.delete()
+
+    val tmpImportFile = File.createTempFile("dbImport", "tmpImport.db", context.cacheDir)
+    tmpImportFile.outputStream().use { outputStream ->
+        inputStream.copyTo(outputStream)
+    }
+    tmpImportFile.renameTo(originalFile)
 }
 
 private fun replaceDatabase(tmpDbFile: File, originalFile: File, newDb: SQLiteDatabase, oldKey: String, version: Int) {

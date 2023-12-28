@@ -14,6 +14,11 @@ class ExportScreenViewModel: ViewModel() {
         launcher.launch(suggestBackupFileName())
     }
 
+    fun onLaunchSelectImportFile(launcher: ManagedActivityResultLauncher<Array<String>, Uri?>) {
+        launcher.launch(arrayOf("*/*"))
+    }
+
+
     fun onExportPlaintextDatabase(uri: Uri, context: Context) {
         var success = false
         val outputStream = context.contentResolver.openOutputStream(uri)
@@ -27,6 +32,16 @@ class ExportScreenViewModel: ViewModel() {
         } else {
             Toast.makeText(context, context.getString(R.string.failed_to_write_file), Toast.LENGTH_LONG).show()
         }
+    }
+
+    fun onImportPlaintextDatabase(uri: Uri, context: Context) {
+        var success = false
+        val inputStream = context.contentResolver.openInputStream(uri)
+        inputStream?.let {
+            success = ApplicationDependencies.getDatabase().importPlaintextDatabase(context, it)
+            it.close()
+        }
+        // TODO toasts and maybe redirect
     }
 
     private fun suggestBackupFileName(): String {

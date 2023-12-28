@@ -144,8 +144,9 @@ fun SettingsScreen(
                     TextPref (
                         title = stringResource(id = R.string.export),
                         onClick = onNavigateToExport,
-                        enabled = true
+                        enabled = false
                     )
+                    Divider()
                 }
             }
 
