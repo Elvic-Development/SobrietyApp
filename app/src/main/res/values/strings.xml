@@ -39,6 +39,7 @@
     <string name="theme">Theme</string>
     <string name="dynamic_colours">Dynamic colours</string>
     <string name="dynamic_colours_summary">Use material you dynamic colours. Requires Android 12 or above.</string>
+    <string name="export">Export</string>
     <string name="security">Security</string>
     <string name="biometric_unlock">Biometric Unlock</string>
     <string name="biometric_unlock_description">Require unlocking the app with device screenlock</string>
@@ -114,6 +115,11 @@
     <string name="reason_input">Reason</string>
     <string name="initial_start_time">Initial start time</string>
     <string name="no_comment">No comment</string>
+
+    <!-- Export options -->
+    <string name="failed_to_select_file_location">Selecting file location failed</string>
+    <string name="failed_to_write_file">Failed export database to file</string>
+    <string name="exported_database_successfully">Database exported successfully</string>
 
     <!--- Drawables -->
     <string name="ic_launcher_background">ic_launcher_background</string>

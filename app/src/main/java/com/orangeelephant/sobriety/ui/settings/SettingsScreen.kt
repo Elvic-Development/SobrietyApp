@@ -40,6 +40,7 @@ import com.orangeelephant.sobriety.util.dataStore
 @Composable
 fun SettingsScreen(
     popBack: () -> Unit,
+    onNavigateToExport: () -> Unit,
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
     val localContext = LocalContext.current as MainActivity
@@ -133,6 +134,18 @@ fun SettingsScreen(
                         )
                     }
                     Divider()
+                }
+            }
+
+            prefsGroup({
+                GroupHeader(title = stringResource(id = R.string.export))
+            }) {
+                prefsItem {
+                    TextPref (
+                        title = stringResource(id = R.string.export),
+                        onClick = onNavigateToExport,
+                        enabled = true
+                    )
                 }
             }
 

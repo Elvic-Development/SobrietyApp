@@ -13,6 +13,7 @@ import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullView
 import com.orangeelephant.sobriety.ui.screens.CreateCounter
 import com.orangeelephant.sobriety.ui.screens.unlock.UnlockScreen
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullScreenViewModel
+import com.orangeelephant.sobriety.ui.screens.export.ExportScreen
 import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
 import com.orangeelephant.sobriety.ui.settings.SettingsScreen
 
@@ -24,6 +25,7 @@ sealed class Screen(val route: String) {
     }
     object AddCounter: Screen("addCounter")
     object Settings: Screen("settings")
+    object Export: Screen("export")
 }
 
 
@@ -40,6 +42,7 @@ fun SobrietyAppNavigation(
         addCounterFullViewNavigation(context, navController)
         addCreateCounterNavigation(navController)
         addSettingsNavigation(navController)
+        addExportDatabaseNavigation(navController)
     }
 }
 
@@ -102,6 +105,15 @@ fun NavGraphBuilder.addCreateCounterNavigation(navController: NavHostController)
 
 fun NavGraphBuilder.addSettingsNavigation(navController: NavHostController) {
     composable(route = Screen.Settings.route) {
-        SettingsScreen(popBack = { navController.popBackStack() })
+        SettingsScreen(
+            popBack = { navController.popBackStack() },
+            onNavigateToExport = { navController.navigate(route = Screen.Export.route) }
+        )
+    }
+}
+
+fun NavGraphBuilder.addExportDatabaseNavigation(navController: NavHostController) {
+    composable(route = Screen.Export.route) {
+        ExportScreen(popBack = { navController.popBackStack() })
     }
 }
