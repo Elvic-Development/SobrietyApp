@@ -84,6 +84,8 @@
     <string name="change_password_description">The database will be re-encrypted using this password, if you forget it then all data will be inaccessible.</string>
     <string name="confirm_change_password">Confirm change</string>
     <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="passwords_dont_match">Passwords don\'t match, try again.</string>
     <string name="new_password">New password</string>
     <string name="encrypted_successfully">Database has been encrypted successfully</string>
     <string name="decrypted_successfully">Database has been decrypted successfully</string>

@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -31,7 +30,7 @@ import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.ConfirmationDialog
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.LoadingDialog
-import com.orangeelephant.sobriety.ui.common.PasswordInputField
+import com.orangeelephant.sobriety.ui.common.PasswordConfirmationLayout
 import com.orangeelephant.sobriety.ui.common.SobrietyAlertDialog
 import com.orangeelephant.sobriety.util.SobrietyPreferences
 import com.orangeelephant.sobriety.util.dataStore
@@ -196,8 +195,7 @@ fun SettingsScreen(
                 },
                 title = R.string.change_password_dialog,
                 description = R.string.change_password_description,
-                btnPosLabel = R.string.confirm_change_password,
-                inputBoxLabel = R.string.new_password
+                btnPosLabel = R.string.confirm_change_password
             )
         }
         
@@ -245,39 +243,14 @@ fun ManagePasswordDialog(
     onConfirm: (password: String) -> Unit,
     @StringRes title: Int,
     @StringRes description: Int,
-    @StringRes btnPosLabel: Int,
-    @StringRes inputBoxLabel: Int = R.string.password
+    @StringRes btnPosLabel: Int
 ) {
-    val password = remember { mutableStateOf("") }
-
     SobrietyAlertDialog(onDismiss = onDismiss) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(
-                stringResource(id = title),
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                stringResource(id = description),
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            PasswordInputField(
-                password = password,
-                label = inputBoxLabel
-            ) {
-                onConfirm(password.value)
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            TextButton(
-                onClick = { onConfirm(password.value) },
-                enabled = password.value != "",
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text(stringResource(id = btnPosLabel))
-            }
-        }
+        PasswordConfirmationLayout(
+            onConfirm,
+            title,
+            description,
+            btnPosLabel
+        )
     }
 }
