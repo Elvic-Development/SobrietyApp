@@ -2,11 +2,9 @@ package com.orangeelephant.sobriety.ui.screens.export
 
 import android.content.Context
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import com.orangeelephant.sobriety.ApplicationDependencies
-import com.orangeelephant.sobriety.R
 
 class ExportScreenViewModel: ViewModel() {
 
@@ -15,36 +13,30 @@ class ExportScreenViewModel: ViewModel() {
     }
 
     fun onLaunchSelectImportFile(launcher: ManagedActivityResultLauncher<Array<String>, Uri?>) {
-        launcher.launch(arrayOf("*/*"))
+        launcher.launch(arrayOf("application/*"))
     }
 
 
+    // TODO run in coroutine and maybe add loading UI incase file size gets bigger in future...
+    // also add toasts for if things worked / didnt
     fun onExportPlaintextDatabase(uri: Uri, context: Context) {
-        var success = false
         val outputStream = context.contentResolver.openOutputStream(uri)
         outputStream?.let {
-            success = ApplicationDependencies.getDatabase().exportPlaintextDatabase(context, it)
+            ApplicationDependencies.getDatabase().exportPlaintextDatabase(context, it)
             it.close()
-        }
-
-        if (success) {
-            Toast.makeText(context, context.getString(R.string.exported_database_successfully), Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(context, context.getString(R.string.failed_to_write_file), Toast.LENGTH_LONG).show()
         }
     }
 
     fun onImportPlaintextDatabase(uri: Uri, context: Context) {
-        var success = false
         val inputStream = context.contentResolver.openInputStream(uri)
         inputStream?.let {
-            success = ApplicationDependencies.getDatabase().importPlaintextDatabase(context, it)
+            ApplicationDependencies.getDatabase().importPlaintextDatabase(context, it)
             it.close()
         }
-        // TODO toasts and maybe redirect
     }
 
     private fun suggestBackupFileName(): String {
+        // TODO make each unique
         return "lotus_db_export.db"
     }
 }

@@ -15,16 +15,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.orangeelephant.sobriety.logging.LogEvent
-import com.orangeelephant.sobriety.storage.models.Counter
+import com.orangeelephant.sobriety.ui.screens.unlock.UnlockScreen
 import com.orangeelephant.sobriety.ui.theme.SobrietyTheme
 import com.orangeelephant.sobriety.util.SobrietyPreferences
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.sqlcipher.database.SQLiteDatabase
+import java.lang.IllegalStateException
 import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
+    private val dynamicColoursPreference = mutableStateOf(false)
+    private val themePreference = mutableStateOf("default")
+
     companion object {
         private val TAG = MainActivity::class.java.simpleName
     }
@@ -47,7 +51,6 @@ class MainActivity : FragmentActivity() {
         }
 
         // when theme or dynamic colours pref change the theme is recomposed
-        val themePreference = mutableStateOf("default")
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 SobrietyPreferences(applicationContext).theme.collect {
@@ -56,7 +59,6 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
-        val dynamicColoursPreference = mutableStateOf(false)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 SobrietyPreferences(applicationContext).dynamicColours.collect {
@@ -67,6 +69,20 @@ class MainActivity : FragmentActivity() {
         }
 
         installSplashScreen()
+        requireUnlock()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        try {
+            ApplicationDependencies.getSqlCipherKey()
+        } catch (e: IllegalStateException) {
+            requireUnlock()
+            LogEvent.e(TAG, "SQL cipher key unavailable after activity resume", e)
+        }
+    }
+
+    private fun setContentMain() {
         setContent {
             SobrietyTheme (
                 themePreference = themePreference,
@@ -80,6 +96,22 @@ class MainActivity : FragmentActivity() {
                         navController = rememberNavController(),
                         context = this
                     )
+                }
+            }
+        }
+    }
+
+    private fun requireUnlock() {
+        setContent {
+            SobrietyTheme (
+                themePreference = themePreference,
+                dynamicColor = dynamicColoursPreference
+            ){
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    UnlockScreen(navigateToHome = { setContentMain() })
                 }
             }
         }

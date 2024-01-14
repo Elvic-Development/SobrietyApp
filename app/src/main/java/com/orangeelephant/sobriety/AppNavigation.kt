@@ -11,14 +11,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullView
 import com.orangeelephant.sobriety.ui.screens.CreateCounter
-import com.orangeelephant.sobriety.ui.screens.unlock.UnlockScreen
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullScreenViewModel
 import com.orangeelephant.sobriety.ui.screens.export.ExportScreen
 import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
 import com.orangeelephant.sobriety.ui.settings.SettingsScreen
 
 sealed class Screen(val route: String) {
-    object Unlock: Screen("unlock")
     object Home: Screen("home")
     object CounterFullView: Screen("counterFullView/{counterId}") {
         fun createRoute(counterId: Int) = "counterFullView/$counterId"
@@ -34,29 +32,13 @@ fun SobrietyAppNavigation(
     navController: NavHostController,
     context: Context
 ) {
-    val startDestination = Screen.Unlock.route
-
+    val startDestination = Screen.Home.route
     NavHost(navController, startDestination = startDestination) {
-        addUnlockNavigation(navController)
         addHomeNavigation(navController)
         addCounterFullViewNavigation(context, navController)
         addCreateCounterNavigation(navController)
         addSettingsNavigation(navController)
         addExportDatabaseNavigation(navController)
-    }
-}
-
-fun NavGraphBuilder.addUnlockNavigation(navController: NavHostController) {
-    composable(route = Screen.Unlock.route) {
-        UnlockScreen(
-            navigateToHome = {
-                navController.navigate(Screen.Home.route) {
-                    popUpTo(Screen.Unlock.route) {
-                        inclusive = true
-                    }
-                }
-            }
-        )
     }
 }
 

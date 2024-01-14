@@ -53,7 +53,7 @@ class SobrietyDatabase(context: Context) {
         }
     }
 
-    fun exportPlaintextDatabase(context: Context, destinationOutputStream: OutputStream): Boolean {
+    fun exportPlaintextDatabase(context: Context, destinationOutputStream: OutputStream) {
         val database = openHelper.getReadableDatabase()
         val originalFile = File(database.path)
         val version = database.version
@@ -66,21 +66,17 @@ class SobrietyDatabase(context: Context) {
             ApplicationDependencies.getSqlCipherKey().keyBytes,
             version
         )
-
-        return true // TODO return success or fail
     }
 
     /**
      * Wipe existing DB and replace with imported DB file
      * won't work if the existing DB is encrypted yet
      */
-    fun importPlaintextDatabase(context: Context, inputStream: InputStream): Boolean {
+    fun importPlaintextDatabase(context: Context, inputStream: InputStream) {
         val database = openHelper.getReadableDatabase()
         val originalFile = File(database.path)
         database.close()
 
         replaceDatabaseWithImportedFile(context, originalFile, inputStream)
-
-        return true // TODO return success or fail
     }
 }
