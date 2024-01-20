@@ -82,6 +82,21 @@
     <string name="select_date">Select date</string>
     <string name="today">Today</string>
 
+    <!-- Initial Setup -->
+    <string name="welcome">Welcome</string>
+    <string name="welcome_description">Welcome to Lotus, an app for keeping track of your sobriety. Lotus offers features to preserve your privacy such as encrypting the database with a password and requiring biometric authentication to unlock the app. We never collect any data about users.</string>
+    <string name="import_backup">Import backup</string>
+    <string name="import_backup_description">If you have previously exported a backup of your Lotus database you can import this now to not lose anything, note that this is the only opportunity to do so without resetting the app.</string>
+    <string name="tap_to_select_backup_file">Tap to select backup</string>
+    <string name="create_password">Create password</string>
+    <string name="create_password_setup_description">This password will be used to encrypt the database where all your counters are stored. If you forget this password it will be impossible to decrypt them again so it is important to not lose it.</string>
+    <string name="enable_biometrics">Enable biometric unlock</string>
+    <string name="enable_biometrics_description">Require biometrics to open the app. If you already setup a password to encrypt the database you will be able to use either to open the app for convenience. Warning: You must still remember your password as android may invalidate the keys used to decrypt the database key in some circumstances.</string>
+    <string name="tap_to_enable_biometrics">Tap to enable biometrics</string>
+    <string name="finish">Finish</string>
+    <string name="finish_description">All done! We hope you enjoy using Lotus, begin tracking your sobriety by clicking the + button on the home screen.</string>
+
+
     <!-- Database password -->
     <string name="create_password_dialog">Create password</string>
     <string name="create_password_description">The database will be encrypted using this password, if you forget it then all data will be inaccessible.</string>

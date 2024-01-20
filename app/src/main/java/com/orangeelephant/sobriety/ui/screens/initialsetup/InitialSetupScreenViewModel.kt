@@ -1,7 +1,9 @@
 package com.orangeelephant.sobriety.ui.screens.initialsetup
 
 import android.content.Context
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.orangeelephant.sobriety.ApplicationDependencies
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.settings.setEncryptionPassword
 import com.orangeelephant.sobriety.ui.settings.toggleBiometrics
@@ -73,6 +76,18 @@ class InitialSetupScreenViewModel @Inject constructor(
             } else {
                 preferences.setSetupCurrentStep(currentStep + 1)
             }
+        }
+    }
+
+    fun onLaunchSelectImportFile(launcher: ManagedActivityResultLauncher<Array<String>, Uri?>) {
+        launcher.launch(arrayOf("application/*"))
+    }
+
+    fun onImportPlaintextDatabase(uri: Uri, context: Context) {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        inputStream?.let {
+            ApplicationDependencies.getDatabase().importPlaintextDatabase(context, it)
+            it.close()
         }
     }
 }

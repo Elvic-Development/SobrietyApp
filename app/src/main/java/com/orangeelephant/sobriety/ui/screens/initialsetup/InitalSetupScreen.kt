@@ -1,5 +1,8 @@
 package com.orangeelephant.sobriety.ui.screens.initialsetup
 
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,7 +63,7 @@ fun InitialSetupScreen(
                 }
                 InitialSetupScreenViewModel.IMPORT_BACKUP -> {
                     SmallLogo()
-                    ImportBackup()
+                    ImportBackup(viewModel = viewModel)
                 }
                 InitialSetupScreenViewModel.CREATE_PASSWORD -> {
                     SmallLogo()
@@ -101,12 +104,61 @@ fun InitialSetupScreen(
 
 @Composable
 fun Welcome() {
-    Text("Welcome", color = MaterialTheme.colorScheme.outline)
+    Column (
+        horizontalAlignment = Alignment.Start
+    ) {
+        Text(
+            stringResource(id = R.string.welcome),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleLarge
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(
+            stringResource(id = R.string.welcome_description),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
 }
 
 @Composable
-fun ImportBackup() {
-    Text("Import", color = MaterialTheme.colorScheme.outline)
+fun ImportBackup(viewModel: InitialSetupScreenViewModel) {
+    val context = LocalContext.current
+    val selectImportDbFileLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let {
+            viewModel.onImportPlaintextDatabase(uri, context)
+        } ?: run {
+            Toast.makeText(context, context.getString(R.string.failed_to_select_file_location), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    Column (
+        horizontalAlignment = Alignment.Start,
+        modifier = Modifier.padding(20.dp)
+    ) {
+        Text(
+            stringResource(id = R.string.import_backup),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleLarge
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(
+            stringResource(id = R.string.import_backup_description),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+    Spacer(modifier = Modifier.fillMaxHeight(0.15f))
+
+    Button(
+        onClick = { viewModel.onLaunchSelectImportFile(selectImportDbFileLauncher) },
+        shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 25)),
+        modifier = Modifier.size(width = 250.dp, height = 50.dp)
+    ) {
+        Text(stringResource(id = R.string.tap_to_select_backup_file))
+    }
 }
 
 @Composable
@@ -117,8 +169,8 @@ fun SetupPassword(viewModel: InitialSetupScreenViewModel) {
         onConfirm = { password ->
             viewModel.onSetPassword(context, password)
         },
-        title = R.string.create_password_dialog,
-        description = R.string.create_password_description,
+        title = R.string.create_password,
+        description = R.string.create_password_setup_description,
         btnPosLabel = R.string.encrypt_database
     )
 
@@ -129,6 +181,24 @@ fun SetupPassword(viewModel: InitialSetupScreenViewModel) {
 
 @Composable
 fun EnableBiometrics(viewModel: InitialSetupScreenViewModel) {
+    Column (
+        horizontalAlignment = Alignment.Start,
+        modifier = Modifier.padding(20.dp)
+    ) {
+        Text(
+            stringResource(id = R.string.enable_biometrics),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleLarge
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(
+            stringResource(id = R.string.enable_biometrics_description),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+    Spacer(modifier = Modifier.fillMaxHeight(0.15f))
+
     val activity = LocalContext.current as MainActivity
     Button(
         onClick = { viewModel.onEnableBiometrics(activity) },
@@ -137,13 +207,27 @@ fun EnableBiometrics(viewModel: InitialSetupScreenViewModel) {
     ) {
         Icon(Icons.Default.Lock, contentDescription = "lock icon")
         Spacer(modifier = Modifier.width(10.dp))
-        Text(stringResource(id = R.string.prompt_unlock_button))
+        Text(stringResource(id = R.string.tap_to_enable_biometrics))
     }
 }
 
 @Composable
 fun Finish() {
-    Text("Finish", color = MaterialTheme.colorScheme.outline)
+    Column (
+        horizontalAlignment = Alignment.Start
+    ) {
+        Text(
+            stringResource(id = R.string.finish),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleLarge
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(
+            stringResource(id = R.string.finish_description),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
 }
 
 @Composable
@@ -157,7 +241,7 @@ fun SmallLogo() {
 
 @Composable
 fun LargeLogo() {
-    Spacer(modifier = Modifier.fillMaxHeight(0.2f))
+    Spacer(modifier = Modifier.fillMaxHeight(0.1f))
     LogoAndName()
     Spacer(modifier = Modifier.fillMaxHeight(0.2f))
 }
