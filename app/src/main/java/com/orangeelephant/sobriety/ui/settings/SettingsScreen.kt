@@ -142,9 +142,10 @@ fun SettingsScreen(
             }) {
                 prefsItem {
                     TextPref (
-                        title = stringResource(id = R.string.export),
+                        title = stringResource(id = R.string.export_database),
+                        summary = stringResource(id = R.string.export_database_description),
                         onClick = onNavigateToExport,
-                        enabled = false
+                        enabled = true
                     )
                     Divider()
                 }

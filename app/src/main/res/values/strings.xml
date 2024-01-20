@@ -40,6 +40,8 @@
     <string name="dynamic_colours">Dynamic colours</string>
     <string name="dynamic_colours_summary">Use material you dynamic colours. Requires Android 12 or above.</string>
     <string name="export">Export</string>
+    <string name="export_database">Export the database</string>
+    <string name="export_database_description">Export a backup of the apps database</string>
     <string name="security">Security</string>
     <string name="biometric_unlock">Biometric Unlock</string>
     <string name="biometric_unlock_description">Require unlocking the app with device screenlock</string>
@@ -99,6 +101,10 @@
     <string name="next">Next</string>
     <string name="skip_import">Skip import</string>
     <string name="skip_for_now">Skip for now</string>
+
+    <!-- Export -->
+    <string name="export_plaintext_description">Export the database file in plaintext to use as a backup, encrypted exports are not yet implemented so be careful where you store this.</string>
+    <string name="tap_to_select_export_file">Tap choose export location</string>
 
     <!-- Database password -->
     <string name="create_password_dialog">Create password</string>

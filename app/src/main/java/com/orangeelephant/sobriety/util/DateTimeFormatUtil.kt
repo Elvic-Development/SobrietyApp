@@ -48,6 +48,13 @@ object DateTimeFormatUtil {
         }
     }
 
+    fun currentTimeStampForBackupFile(context: Context): String {
+        val locale = context.resources.configuration.locales.get(0)
+        val pattern = "yyyy-MM-dd-HH-mm-ss"
+
+        return SimpleDateFormat(pattern, locale).format(Date(System.currentTimeMillis()))
+    }
+
     fun formatTime(context: Context, timestamp: Long): String {
         val locale = context.resources.configuration.locales.get(0)
         val format = if (DateFormat.is24HourFormat(context)) "HH:mm" else "hh:mm a"

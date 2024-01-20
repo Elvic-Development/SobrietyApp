@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orangeelephant.sobriety.MainActivity
 import com.orangeelephant.sobriety.R
+import com.orangeelephant.sobriety.ui.common.FormatTitleAndDescription
 import com.orangeelephant.sobriety.ui.common.LinearProgressIndicator
 import com.orangeelephant.sobriety.ui.common.LoadingDialog
 import com.orangeelephant.sobriety.ui.common.Logo
@@ -137,21 +138,7 @@ fun InitialSetupScreen(
 
 @Composable
 fun Welcome() {
-    Column (
-        horizontalAlignment = Alignment.Start
-    ) {
-        Text(
-            stringResource(id = R.string.welcome),
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleLarge
-        )
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            stringResource(id = R.string.welcome_description),
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
+    FormatTitleAndDescription(title = R.string.welcome, description = R.string.welcome_description)
 }
 
 @Composable
@@ -167,22 +154,7 @@ fun ImportBackup(viewModel: InitialSetupScreenViewModel) {
         }
     }
 
-    Column (
-        horizontalAlignment = Alignment.Start,
-        modifier = Modifier.padding(20.dp)
-    ) {
-        Text(
-            stringResource(id = R.string.import_backup),
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleLarge
-        )
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            stringResource(id = R.string.import_backup_description),
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
+    FormatTitleAndDescription(title = R.string.import_backup, description = R.string.import_backup_description)
     Spacer(modifier = Modifier.fillMaxHeight(0.15f))
 
     Button(
@@ -214,22 +186,7 @@ fun SetupPassword(viewModel: InitialSetupScreenViewModel) {
 
 @Composable
 fun EnableBiometrics(viewModel: InitialSetupScreenViewModel) {
-    Column (
-        horizontalAlignment = Alignment.Start,
-        modifier = Modifier.padding(20.dp)
-    ) {
-        Text(
-            stringResource(id = R.string.enable_biometrics),
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleLarge
-        )
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            stringResource(id = R.string.enable_biometrics_description),
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
+    FormatTitleAndDescription(title = R.string.enable_biometrics, description = R.string.enable_biometrics_description)
     Spacer(modifier = Modifier.fillMaxHeight(0.15f))
 
     val activity = LocalContext.current as MainActivity
@@ -246,21 +203,7 @@ fun EnableBiometrics(viewModel: InitialSetupScreenViewModel) {
 
 @Composable
 fun Finish() {
-    Column (
-        horizontalAlignment = Alignment.Start
-    ) {
-        Text(
-            stringResource(id = R.string.finish),
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleLarge
-        )
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            stringResource(id = R.string.finish_description),
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
+    FormatTitleAndDescription(title = R.string.finish, description = R.string.finish_description)
 }
 
 @Composable
@@ -276,5 +219,5 @@ fun SmallLogo() {
 fun LargeLogo() {
     Spacer(modifier = Modifier.fillMaxHeight(0.1f))
     LogoAndName()
-    Spacer(modifier = Modifier.fillMaxHeight(0.2f))
+    Spacer(modifier = Modifier.fillMaxHeight(0.15f))
 }
