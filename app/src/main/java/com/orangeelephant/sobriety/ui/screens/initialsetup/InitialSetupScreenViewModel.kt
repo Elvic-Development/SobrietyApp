@@ -65,8 +65,14 @@ class InitialSetupScreenViewModel @Inject constructor(
     }
 
     fun onEnableBiometrics(context: FragmentActivity) {
-        toggleBiometrics(context, preferences, viewModelScope, true)
-        incrementCurrentStep()
+        toggleBiometrics(
+            context,
+            preferences,
+            viewModelScope,
+            true
+        ) {
+            incrementCurrentStep()
+        }
     }
 
     fun incrementCurrentStep() {

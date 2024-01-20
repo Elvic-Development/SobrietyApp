@@ -83,7 +83,7 @@ fun InitialSetupScreen(
                 targetState = viewModel.currentStep,
                 transitionSpec = {
                     slideInHorizontally(
-                        animationSpec = tween(600),
+                        animationSpec = tween(400),
                         initialOffsetX = { fullHeight -> fullHeight }) togetherWith
                             fadeOut(
                                 animationSpec = tween(200)
