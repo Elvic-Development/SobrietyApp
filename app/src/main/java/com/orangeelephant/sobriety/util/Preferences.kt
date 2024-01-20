@@ -6,6 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.orangeelephant.sobriety.R
@@ -21,6 +22,9 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(PREFERENCE
 class SobrietyPreferences(context: Context) {
     private val preferenceDataStore = context.dataStore
     companion object {
+        const val SETUP_COMPLETED = "setup_completed"
+        const val SETUP_CURRENT_STEP = "setup_current_step"
+
         const val DYNAMIC_COLOURS = "dynamic_colours"
         const val THEME = "theme"
         const val LANGUAGE = "language"
@@ -31,6 +35,9 @@ class SobrietyPreferences(context: Context) {
         const val KEYSTORE_ENCRYPTED_KEY = "keystore_encrypted_key"
     }
 
+    val setupCompleted: Flow<Boolean> = getPrefFlow(booleanPreferencesKey(SETUP_COMPLETED), false)
+    val setupCurrentStep: Flow<Int> = getPrefFlow(intPreferencesKey(SETUP_CURRENT_STEP), 0)
+
     val dynamicColours: Flow<Boolean> = getPrefFlow(booleanPreferencesKey(DYNAMIC_COLOURS), true)
     val theme: Flow<String> = getPrefFlow(stringPreferencesKey(THEME), "default")
     val language: Flow<String> = getPrefFlow(stringPreferencesKey(LANGUAGE), "default")
@@ -38,6 +45,14 @@ class SobrietyPreferences(context: Context) {
     val biometricUnlock: Flow<Boolean> = getPrefFlow(booleanPreferencesKey(BIOMETRIC_UNLOCK), false)
     val encryptedByPassword: Flow<Boolean> = getPrefFlow(booleanPreferencesKey(ENCRYPTED_BY_PASSWORD), false)
     val passwordSalt: Flow<String> = getPrefFlow(stringPreferencesKey(PASSWORD_SALT), "")
+
+    suspend fun setSetupCompleted(completed: Boolean) {
+        editPref(booleanPreferencesKey(SETUP_COMPLETED), completed)
+    }
+
+    suspend fun setSetupCurrentStep(currentStep: Int) {
+        editPref(intPreferencesKey(SETUP_CURRENT_STEP), currentStep)
+    }
 
     suspend fun setBiometricsEnabled(value: Boolean) {
         editPref(booleanPreferencesKey(BIOMETRIC_UNLOCK), value)

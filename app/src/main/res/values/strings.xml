@@ -53,6 +53,12 @@
     <string name="version">Version</string>
     <string name="source_code">Source code</string>
     <string name="source_code_description">Follow this link to view the source code of this app.</string>
+    <string name="development">Development</string>
+    <string name="development_settings">Development Settings</string>
+    <string name="development_settings_description">Useful options to help with testing and development</string>
+    <string name="app_setup">App setup</string>
+    <string name="mark_setup_incomplete">Mark setup as incomplete</string>
+    <string name="mark_setup_incomplete_description">Forces the app to rerun the setup process</string>
 
     <!-- Preference confirmation -->
     <string name="disable_biometrics">Disable Biometrics</string>

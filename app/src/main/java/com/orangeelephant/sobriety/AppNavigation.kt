@@ -14,6 +14,8 @@ import com.orangeelephant.sobriety.ui.screens.CreateCounter
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullScreenViewModel
 import com.orangeelephant.sobriety.ui.screens.export.ExportScreen
 import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
+import com.orangeelephant.sobriety.ui.screens.initialsetup.InitialSetupScreen
+import com.orangeelephant.sobriety.ui.settings.DevelopmentOptionsScreen
 import com.orangeelephant.sobriety.ui.settings.SettingsScreen
 
 sealed class Screen(val route: String) {
@@ -23,14 +25,17 @@ sealed class Screen(val route: String) {
     }
     object AddCounter: Screen("addCounter")
     object Settings: Screen("settings")
+    object DevelopmentSettings: Screen("developmentSettings")
     object Export: Screen("export")
+    object InitialSetup: Screen("setup")
 }
 
 
 @Composable
 fun SobrietyAppNavigation(
     navController: NavHostController,
-    context: Context
+    context: Context,
+    isInSetup: Boolean
 ) {
     val startDestination = Screen.Home.route
     NavHost(navController, startDestination = startDestination) {
@@ -39,6 +44,11 @@ fun SobrietyAppNavigation(
         addCreateCounterNavigation(navController)
         addSettingsNavigation(navController)
         addExportDatabaseNavigation(navController)
+        addInitialSetupNavigation(navController)
+    }
+
+    if (isInSetup) {
+        navController.navigate(Screen.InitialSetup.route)
     }
 }
 
@@ -89,7 +99,14 @@ fun NavGraphBuilder.addSettingsNavigation(navController: NavHostController) {
     composable(route = Screen.Settings.route) {
         SettingsScreen(
             popBack = { navController.popBackStack() },
-            onNavigateToExport = { navController.navigate(route = Screen.Export.route) }
+            onNavigateToExport = { navController.navigate(route = Screen.Export.route) },
+            onNavigateToDevlopmentOptions = { navController.navigate(route = Screen.DevelopmentSettings.route)}
+        )
+    }
+
+    composable(route = Screen.DevelopmentSettings.route) {
+        DevelopmentOptionsScreen(
+            popBack = { navController.popBackStack() }
         )
     }
 }
@@ -97,5 +114,11 @@ fun NavGraphBuilder.addSettingsNavigation(navController: NavHostController) {
 fun NavGraphBuilder.addExportDatabaseNavigation(navController: NavHostController) {
     composable(route = Screen.Export.route) {
         ExportScreen(popBack = { navController.popBackStack() })
+    }
+}
+
+fun NavGraphBuilder.addInitialSetupNavigation(navController: NavHostController) {
+    composable(route = Screen.InitialSetup.route) {
+        InitialSetupScreen(onNavigateToHome = { navController.navigate(Screen.Home.route) })
     }
 }

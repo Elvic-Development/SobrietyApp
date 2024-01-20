@@ -2,7 +2,9 @@ package com.orangeelephant.sobriety.ui.settings
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,20 +30,20 @@ class SettingsViewModel @Inject constructor(
     private val preferences = SobrietyPreferences(context = app)
     val availableLanguages = preferences.availableLanguages
     val availableThemes = preferences.availableThemes
-    val encryptedWithPassword = mutableStateOf(false)
+    var encryptedWithPassword by mutableStateOf(false)
 
-    val isEncryptingDb = mutableStateOf(false)
-    val isDecryptingDb = mutableStateOf(false)
+    var isEncryptingDb by mutableStateOf(false)
+    var isDecryptingDb by mutableStateOf(false)
 
     init {
         viewModelScope.launch {
-            preferences.encryptedByPassword.collect { encryptedWithPassword.value = it }
+            preferences.encryptedByPassword.collect { encryptedWithPassword = it }
         }
     }
 
     fun onSetPassword(context: FragmentActivity, password: String) {
         viewModelScope.launch {
-            isEncryptingDb.value = true
+            isEncryptingDb = true
             var biometricsEnabledPreviously: Boolean
 
             withContext(Dispatchers.Default) {
@@ -52,7 +54,7 @@ class SettingsViewModel @Inject constructor(
             }
 
             Toast.makeText(context, R.string.encrypted_successfully, Toast.LENGTH_LONG).show()
-            isEncryptingDb.value = false
+            isEncryptingDb = false
 
             if (biometricsEnabledPreviously) {
                 onToggleFingerprint(context, true)
@@ -62,9 +64,9 @@ class SettingsViewModel @Inject constructor(
 
     fun onDecrypt(context: Context) {
         viewModelScope.launch {
-            isDecryptingDb.value = true
+            isDecryptingDb = true
             disableEncryption(context, preferences)
-            isDecryptingDb.value = false
+            isDecryptingDb = false
         }
     }
 

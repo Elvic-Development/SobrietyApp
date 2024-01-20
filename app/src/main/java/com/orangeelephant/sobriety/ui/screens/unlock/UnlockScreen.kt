@@ -22,13 +22,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.orangeelephant.sobriety.MainActivity
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.ui.common.LoadingDialog
+import com.orangeelephant.sobriety.ui.common.LogoAndName
 import com.orangeelephant.sobriety.ui.common.PasswordInputField
 import com.orangeelephant.sobriety.ui.common.TextDivider
 import com.orangeelephant.sobriety.ui.common.WarningDialog
@@ -55,15 +55,7 @@ fun UnlockScreen(
                 .padding(horizontal = 30.dp)
                 .fillMaxSize()
         ) {
-            Icon(
-                painterResource(id = R.drawable.lotus_app_icon),
-                contentDescription = stringResource(id = R.string.app_name)
-            )
-            Text(
-                stringResource(id = R.string.app_name),
-                style = MaterialTheme.typography.headlineLarge
-            )
-
+            LogoAndName()
             Spacer(modifier = Modifier.height(60.dp))
 
             if (viewModel.loadingValues.value) {

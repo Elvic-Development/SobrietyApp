@@ -40,6 +40,7 @@ import com.orangeelephant.sobriety.util.dataStore
 fun SettingsScreen(
     popBack: () -> Unit,
     onNavigateToExport: () -> Unit,
+    onNavigateToDevlopmentOptions: () -> Unit,
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
     val localContext = LocalContext.current as MainActivity
@@ -111,7 +112,7 @@ fun SettingsScreen(
                             }
                         }
                     )
-                    if (settingsViewModel.encryptedWithPassword.value) {
+                    if (settingsViewModel.encryptedWithPassword) {
                         TextPref(
                             title = stringResource(id = R.string.change_db_password),
                             summary = stringResource(id = R.string.change_db_password_summary),
@@ -169,6 +170,21 @@ fun SettingsScreen(
                         onClick = { context.startActivity(sourceCodeIntent) },
                         enabled = true
                     )
+
+                    Divider()
+                }
+            }
+
+            prefsGroup({
+                GroupHeader(title = stringResource(id = R.string.development))
+            }) {
+                prefsItem {
+                    TextPref(
+                        title = stringResource(id = R.string.development_settings),
+                        summary = stringResource(id = R.string.development_settings_description),
+                        onClick = onNavigateToDevlopmentOptions,
+                        enabled = true
+                    )
                 }
             }
         }
@@ -199,8 +215,8 @@ fun SettingsScreen(
             )
         }
         
-        if (settingsViewModel.isEncryptingDb.value || settingsViewModel.isDecryptingDb.value) {
-            val message = if ( settingsViewModel.isEncryptingDb.value ) {
+        if (settingsViewModel.isEncryptingDb || settingsViewModel.isDecryptingDb) {
+            val message = if ( settingsViewModel.isEncryptingDb ) {
                 R.string.encryption_in_progress
             } else {
                 R.string.decryption_in_progress
