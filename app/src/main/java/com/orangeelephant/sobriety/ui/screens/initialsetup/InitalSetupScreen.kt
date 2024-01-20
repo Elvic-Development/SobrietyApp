@@ -62,15 +62,20 @@ fun InitialSetupScreen(
                 .padding(horizontal = 30.dp)
                 .fillMaxSize()
         ) {
-            when (viewModel.currentStep) {
-                InitialSetupScreenViewModel.WELCOME,
-                InitialSetupScreenViewModel.FINISH -> {
-                    LargeLogo()
-                }
-                InitialSetupScreenViewModel.IMPORT_BACKUP,
-                InitialSetupScreenViewModel.CREATE_PASSWORD,
-                InitialSetupScreenViewModel.ENABLE_BIOMETRICS -> {
-                    SmallLogo()
+            AnimatedContent(
+                targetState = viewModel.currentStep,
+                label = "Logo position animation"
+            ) {targetState ->
+                when (targetState) {
+                    InitialSetupScreenViewModel.WELCOME,
+                    InitialSetupScreenViewModel.FINISH -> {
+                        LargeLogo()
+                    }
+                    InitialSetupScreenViewModel.IMPORT_BACKUP,
+                    InitialSetupScreenViewModel.CREATE_PASSWORD,
+                    InitialSetupScreenViewModel.ENABLE_BIOMETRICS -> {
+                        SmallLogo()
+                    }
                 }
             }
 
@@ -247,16 +252,24 @@ fun Finish() {
 
 @Composable
 fun SmallLogo() {
-    Spacer(modifier = Modifier.height(20.dp))
-    Box(modifier = Modifier.size(80.dp)) {
-        Logo()
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Box(modifier = Modifier.size(80.dp)) {
+            Logo()
+        }
+        Spacer(modifier = Modifier.fillMaxHeight(0.2f))
     }
-    Spacer(modifier = Modifier.fillMaxHeight(0.2f))
 }
 
 @Composable
 fun LargeLogo() {
-    Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-    LogoAndName()
-    Spacer(modifier = Modifier.fillMaxHeight(0.15f))
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+        LogoAndName()
+        Spacer(modifier = Modifier.fillMaxHeight(0.15f))
+    }
 }
