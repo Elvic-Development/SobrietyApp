@@ -95,8 +95,41 @@ fun InitialSetupScreen(
                 currentStep = viewModel.currentStep
             )
             Spacer(modifier = Modifier.height(10.dp))
-            TextButton(onClick = { viewModel.incrementCurrentStep() }) {
-                Text("Skip for now", color = MaterialTheme.colorScheme.outline)
+
+            when (viewModel.currentStep) {
+                InitialSetupScreenViewModel.WELCOME -> {
+                    TextButton(onClick = { viewModel.incrementCurrentStep() }) {
+                        Text(
+                            stringResource(id = R.string.next),
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                }
+                InitialSetupScreenViewModel.IMPORT_BACKUP -> {
+                    TextButton(onClick = { viewModel.incrementCurrentStep() }) {
+                        Text(
+                            stringResource(id = R.string.skip_import),
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                }
+                InitialSetupScreenViewModel.CREATE_PASSWORD,
+                InitialSetupScreenViewModel.ENABLE_BIOMETRICS -> {
+                    TextButton(onClick = { viewModel.incrementCurrentStep() }) {
+                        Text(
+                            stringResource(id = R.string.skip_for_now),
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                }
+                InitialSetupScreenViewModel.FINISH -> {
+                    TextButton(onClick = { viewModel.incrementCurrentStep() }) {
+                        Text(
+                            stringResource(id = R.string.finish),
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                }
             }
         }
     }

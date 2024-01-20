@@ -96,6 +96,9 @@
     <string name="finish">Finish</string>
     <string name="finish_description">All done! We hope you enjoy using Lotus, begin tracking your sobriety by clicking the + button on the home screen.</string>
 
+    <string name="next">Next</string>
+    <string name="skip_import">Skip import</string>
+    <string name="skip_for_now">Skip for now</string>
 
     <!-- Database password -->
     <string name="create_password_dialog">Create password</string>

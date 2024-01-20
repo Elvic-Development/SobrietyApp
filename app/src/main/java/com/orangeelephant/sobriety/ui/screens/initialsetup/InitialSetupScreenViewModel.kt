@@ -46,7 +46,6 @@ class InitialSetupScreenViewModel @Inject constructor(
             preferences.setupCurrentStep.collect { currentStep = it }
             preferences.setupCompleted.collect {
                 setupComplete = it
-                println(it)
             }
         }
     }
@@ -61,11 +60,13 @@ class InitialSetupScreenViewModel @Inject constructor(
 
             Toast.makeText(context, R.string.encrypted_successfully, Toast.LENGTH_LONG).show()
             isEncryptingDb = false
+            incrementCurrentStep()
         }
     }
 
     fun onEnableBiometrics(context: FragmentActivity) {
         toggleBiometrics(context, preferences, viewModelScope, true)
+        incrementCurrentStep()
     }
 
     fun incrementCurrentStep() {
@@ -88,6 +89,7 @@ class InitialSetupScreenViewModel @Inject constructor(
         inputStream?.let {
             ApplicationDependencies.getDatabase().importPlaintextDatabase(context, it)
             it.close()
+            incrementCurrentStep()
         }
     }
 }
