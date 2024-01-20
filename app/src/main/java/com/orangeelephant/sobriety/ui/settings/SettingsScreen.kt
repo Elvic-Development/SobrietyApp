@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -31,7 +30,7 @@ import com.orangeelephant.sobriety.ui.common.BackIcon
 import com.orangeelephant.sobriety.ui.common.ConfirmationDialog
 import com.orangeelephant.sobriety.ui.common.GenericTopAppBar
 import com.orangeelephant.sobriety.ui.common.LoadingDialog
-import com.orangeelephant.sobriety.ui.common.PasswordInputField
+import com.orangeelephant.sobriety.ui.common.PasswordConfirmationLayout
 import com.orangeelephant.sobriety.ui.common.SobrietyAlertDialog
 import com.orangeelephant.sobriety.util.SobrietyPreferences
 import com.orangeelephant.sobriety.util.dataStore
@@ -40,6 +39,8 @@ import com.orangeelephant.sobriety.util.dataStore
 @Composable
 fun SettingsScreen(
     popBack: () -> Unit,
+    onNavigateToExport: () -> Unit,
+    onNavigateToDevlopmentOptions: () -> Unit,
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
     val localContext = LocalContext.current as MainActivity
@@ -111,7 +112,7 @@ fun SettingsScreen(
                             }
                         }
                     )
-                    if (settingsViewModel.encryptedWithPassword.value) {
+                    if (settingsViewModel.encryptedWithPassword) {
                         TextPref(
                             title = stringResource(id = R.string.change_db_password),
                             summary = stringResource(id = R.string.change_db_password_summary),
@@ -137,6 +138,20 @@ fun SettingsScreen(
             }
 
             prefsGroup({
+                GroupHeader(title = stringResource(id = R.string.export))
+            }) {
+                prefsItem {
+                    TextPref (
+                        title = stringResource(id = R.string.export_database),
+                        summary = stringResource(id = R.string.export_database_description),
+                        onClick = onNavigateToExport,
+                        enabled = true
+                    )
+                    Divider()
+                }
+            }
+
+            prefsGroup({
                 GroupHeader(title = stringResource(id = R.string.about))
             }) {
                 prefsItem {
@@ -154,6 +169,21 @@ fun SettingsScreen(
                         title = stringResource(id = R.string.source_code),
                         summary = stringResource(id = R.string.source_code_description),
                         onClick = { context.startActivity(sourceCodeIntent) },
+                        enabled = true
+                    )
+
+                    Divider()
+                }
+            }
+
+            prefsGroup({
+                GroupHeader(title = stringResource(id = R.string.development))
+            }) {
+                prefsItem {
+                    TextPref(
+                        title = stringResource(id = R.string.development_settings),
+                        summary = stringResource(id = R.string.development_settings_description),
+                        onClick = onNavigateToDevlopmentOptions,
                         enabled = true
                     )
                 }
@@ -182,13 +212,12 @@ fun SettingsScreen(
                 },
                 title = R.string.change_password_dialog,
                 description = R.string.change_password_description,
-                btnPosLabel = R.string.confirm_change_password,
-                inputBoxLabel = R.string.new_password
+                btnPosLabel = R.string.confirm_change_password
             )
         }
         
-        if (settingsViewModel.isEncryptingDb.value || settingsViewModel.isDecryptingDb.value) {
-            val message = if ( settingsViewModel.isEncryptingDb.value ) {
+        if (settingsViewModel.isEncryptingDb || settingsViewModel.isDecryptingDb) {
+            val message = if ( settingsViewModel.isEncryptingDb ) {
                 R.string.encryption_in_progress
             } else {
                 R.string.decryption_in_progress
@@ -231,39 +260,14 @@ fun ManagePasswordDialog(
     onConfirm: (password: String) -> Unit,
     @StringRes title: Int,
     @StringRes description: Int,
-    @StringRes btnPosLabel: Int,
-    @StringRes inputBoxLabel: Int = R.string.password
+    @StringRes btnPosLabel: Int
 ) {
-    val password = remember { mutableStateOf("") }
-
     SobrietyAlertDialog(onDismiss = onDismiss) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(
-                stringResource(id = title),
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                stringResource(id = description),
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            PasswordInputField(
-                password = password,
-                label = inputBoxLabel
-            ) {
-                onConfirm(password.value)
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            TextButton(
-                onClick = { onConfirm(password.value) },
-                enabled = password.value != "",
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text(stringResource(id = btnPosLabel))
-            }
-        }
+        PasswordConfirmationLayout(
+            onConfirm,
+            title,
+            description,
+            btnPosLabel
+        )
     }
 }

@@ -1,14 +1,19 @@
 package com.orangeelephant.sobriety.storage.database
 
 import android.content.Context
+import com.orangeelephant.sobriety.ApplicationDependencies
 import com.orangeelephant.sobriety.storage.database.helpers.OpenHelper
 import com.orangeelephant.sobriety.storage.database.helpers.decryptEncryptedDb
 import com.orangeelephant.sobriety.storage.database.helpers.encryptPlaintextDb
+import com.orangeelephant.sobriety.storage.database.helpers.exportPlaintextDatabaseFile
+import com.orangeelephant.sobriety.storage.database.helpers.replaceDatabaseWithImportedFile
 import com.orangeelephant.sobriety.storage.database.tables.CountersTable
 import com.orangeelephant.sobriety.storage.database.tables.ReasonsTable
 import com.orangeelephant.sobriety.storage.database.tables.RelapsesTable
 import net.sqlcipher.database.SQLiteException
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 
 class SobrietyDatabase(context: Context) {
     private val openHelper: OpenHelper = OpenHelper(context)
@@ -46,5 +51,32 @@ class SobrietyDatabase(context: Context) {
         } catch (sqLiteException: SQLiteException) {
             false
         }
+    }
+
+    fun exportPlaintextDatabase(context: Context, destinationOutputStream: OutputStream) {
+        val database = openHelper.getReadableDatabase()
+        val originalFile = File(database.path)
+        val version = database.version
+        database.close()
+
+        exportPlaintextDatabaseFile(
+            context,
+            originalFile,
+            destinationOutputStream,
+            ApplicationDependencies.getSqlCipherKey().keyBytes,
+            version
+        )
+    }
+
+    /**
+     * Wipe existing DB and replace with imported DB file
+     * won't work if the existing DB is encrypted yet
+     */
+    fun importPlaintextDatabase(context: Context, inputStream: InputStream) {
+        val database = openHelper.getReadableDatabase()
+        val originalFile = File(database.path)
+        database.close()
+
+        replaceDatabaseWithImportedFile(context, originalFile, inputStream)
     }
 }

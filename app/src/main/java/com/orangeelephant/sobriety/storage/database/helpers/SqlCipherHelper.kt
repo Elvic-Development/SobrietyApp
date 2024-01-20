@@ -4,6 +4,8 @@ import android.content.Context
 import com.orangeelephant.sobriety.logging.LogEvent
 import net.sqlcipher.database.SQLiteDatabase
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 
 private const val TAG = "SqlCipherHelper"
 
@@ -20,7 +22,7 @@ fun encryptPlaintextDb(context: Context, originalFile: File, newKey: ByteArray, 
             null
         )
 
-        exportDatabase(
+        replaceDatabase(
             tmpEncryptedDbFile,
             originalFile,
             encryptedDb,
@@ -43,7 +45,7 @@ fun decryptEncryptedDb(context: Context, originalFile: File, currentKey: ByteArr
             null
         )
 
-        exportDatabase(
+        replaceDatabase(
             tmpUnencryptedFile,
             originalFile,
             unencryptedDb,
@@ -53,7 +55,51 @@ fun decryptEncryptedDb(context: Context, originalFile: File, currentKey: ByteArr
     }
 }
 
-private fun exportDatabase(tmpDbFile: File, originalFile: File, newDb: SQLiteDatabase, oldKey: String, version: Int) {
+fun exportPlaintextDatabaseFile(context: Context, originalFile: File, exportOutputStream: OutputStream, currentKey: ByteArray?, version: Int) {
+    LogEvent.i(TAG, "Exporting database as plaintext")
+    if (originalFile.exists()) {
+        val tmpExportFile = File.createTempFile("dbExport", "tmpExport.db", context.cacheDir)
+        val exportDB = SQLiteDatabase.openDatabase(
+            tmpExportFile.absolutePath,
+            "",
+            null,
+            SQLiteDatabase.OPEN_READWRITE,
+            null,
+            null
+        )
+
+        exportDatabase(
+            originalFile,
+            exportDB,
+            currentKey?.decodeToString() ?: "",
+            version
+        )
+
+        exportOutputStream.use { outputStream ->
+            tmpExportFile.inputStream().copyTo(outputStream)
+        }
+        tmpExportFile.delete()
+    }
+}
+
+fun replaceDatabaseWithImportedFile(context: Context, originalFile: File, inputStream: InputStream) {
+    originalFile.delete()
+
+    val tmpImportFile = File.createTempFile("dbImport", "tmpImport.db", context.cacheDir)
+    tmpImportFile.outputStream().use { outputStream ->
+        inputStream.copyTo(outputStream)
+    }
+    tmpImportFile.renameTo(originalFile)
+}
+
+private fun replaceDatabase(tmpDbFile: File, originalFile: File, newDb: SQLiteDatabase, oldKey: String, version: Int) {
+    exportDatabase(originalFile, newDb, oldKey, version)
+    originalFile.delete()
+    tmpDbFile.renameTo(originalFile)
+    LogEvent.i(TAG, "Original database file replaced by exported version")
+}
+
+private fun exportDatabase(originalFile: File, newDb: SQLiteDatabase, oldKey: String, version: Int) {
     val attachStatement = newDb.compileStatement(
         "ATTACH DATABASE ? AS original KEY '${oldKey}'"
     )
@@ -65,8 +111,6 @@ private fun exportDatabase(tmpDbFile: File, originalFile: File, newDb: SQLiteDat
 
     attachStatement.close()
     newDb.close()
-    originalFile.delete()
 
-    tmpDbFile.renameTo(originalFile)
     LogEvent.i(TAG, "Database data exported to new file")
 }

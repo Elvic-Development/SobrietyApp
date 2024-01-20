@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
@@ -15,16 +17,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.orangeelephant.sobriety.logging.LogEvent
-import com.orangeelephant.sobriety.storage.models.Counter
+import com.orangeelephant.sobriety.ui.screens.unlock.UnlockScreen
 import com.orangeelephant.sobriety.ui.theme.SobrietyTheme
 import com.orangeelephant.sobriety.util.SobrietyPreferences
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.sqlcipher.database.SQLiteDatabase
+import java.lang.IllegalStateException
 import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
+    private var dynamicColoursPreference by mutableStateOf(false)
+    private var themePreference by mutableStateOf("default")
+    private var isInSetup by mutableStateOf(false)
+
     companion object {
         private val TAG = MainActivity::class.java.simpleName
     }
@@ -36,37 +43,23 @@ class MainActivity : FragmentActivity() {
         }
         super.onCreate(savedInstanceState)
 
-        // update language on pref value change
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                SobrietyPreferences(applicationContext).language.collect {
-                    LogEvent.i(TAG, "Updating language to $it")
-                    setLocale(it)
-                }
-            }
-        }
-
-        // when theme or dynamic colours pref change the theme is recomposed
-        val themePreference = mutableStateOf("default")
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                SobrietyPreferences(applicationContext).theme.collect {
-                    LogEvent.i(TAG, "Updating theme to $it")
-                    themePreference.value = it
-                }
-            }
-        }
-        val dynamicColoursPreference = mutableStateOf(false)
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                SobrietyPreferences(applicationContext).dynamicColours.collect {
-                    LogEvent.i(TAG, "Updating dynamic colours to $it")
-                    dynamicColoursPreference.value = it
-                }
-            }
-        }
+        observePreferenceFlows()
 
         installSplashScreen()
+        requireUnlock()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        try {
+            ApplicationDependencies.getSqlCipherKey()
+        } catch (e: IllegalStateException) {
+            requireUnlock()
+            LogEvent.e(TAG, "SQL cipher key unavailable after activity resume", e)
+        }
+    }
+
+    private fun setContentMain() {
         setContent {
             SobrietyTheme (
                 themePreference = themePreference,
@@ -78,8 +71,65 @@ class MainActivity : FragmentActivity() {
                 ) {
                     SobrietyAppNavigation(
                         navController = rememberNavController(),
-                        context = this
+                        context = this,
+                        isInSetup
                     )
+                }
+            }
+        }
+    }
+
+    private fun requireUnlock() {
+        setContent {
+            SobrietyTheme (
+                themePreference = themePreference,
+                dynamicColor = dynamicColoursPreference
+            ){
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    UnlockScreen(navigateToHome = { setContentMain() })
+                }
+            }
+        }
+    }
+
+    private fun observePreferenceFlows() {
+        // update language on pref value change
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                SobrietyPreferences(applicationContext).language.collect {
+                    LogEvent.i(TAG, "Updating language to $it")
+                    setLocale(it)
+                }
+            }
+        }
+
+        // when theme or dynamic colours pref change the theme is recomposed
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                SobrietyPreferences(applicationContext).theme.collect {
+                    LogEvent.i(TAG, "Updating theme to $it")
+                    themePreference = it
+                }
+            }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                SobrietyPreferences(applicationContext).dynamicColours.collect {
+                    LogEvent.i(TAG, "Updating dynamic colours to $it")
+                    dynamicColoursPreference = it
+                }
+            }
+        }
+
+        // check to see if the app is in setup still
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                SobrietyPreferences(applicationContext).setupCompleted.collect {
+                    LogEvent.i(TAG, "App is in setup mode: ${!it}")
+                    isInSetup = !it
                 }
             }
         }

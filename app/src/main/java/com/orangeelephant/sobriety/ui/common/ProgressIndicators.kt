@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -13,11 +16,48 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.orangeelephant.sobriety.util.Duration
+
+
+@Composable
+fun LinearProgressIndicator(
+    numSteps: Int,
+    currentStep: Int
+) {
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val outline = MaterialTheme.colorScheme.outline
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.width(250.dp).height(8.dp)
+    ) {
+        Canvas(
+            modifier = Modifier.fillMaxHeight(0.8f).fillMaxWidth(0.8f)
+        ) {
+            drawLine(
+                color = outline,
+                start = Offset(x = 0.dp.toPx(), y = size.height / 2),
+                end = Offset(x = size.width, y = size.height / 2),
+                strokeWidth = 10.dp.toPx(),
+                cap = StrokeCap.Round
+            )
+
+            val proportion = size.width * (currentStep.toFloat() / numSteps.toFloat())
+            drawLine(
+                color = primaryColor,
+                start = Offset(x = 0.dp.toPx(), y = size.height / 2),
+                end = Offset(x = proportion, y = size.height / 2),
+                strokeWidth = 10.dp.toPx(),
+                cap = StrokeCap.Round
+            )
+        }
+    }
+}
 
 @Composable
 fun MileStoneProgressTracker(
@@ -139,4 +179,10 @@ fun MileStoneProgressCounterPreview() {
     MileStoneProgressTracker(
         duration = Duration(days = 3, seconds = 20)
     )
+}
+
+@Preview
+@Composable
+fun LinearProgressIndicatorPreview() {
+    LinearProgressIndicator(numSteps = 3, currentStep = 2)
 }
