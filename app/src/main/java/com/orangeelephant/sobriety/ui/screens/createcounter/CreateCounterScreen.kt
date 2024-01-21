@@ -1,5 +1,7 @@
 package com.orangeelephant.sobriety.ui.screens.createcounter
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,9 +43,8 @@ fun CreateCounterScreen(
     var isDialogOpen by remember { mutableStateOf(false) }
     var numberOfReasonsInputFields by remember { mutableIntStateOf(1) }
 
-    val textValues = remember { mutableStateListOf<TextFieldValue>() }
-
-
+    val reasonValues = remember { mutableStateListOf<TextFieldValue>() }
+    
     if (isDialogOpen) {
         DatePickerDialog(
             onDismissRequest = { isDialogOpen = false },
@@ -104,11 +105,10 @@ fun CreateCounterScreen(
                         createScreenViewModel.onCreateCounter(
                             createScreenViewModel.nameText,
                             createScreenViewModel.dateVal,
-                            createScreenViewModel.reasonText,
-                            onCounterCreated = { counterId ->
-                                navigateToCounterFullView(counterId)
-                            }
-                        )
+                            reasonValues.toList()
+                        ) { counterId ->
+                            navigateToCounterFullView(counterId)
+                        }
                     },
                     content = {
                         Text(text = stringResource(id = R.string.create_button))
@@ -122,65 +122,78 @@ fun CreateCounterScreen(
         floatingActionButtonPosition = FabPosition.Center
 
     ) { innerPadding ->
-
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding(), bottom = 0.dp)
+                .padding(top = innerPadding.calculateTopPadding() + 40.dp, bottom = 0.dp)
+                .padding(horizontal = 40.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            Column (
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally,
+            OutlinedTextField(
                 modifier = Modifier
-                    .padding(bottom = 100.dp, top = 40.dp, start = 40.dp, end = 40.dp)
-                    .verticalScroll(rememberScrollState()) // Enable vertical scrolling
+                    .fillMaxWidth(),
+                value = createScreenViewModel.nameText,
+                onValueChange = { createScreenViewModel.nameText = it },
+                label = { Text(stringResource(R.string.placeholder_counter_name)) }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-            ) {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    value = createScreenViewModel.nameText,
-                    onValueChange = { createScreenViewModel.nameText = it },
-                    label = { Text(stringResource(R.string.placeholder_counter_name)) }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+            val dateText = TextFieldValue(DateTimeFormatUtil.formatDate(context,
+                createScreenViewModel.dateVal
+            ))
 
-                val dateText = TextFieldValue(DateTimeFormatUtil.formatDate(context,
-                    createScreenViewModel.dateVal
-                ))
+            ClickableOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = dateText,
+                onClick = { isDialogOpen = true },
+                label = { Text(context.getString(R.string.placeholder_date)) }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-                ClickableOutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = dateText,
-                    onClick = { isDialogOpen = true },
-                    label = { Text(context.getString(R.string.placeholder_date)) }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                if (numberOfReasonsInputFields > textValues.size) {
-                    repeat(numberOfReasonsInputFields - textValues.size) {
-                        textValues.add(TextFieldValue())
-                    }
+            if (numberOfReasonsInputFields > reasonValues.size) {
+                repeat(numberOfReasonsInputFields - reasonValues.size) {
+                    reasonValues.add(TextFieldValue())
                 }
-
-                for (i in 0 until numberOfReasonsInputFields) {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = textValues[i],
-                        onValueChange = { textValues[i] = it },
-                        label = { Text(stringResource(R.string.placeholder_counter_reason)) }
-                    )
-                }
-                /*
-                if (textValues[0] != TextFieldValue("")) {
-                    Button(
-                        onClick = { numberOfReasonsInputFields++ }
-                    ) {
-                        Text(text = context.getString(R.string.add_additional_reason))
-                    }
-                }
-                */
             }
+
+            AnimatedContent(
+                targetState = numberOfReasonsInputFields,
+                label = "Animate presence of reason input boxes"
+            ) { targetState ->
+                Column {
+                    for (i in 0 until targetState) {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            value = reasonValues[i],
+                            onValueChange = { reasonValues[i] = it },
+                            label = {
+                                if (i == 0) {
+                                    Text(stringResource(R.string.placeholder_counter_reason))
+                                } else {
+                                    Text(
+                                        stringResource(
+                                            R.string.placeholder_counter_reason_numbered,
+                                            i + 1
+                                        )
+                                    )
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+            AnimatedVisibility(visible = reasonValues[0] != TextFieldValue("")) {
+                Button(
+                    onClick = { numberOfReasonsInputFields++ }
+                ) {
+                    Text(text = context.getString(R.string.add_additional_reason))
+                }
+            }
+            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
         }
     }
 }
