@@ -129,8 +129,9 @@
     <string name="create_counter_start_date">When did you begin?</string>
     <string name="create_counter_reason">Why are you doing this?</string>
     <string name="placeholder_counter_name">Name</string>
-    <string name="placeholder_counter_reason">Reason (Optional)</string>
-    <string name="placeholder_date">dd/mm/yyyy</string>
+    <string name="placeholder_counter_reason">Reason (optional)</string>
+    <string name="placeholder_date">Date</string>
+    <string name="add_additional_reason">Add Another Reason</string>
 
     <!-- Counter full screen -->
     <string name="record_relapse">Record a relapse</string>

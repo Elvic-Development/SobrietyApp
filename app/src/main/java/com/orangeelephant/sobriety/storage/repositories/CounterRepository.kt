@@ -9,7 +9,7 @@ interface CounterRepository {
     fun getCounter(id: Int): Counter
     fun getRelapsesForCounter(counterId: Int): List<Relapse>
     fun getReasonsForCounter(counterId: Int): List<Reason>
-    fun addCounter(counter: Counter)
+    fun addCounter(counter: Counter): Int
     fun addReasonForCounter(counterId: Int, reason: String)
     fun resetCounter(id: Int, relapseTime: Long, comment: String?): Long
     fun deleteCounter(id: Int)

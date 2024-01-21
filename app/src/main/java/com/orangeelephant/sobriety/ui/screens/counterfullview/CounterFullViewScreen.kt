@@ -1,5 +1,6 @@
 package com.orangeelephant.sobriety.ui.screens.counterfullview
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -75,6 +76,10 @@ fun CounterFullView(
     counterFullScreenViewModel: CounterFullScreenViewModel,
     popBack: () -> Unit
 ) {
+    BackHandler {
+        popBack()
+    }
+
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 

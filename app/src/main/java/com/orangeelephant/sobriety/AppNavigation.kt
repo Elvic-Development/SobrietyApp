@@ -10,8 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullView
-import com.orangeelephant.sobriety.ui.screens.CreateCounter
 import com.orangeelephant.sobriety.ui.screens.counterfullview.CounterFullScreenViewModel
+import com.orangeelephant.sobriety.ui.screens.createcounter.CreateCounterScreen
 import com.orangeelephant.sobriety.ui.screens.export.ExportScreen
 import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
 import com.orangeelephant.sobriety.ui.screens.initialsetup.InitialSetupScreen
@@ -80,7 +80,7 @@ fun NavGraphBuilder.addCounterFullViewNavigation(context: Context, navController
         counterId?.let {
             CounterFullView(
                 counterFullScreenViewModel = CounterFullScreenViewModel(counterId),
-                popBack = { navController.popBackStack() }
+                popBack = { navController.navigate(Screen.Home.route) }
             )
         } ?: run {
             Toast.makeText(context, "No counterID provided", Toast.LENGTH_LONG).show()
@@ -90,7 +90,14 @@ fun NavGraphBuilder.addCounterFullViewNavigation(context: Context, navController
 
 fun NavGraphBuilder.addCreateCounterNavigation(navController: NavHostController) {
     composable(route = Screen.AddCounter.route) {
-        CreateCounter(popBack = { navController.popBackStack() })
+        CreateCounterScreen(
+            popBack = { navController.popBackStack() },
+            navigateToCounterFullView = { counterId ->
+                navController.navigate(
+                    route = Screen.CounterFullView.createRoute(counterId)
+                )
+            }
+        )
     }
 
 }
