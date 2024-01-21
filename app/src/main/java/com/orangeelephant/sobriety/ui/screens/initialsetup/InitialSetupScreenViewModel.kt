@@ -13,8 +13,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orangeelephant.sobriety.ApplicationDependencies
 import com.orangeelephant.sobriety.R
-import com.orangeelephant.sobriety.ui.settings.setEncryptionPassword
-import com.orangeelephant.sobriety.ui.settings.toggleBiometrics
+import com.orangeelephant.sobriety.util.setEncryptionPassword
+import com.orangeelephant.sobriety.util.toggleBiometrics
 import com.orangeelephant.sobriety.util.SobrietyPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

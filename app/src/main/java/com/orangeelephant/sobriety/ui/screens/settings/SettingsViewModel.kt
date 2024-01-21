@@ -1,4 +1,4 @@
-package com.orangeelephant.sobriety.ui.settings
+package com.orangeelephant.sobriety.ui.screens.settings
 
 import android.content.Context
 import android.widget.Toast
@@ -10,6 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.util.SobrietyPreferences
+import com.orangeelephant.sobriety.util.disableEncryption
+import com.orangeelephant.sobriety.util.setEncryptionPassword
+import com.orangeelephant.sobriety.util.toggleBiometrics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers

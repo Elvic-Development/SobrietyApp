@@ -1,4 +1,4 @@
-package com.orangeelephant.sobriety.ui.settings
+package com.orangeelephant.sobriety.ui.screens.settings
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api

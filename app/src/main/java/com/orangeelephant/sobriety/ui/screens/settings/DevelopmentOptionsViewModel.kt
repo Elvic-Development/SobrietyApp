@@ -1,4 +1,4 @@
-package com.orangeelephant.sobriety.ui.settings
+package com.orangeelephant.sobriety.ui.screens.settings
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

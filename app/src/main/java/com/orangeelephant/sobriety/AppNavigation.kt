@@ -15,8 +15,8 @@ import com.orangeelephant.sobriety.ui.screens.createcounter.CreateCounterScreen
 import com.orangeelephant.sobriety.ui.screens.export.ExportScreen
 import com.orangeelephant.sobriety.ui.screens.home.HomeScreen
 import com.orangeelephant.sobriety.ui.screens.initialsetup.InitialSetupScreen
-import com.orangeelephant.sobriety.ui.settings.DevelopmentOptionsScreen
-import com.orangeelephant.sobriety.ui.settings.SettingsScreen
+import com.orangeelephant.sobriety.ui.screens.settings.DevelopmentOptionsScreen
+import com.orangeelephant.sobriety.ui.screens.settings.SettingsScreen
 
 sealed class Screen(val route: String) {
     object Home: Screen("home")
