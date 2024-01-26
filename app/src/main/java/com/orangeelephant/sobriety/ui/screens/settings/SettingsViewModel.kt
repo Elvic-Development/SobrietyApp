@@ -51,8 +51,6 @@ class SettingsViewModel @Inject constructor(
 
             withContext(Dispatchers.Default) {
                 biometricsEnabledPreviously = preferences.biometricUnlock.first()
-                preferences.setBiometricsEnabled(false)
-
                 setEncryptionPassword(context, preferences, password)
             }
 
@@ -74,7 +72,12 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onToggleFingerprint(context: FragmentActivity, newValue: Boolean) {
-        toggleBiometrics(context, preferences, viewModelScope, newValue)
+        toggleBiometrics(
+            context,
+            preferences,
+            viewModelScope,
+            newValue
+        ) {}
     }
 
     fun onCancelBiometricDisable() {

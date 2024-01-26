@@ -29,6 +29,7 @@ suspend fun setEncryptionPassword(
     preferences: SobrietyPreferences,
     password: String
 ) {
+    preferences.setBiometricsEnabled(false)
     val salt = Argon2().genSalt()
 
     val newKey = SqlCipherKey(
@@ -74,7 +75,8 @@ fun toggleBiometrics(
     context: FragmentActivity,
     preferences: SobrietyPreferences,
     coroutineScope: CoroutineScope,
-    newValue: Boolean
+    newValue: Boolean,
+    onToggledCallback: () -> Unit
 ) {
     coroutineScope.launch {
         if (newValue) {
@@ -110,6 +112,7 @@ fun toggleBiometrics(
                             )
                             preferences.setKeystoreEncryptedKey(encryptedData)
                             preferences.setBiometricsEnabled(true)
+                            onToggledCallback()
                         }
                     },
                     title = R.string.enable_title,
@@ -117,10 +120,12 @@ fun toggleBiometrics(
                 )
             } else {
                 preferences.setBiometricsEnabled(true)
+                onToggledCallback()
                 Toast.makeText(context, R.string.enable_success, Toast.LENGTH_LONG).show()
             }
         } else {
             preferences.setKeystoreEncryptedKey(null)
+            onToggledCallback()
             Toast.makeText(context, R.string.disable_success, Toast.LENGTH_LONG).show()
         }
     }

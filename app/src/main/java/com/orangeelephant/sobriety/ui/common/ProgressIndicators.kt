@@ -1,5 +1,7 @@
 package com.orangeelephant.sobriety.ui.common
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,12 +34,24 @@ fun LinearProgressIndicator(
     val primaryColor = MaterialTheme.colorScheme.primary
     val outline = MaterialTheme.colorScheme.outline
 
+    val proportion = animateFloatAsState (
+        targetValue = currentStep.toFloat() / numSteps.toFloat(),
+        animationSpec = tween(
+            durationMillis = 500
+        ),
+        label = "Animate proportion of progress bar"
+    )
+
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.width(250.dp).height(8.dp)
+        modifier = Modifier
+            .width(250.dp)
+            .height(8.dp)
     ) {
         Canvas(
-            modifier = Modifier.fillMaxHeight(0.8f).fillMaxWidth(0.8f)
+            modifier = Modifier
+                .fillMaxHeight(0.8f)
+                .fillMaxWidth(0.8f)
         ) {
             drawLine(
                 color = outline,
@@ -47,11 +61,11 @@ fun LinearProgressIndicator(
                 cap = StrokeCap.Round
             )
 
-            val proportion = size.width * (currentStep.toFloat() / numSteps.toFloat())
+            val end = size.width * proportion.value
             drawLine(
                 color = primaryColor,
                 start = Offset(x = 0.dp.toPx(), y = size.height / 2),
-                end = Offset(x = proportion, y = size.height / 2),
+                end = Offset(x = end, y = size.height / 2),
                 strokeWidth = 10.dp.toPx(),
                 cap = StrokeCap.Round
             )

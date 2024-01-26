@@ -3,6 +3,11 @@ package com.orangeelephant.sobriety.ui.screens.initialsetup
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,31 +62,59 @@ fun InitialSetupScreen(
                 .padding(horizontal = 30.dp)
                 .fillMaxSize()
         ) {
-            when (viewModel.currentStep) {
-                InitialSetupScreenViewModel.WELCOME -> {
-                    LargeLogo()
-                    Welcome()
+            AnimatedContent(
+                targetState = viewModel.currentStep,
+                label = "Logo position animation"
+            ) {targetState ->
+                when (targetState) {
+                    InitialSetupScreenViewModel.WELCOME,
+                    InitialSetupScreenViewModel.FINISH -> {
+                        LargeLogo()
+                    }
+                    InitialSetupScreenViewModel.IMPORT_BACKUP,
+                    InitialSetupScreenViewModel.CREATE_PASSWORD,
+                    InitialSetupScreenViewModel.ENABLE_BIOMETRICS -> {
+                        SmallLogo()
+                    }
                 }
-                InitialSetupScreenViewModel.IMPORT_BACKUP -> {
-                    SmallLogo()
-                    ImportBackup(viewModel = viewModel)
-                }
-                InitialSetupScreenViewModel.CREATE_PASSWORD -> {
-                    SmallLogo()
-                    SetupPassword(viewModel = viewModel)
-                }
-                InitialSetupScreenViewModel.ENABLE_BIOMETRICS -> {
-                    SmallLogo()
-                    EnableBiometrics(viewModel = viewModel)
-                }
-                InitialSetupScreenViewModel.FINISH -> {
-                    LargeLogo()
-                    Finish()
+            }
+
+            AnimatedContent(
+                targetState = viewModel.currentStep,
+                transitionSpec = {
+                    slideInHorizontally(
+                        animationSpec = tween(400),
+                        initialOffsetX = { fullHeight -> fullHeight }) togetherWith
+                            fadeOut(
+                                animationSpec = tween(200)
+                            )
+                },
+                label = "Setup stage animation"
+            ) { targetState ->
+                when (targetState) {
+                    InitialSetupScreenViewModel.WELCOME -> {
+                        Welcome()
+                    }
+
+                    InitialSetupScreenViewModel.IMPORT_BACKUP -> {
+                        ImportBackup(viewModel = viewModel)
+                    }
+
+                    InitialSetupScreenViewModel.CREATE_PASSWORD -> {
+                        SetupPassword(viewModel = viewModel)
+                    }
+
+                    InitialSetupScreenViewModel.ENABLE_BIOMETRICS -> {
+                        EnableBiometrics(viewModel = viewModel)
+                    }
+
+                    InitialSetupScreenViewModel.FINISH -> {
+                        Finish()
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.fillMaxHeight(0.85f))
-
         }
         Column (
             verticalArrangement = Arrangement.Bottom,
@@ -154,15 +187,22 @@ fun ImportBackup(viewModel: InitialSetupScreenViewModel) {
         }
     }
 
-    FormatTitleAndDescription(title = R.string.import_backup, description = R.string.import_backup_description)
-    Spacer(modifier = Modifier.fillMaxHeight(0.15f))
-
-    Button(
-        onClick = { viewModel.onLaunchSelectImportFile(selectImportDbFileLauncher) },
-        shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 25)),
-        modifier = Modifier.size(width = 250.dp, height = 50.dp)
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(stringResource(id = R.string.tap_to_select_backup_file))
+        FormatTitleAndDescription(
+            title = R.string.import_backup,
+            description = R.string.import_backup_description
+        )
+        Spacer(modifier = Modifier.fillMaxHeight(0.15f))
+
+        Button(
+            onClick = { viewModel.onLaunchSelectImportFile(selectImportDbFileLauncher) },
+            shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 25)),
+            modifier = Modifier.size(width = 250.dp, height = 50.dp)
+        ) {
+            Text(stringResource(id = R.string.tap_to_select_backup_file))
+        }
     }
 }
 
@@ -186,18 +226,22 @@ fun SetupPassword(viewModel: InitialSetupScreenViewModel) {
 
 @Composable
 fun EnableBiometrics(viewModel: InitialSetupScreenViewModel) {
-    FormatTitleAndDescription(title = R.string.enable_biometrics, description = R.string.enable_biometrics_description)
-    Spacer(modifier = Modifier.fillMaxHeight(0.15f))
-
-    val activity = LocalContext.current as MainActivity
-    Button(
-        onClick = { viewModel.onEnableBiometrics(activity) },
-        shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 25)),
-        modifier = Modifier.size(width = 250.dp, height = 50.dp)
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(Icons.Default.Lock, contentDescription = "lock icon")
-        Spacer(modifier = Modifier.width(10.dp))
-        Text(stringResource(id = R.string.tap_to_enable_biometrics))
+        FormatTitleAndDescription(title = R.string.enable_biometrics, description = R.string.enable_biometrics_description)
+        Spacer(modifier = Modifier.fillMaxHeight(0.15f))
+
+        val activity = LocalContext.current as MainActivity
+        Button(
+            onClick = { viewModel.onEnableBiometrics(activity) },
+            shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 25)),
+            modifier = Modifier.size(width = 250.dp, height = 50.dp)
+        ) {
+            Icon(Icons.Default.Lock, contentDescription = "lock icon")
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(stringResource(id = R.string.tap_to_enable_biometrics))
+        }
     }
 }
 
@@ -208,16 +252,24 @@ fun Finish() {
 
 @Composable
 fun SmallLogo() {
-    Spacer(modifier = Modifier.height(20.dp))
-    Box(modifier = Modifier.size(80.dp)) {
-        Logo()
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Box(modifier = Modifier.size(80.dp)) {
+            Logo()
+        }
+        Spacer(modifier = Modifier.fillMaxHeight(0.2f))
     }
-    Spacer(modifier = Modifier.fillMaxHeight(0.2f))
 }
 
 @Composable
 fun LargeLogo() {
-    Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-    LogoAndName()
-    Spacer(modifier = Modifier.fillMaxHeight(0.15f))
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+        LogoAndName()
+        Spacer(modifier = Modifier.fillMaxHeight(0.15f))
+    }
 }
