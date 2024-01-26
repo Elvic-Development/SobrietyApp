@@ -16,8 +16,10 @@ class DatabaseCounterRepository: CounterRepository {
         return ApplicationDependencies.getDatabase().counters.getAllCounters()
     }
 
-    override fun addCounter(counter: Counter) {
-        ApplicationDependencies.getDatabase().counters.saveCounterObjectToDb(counter)
+    override fun addCounter(counter: Counter): Int {
+        val rowId = ApplicationDependencies.getDatabase().counters.saveCounterObjectToDb(counter)
+
+        return rowId.toInt()
     }
 
     override fun addReasonForCounter(counterId: Int, reason: String) {

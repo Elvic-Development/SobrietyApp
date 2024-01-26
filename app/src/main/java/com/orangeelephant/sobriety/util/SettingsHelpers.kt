@@ -1,4 +1,4 @@
-package com.orangeelephant.sobriety.ui.settings
+package com.orangeelephant.sobriety.util
 
 import android.content.Context
 import android.security.keystore.KeyPermanentlyInvalidatedException
@@ -10,11 +10,7 @@ import com.orangeelephant.sobriety.ApplicationDependencies
 import com.orangeelephant.sobriety.R
 import com.orangeelephant.sobriety.logging.LogEvent
 import com.orangeelephant.sobriety.storage.database.SqlCipherKey
-import com.orangeelephant.sobriety.util.Argon2
-import com.orangeelephant.sobriety.util.KeyStoreHelper
-import com.orangeelephant.sobriety.util.SobrietyPreferences
-import com.orangeelephant.sobriety.util.canEnableAuthentication
-import com.orangeelephant.sobriety.util.showBiometricPrompt
+import com.orangeelephant.sobriety.ui.screens.settings.SettingsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first

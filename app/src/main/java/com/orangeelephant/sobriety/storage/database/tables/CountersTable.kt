@@ -178,7 +178,9 @@ class CountersTable(private val openHelper: OpenHelper) {
         val contentValues = contentValuesOf(
             COLUMN_NAME to counterToSave.name,
             COLUMN_CURRENT_START_TIME to counterToSave.startTimeMillis,
-            COLUMN_RECORD_CLEAN_TIME to counterToSave.recordTimeSoberInMillis
+            COLUMN_RECORD_CLEAN_TIME to counterToSave.recordTimeSoberInMillis,
+            COLUMN_INITIAL_START_TIME to counterToSave.initialStartTime,
+            COLUMN_CREATION_TIMESTAMP to counterToSave.creationTime
         )
 
         return db.insert(TABLE_NAME_COUNTERS, null, contentValues)

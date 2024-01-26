@@ -2,6 +2,8 @@ package com.orangeelephant.sobriety.ui.common
 
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -19,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -26,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.orangeelephant.sobriety.R
 
@@ -103,5 +107,28 @@ fun PasswordConfirmationLayout(
         ) {
             Text(stringResource(id = btnPosLabel))
         }
+    }
+}
+
+@Composable
+fun ClickableOutlinedTextField(
+    value: TextFieldValue,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    label: @Composable () -> Unit
+) {
+    Box {
+        OutlinedTextField(
+            value = value,
+            onValueChange = {},
+            modifier = modifier,
+            label = label
+        )
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .alpha(0f)
+                .clickable(onClick = onClick),
+        )
     }
 }
